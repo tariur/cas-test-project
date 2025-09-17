@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +15,7 @@ import { Auth } from '../../services/auth';
   styleUrl: './signup.scss'
 })
 export class Signup {
-  constructor(private authService:Auth, private router:Router){}
+  constructor(private userService:UserService, private authService:Auth, private router:Router){}
   private formBuilder = inject(FormBuilder);
 
   signupForm = this.formBuilder.group({
@@ -44,6 +45,7 @@ export class Signup {
       .then((userCredential => {
         console.log('user signed up');
         const user = userCredential.user;
+        this.userService.createUserData(user.email || '');
         this.router.navigateByUrl('/login');
       }))
       .catch(error => {
