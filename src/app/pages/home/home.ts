@@ -12,6 +12,7 @@ import {MatIconModule} from '@angular/material/icon';
 export class Home {
   constructor(private router:Router){}
 
+  //Routes to landing component
   signout(){
     this.router.navigateByUrl('');
   }

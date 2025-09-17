@@ -15,9 +15,11 @@ import { UserService } from '../../services/user-service';
   styleUrl: './signup.scss'
 })
 export class Signup {
-  constructor(private userService:UserService, private authService:Auth, private router:Router){}
-  private formBuilder = inject(FormBuilder);
 
+  constructor(private userService:UserService, private authService:Auth, private router:Router){}
+
+  //Signup reactive form
+  private formBuilder = inject(FormBuilder);
   signupForm = this.formBuilder.group({
     email: ['', Validators.required],
     password: ['', Validators.required],
@@ -28,23 +30,27 @@ export class Signup {
     this.router.navigateByUrl('/login');
   }
 
+  //Submiting signup form
   onSubmit(){
 
-    const password = this.signupForm.get('password')?.value || '';
-    const rePassword = this.signupForm.get('passwordAgain')?.value || '';
+    //Fetching signupForm properties
+    const passwordValue = this.signupForm.get('password')?.value || '';
+    const rePasswordValue = this.signupForm.get('passwordAgain')?.value || '';
+    const emailValue = this.signupForm.get('email')?.value  || '';
 
-    if(password !== rePassword){
+    if(passwordValue !== rePasswordValue){
       console.log("passwords not matching error");
       return;
     }
 
-    const emailValue = this.signupForm.get('email')?.value  || '';
-    const passwordValue = this.signupForm.get('password')?.value || '';
-
+    //Signing up user, using auth.ts service signup() function
     this.authService.signup(emailValue, passwordValue)
       .then((userCredential => {
         console.log('user signed up');
+
+        //user data stored in const user
         const user = userCredential.user;
+        //Adds user data to Firestore, using user-service.ts createUserData()
         this.userService.createUserData(user.email || '');
         this.router.navigateByUrl('/login');
       }))

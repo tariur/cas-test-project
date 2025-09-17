@@ -16,14 +16,18 @@ import { Auth } from '../../services/auth';
 export class Login {
 
   constructor(private authService:Auth, private router:Router){}
+
+  //Template prints loginError, after submitting invalid loginForm
   loginError:string = '';
 
+  //Login reactive form
   private formBuilder = inject(FormBuilder);
   loginForm = this.formBuilder.group({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
   });
 
+  //Email property of loginForm
   get email(){
     return this.loginForm.get('email');
   }
@@ -32,6 +36,7 @@ export class Login {
     this.router.navigateByUrl('/signup');
   }
 
+  //Logs in user using auth.ts service login() function
   onLogin(){
     const emailValue = this.loginForm.get('email')?.value  || '';
     const passwordValue = this.loginForm.get('password')?.value || '';
