@@ -1,0 +1,23 @@
+<div class="main-container">
+    <div class="form-container">
+        <h1>Signup</h1>
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="input-fields">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Password again</mat-label>
+                <input matInput type="password" formControlName="passwordAgain">
+            </mat-form-field>
+            <div class="form-buttons">
+                <button matButton="outlined" type="submit" [disabled]="!signupForm.valid">Submit</button>
+                <button matButton="outlined" (click)="loginPage()">Back to Login</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<div class="main-container">
+    <div class="form-container">
+        <h1>Login</h1>
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="input-fields">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password">
+            </mat-form-field>
+            <div class="error-messages">
+                @if(email?.hasError('email')){
+                    <p class="error-message">Invalid email format</p>
+                }
+                @if(loginError){
+                    <p class="error-message">{{loginError}}</p>
+                }
+            </div>
+            <div class="form-buttons">
+                <button matButton="outlined" type="submit" [disabled]="!loginForm.valid">Login</button>
+                <button matButton="outlined" (click)="signupPage()">Sign up instead</button>
+            </div>
+        </form>
+    </div>
+</div>
