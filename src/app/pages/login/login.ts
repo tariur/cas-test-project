@@ -6,16 +6,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
+import {MatDividerModule} from '@angular/material/divider';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDividerModule],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
 export class Login {
 
-  constructor(private authService:Auth, private router:Router){}
+  constructor(private userService:UserService, private authService:Auth, private router:Router){}
 
   //Template prints loginError, after submitting invalid loginForm
   loginError:string = '';
@@ -34,6 +36,23 @@ export class Login {
   
   signupPage(){
     this.router.navigateByUrl('/signup');
+  }
+
+  //Sign in with Google
+  signInWithGoogle(){
+    this.authService.googleSignIn()
+      .then(userCredential =>{
+        const user = userCredential.user;
+        this.userService.createUserData(user.email || '');
+        this.router.navigateByUrl('/home');
+      })
+      .catch(error => {
+        console.error('Google login error:', error.message);
+      });
+  }
+  //Sign in with Facebook
+  signInWithFacebook(){
+    console.log('sign in with facebook button pressed');
   }
 
   //Logs in user using auth.ts service login() function

@@ -45,7 +45,7 @@ export class Signup {
 
     //Signing up user, using auth.ts service signup() function
     this.authService.signup(emailValue, passwordValue)
-      .then((userCredential => {
+      .then(userCredential => {
         console.log('user signed up');
 
         //user data stored in const user
@@ -53,7 +53,7 @@ export class Signup {
         //Adds user data to Firestore, using user-service.ts createUserData()
         this.userService.createUserData(user.email || '');
         this.router.navigateByUrl('/login');
-      }))
+      })
       .catch(error => {
         console.error('Signup error:', error.message);
       });
