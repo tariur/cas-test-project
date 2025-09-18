@@ -4,6 +4,7 @@ import { Login } from './pages/login/login';
 import { Signup } from './pages/signup/signup';
 import { Home } from './pages/home/home';
 import { PageNotFound } from './pages/page-not-found/page-not-found';
+import { authGuard, publicGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
     {
@@ -12,15 +13,18 @@ export const routes: Routes = [
     },
     {
         path:"login",
-        component: Login
+        component: Login,
+        canActivate: [publicGuard]
     },
     {
         path:"signup",
-        component: Signup
+        component: Signup,
+        canActivate: [publicGuard]
     },
     {
         path:"home",
-        component: Home
+        component: Home,
+        canActivate: [authGuard]
     },
     {
         path:"**",

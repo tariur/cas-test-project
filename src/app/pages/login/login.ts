@@ -50,6 +50,7 @@ export class Login {
         console.error('Google login error:', error.message);
       });
   }
+  
   //Sign in with Facebook
   signInWithFacebook(){
     console.log('sign in with facebook button pressed');

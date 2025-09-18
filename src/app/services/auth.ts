@@ -32,4 +32,15 @@ export class Auth {
     const username = this.auth.currentUser;
   }
 
+  isUserSignedIn():boolean{
+    const user = this.auth.currentUser;
+    if(user){
+      console.log('user is signed in');
+      return true;
+    }else{
+      console.log('user is not signed in');
+      return false;
+    }
+  }
+
 }
