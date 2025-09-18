@@ -43,14 +43,15 @@ export class Login {
     this.authService.googleSignIn()
       .then(userCredential =>{
         const user = userCredential.user;
-        this.userService.createUserData(user.email || '');
+        this.userService.createUserData(user.email || '', user.uid);
+        this.userService.changeStatusOnline(user.uid);
         this.router.navigateByUrl('/home');
       })
       .catch(error => {
         console.error('Google login error:', error.message);
       });
   }
-  
+
   //Sign in with Facebook
   signInWithFacebook(){
     console.log('sign in with facebook button pressed');
@@ -63,6 +64,8 @@ export class Login {
 
     this.authService.login(emailValue, passwordValue)
       .then(userCredential =>{
+        const user = userCredential.user;
+        this.userService.changeStatusOnline(user.uid);
         console.log('user logged in');
         this.router.navigateByUrl('/home');
       })

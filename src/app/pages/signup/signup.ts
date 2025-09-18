@@ -51,8 +51,8 @@ export class Signup {
         //user data stored in const user
         const user = userCredential.user;
         //Adds user data to Firestore, using user-service.ts createUserData()
-        this.userService.createUserData(user.email || '');
-        this.router.navigateByUrl('/login');
+        this.userService.createUserData(user.email || '', user.uid);
+        this.router.navigateByUrl('/home');
       })
       .catch(error => {
         console.error('Signup error:', error.message);
