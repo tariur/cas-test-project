@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
+import { collectionData, Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { Auth as FirebaseAuth} from '@angular/fire/auth';
+import { Observable } from 'rxjs';
+import { User } from '../model/User';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +71,11 @@ export class UserService {
     if(!user) throw new Error('No user logged in');
     const userDocRef = doc(this.firestore, 'users', user.uid);
     await updateDoc(userDocRef, {username: newUsername});
+  }
+
+  getAllUsers():Observable<User[]>{
+    const usersRef = collection(this.firestore, 'users');
+    return collectionData(usersRef, {idField: 'id'}) as Observable<User[]>;
   }
   
 }

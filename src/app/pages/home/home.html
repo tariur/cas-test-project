@@ -3,12 +3,21 @@
         <button matButton="tonal" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
         <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
     </div>
-    <div class="content-container">
-        <div class="chat-list-box">
-            <p>online users</p>
-        </div>
-        <div class="message-box">
-            <p>chat with user</p>
-        </div>
-    </div>
+    <mat-drawer-container>
+        <mat-drawer #sidenav mode="side" closed>
+            <mat-tab-group>
+                <mat-tab label="All users">
+                    <mat-list *ngFor="let user of users">
+                        <mat-list-item><mat-icon>person</mat-icon>{{user.username}}</mat-list-item>
+                        <mat-divider></mat-divider>
+                    </mat-list>
+                </mat-tab>
+                <mat-tab label="Online users"> Online users </mat-tab>
+                <mat-tab label="Groups"> Groups </mat-tab>
+            </mat-tab-group>
+        </mat-drawer>
+        <mat-drawer-content>
+            <button matMiniFab (click)="sidenav.toggle()"><mat-icon>menu_open</mat-icon></button>
+        </mat-drawer-content>
+    </mat-drawer-container>
 </div>

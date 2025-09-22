@@ -24,7 +24,7 @@ export class Auth {
 
   async signOutUser(){
     const user = this.auth.currentUser;
-    this.userService.changeStatusOffline(user?.uid || '');
+    await this.userService.changeStatusOffline(user?.uid || '');
 
     try{
       await signOut(this.auth);
