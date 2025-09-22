@@ -1,8 +1,6 @@
 <div class="main-container">
     <div class="navbar-container">
-        <div class="user-info">
-            <p>Hi, {{username}}</p>
-        </div>
+        <button matButton="tonal" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
         <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
     </div>
     <div class="content-container">

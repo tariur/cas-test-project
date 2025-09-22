@@ -63,5 +63,12 @@ export class UserService {
       return null;
     }
   }
+
+  async updateUsername(newUsername: string): Promise<void>{
+    const user = this.firebaseAuth.currentUser;
+    if(!user) throw new Error('No user logged in');
+    const userDocRef = doc(this.firestore, 'users', user.uid);
+    await updateDoc(userDocRef, {username: newUsername});
+  }
   
 }

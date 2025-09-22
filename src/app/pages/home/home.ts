@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import { Auth } from '../../services/auth';
 import { UserService } from '../../services/user-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ChangeUsernameDialog } from './change-username-dialog/change-username-dialog';
 
 @Component({
   selector: 'app-home',
@@ -15,10 +17,22 @@ export class Home implements OnInit{
 
   username:string | null = null;
 
-  constructor(private authService:Auth, private router:Router, private userService:UserService){}
+  constructor(private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
   async ngOnInit(){
     this.username = await this.userService.fetchUsername();
+  }
+
+  openChangeUsernameDialog(){
+    const dialogRef = this.dialog.open(ChangeUsernameDialog, {
+      width: '300px',
+    });
+
+    dialogRef.afterClosed().subscribe((newUsername) =>{
+      if(newUsername){
+        this.username = newUsername;
+      }
+    })
   }
 
 
