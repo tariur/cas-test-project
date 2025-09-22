@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
-import { collection, getDocs, query, where, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { Auth as FirebaseAuth} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   
-  constructor(private firestore:Firestore){}
+  constructor(private firestore:Firestore, private firebaseAuth:FirebaseAuth){}
 
   async createUserData(email:string, uid:string){
     if(await this.checkEmailAlreadyExists(email)){
@@ -48,4 +49,19 @@ export class UserService {
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty;
   }
+
+  async fetchUsername():Promise<string | null>{
+    const user = this.firebaseAuth.currentUser;
+    if(!user) return null;
+    const userDocRef = doc(this.firestore, 'users', user.uid);
+    const userSnap = await getDoc(userDocRef);
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      return data['username'] as string;
+    }else{
+      console.warn('User document does not exist');
+      return null;
+    }
+  }
+  
 }

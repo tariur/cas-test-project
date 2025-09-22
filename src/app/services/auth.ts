@@ -22,14 +22,16 @@ export class Auth {
     return signInWithPopup(this.auth, provider);
   }
 
-  signOutUser(){
+  async signOutUser(){
     const user = this.auth.currentUser;
     this.userService.changeStatusOffline(user?.uid || '');
-    signOut(this.auth).then(()=>{
-      console.log('user signed out');
-    }).catch((error)=>{
+
+    try{
+      await signOut(this.auth);
+    }
+    catch(error:any){
       console.error('signout error:', error.message);
-    });
+    }
   }
 
   isUserSignedIn():boolean{

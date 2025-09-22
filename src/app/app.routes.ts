@@ -9,7 +9,8 @@ import { authGuard, publicGuard } from './guards/auth-guard';
 export const routes: Routes = [
     {
         path: "",
-        component: Landing
+        component: Landing,
+        canActivate: [publicGuard]
     },
     {
         path:"login",
