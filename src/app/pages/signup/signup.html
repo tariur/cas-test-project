@@ -14,6 +14,11 @@
                 <mat-label>Password again</mat-label>
                 <input matInput type="password" formControlName="passwordAgain">
             </mat-form-field>
+            <div class="error-messages">
+                @if(signupError){
+                    <p class="error-message">{{signupError}}</p>
+                }
+            </div>
             <div class="form-buttons">
                 <button matButton="outlined" type="submit" [disabled]="!signupForm.valid">Submit</button>
                 <button matButton="outlined" (click)="loginPage()">Back to Login</button>

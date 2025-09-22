@@ -17,6 +17,7 @@ import { UserService } from '../../services/user-service';
 export class Signup {
 
   constructor(private userService:UserService, private authService:Auth, private router:Router){}
+  signupError: string = '';
 
   //Signup reactive form
   private formBuilder = inject(FormBuilder);
@@ -32,6 +33,7 @@ export class Signup {
 
   //Submiting signup form
   onSubmit(){
+    this.signupError = '';
 
     //Fetching signupForm properties
     const passwordValue = this.signupForm.get('password')?.value || '';
@@ -39,7 +41,7 @@ export class Signup {
     const emailValue = this.signupForm.get('email')?.value  || '';
 
     if(passwordValue !== rePasswordValue){
-      console.log("passwords not matching error");
+      this.signupError = 'Passwords are not mathcing'
       return;
     }
 
@@ -55,7 +57,17 @@ export class Signup {
         this.router.navigateByUrl('/home');
       })
       .catch(error => {
-        console.error('Signup error:', error.message);
+        switch(error.code){
+          case 'auth/email-already-in-use':
+            this.signupError = 'Email already in use';
+            break;
+          case 'auth/weak-password':
+            this.signupError = 'Password should be at least 6 characters';
+            break;
+          default:
+            console.error('Signup error:', error.message);
+            break;
+        }
       });
   }
 

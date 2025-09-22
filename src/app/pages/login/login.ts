@@ -71,7 +71,6 @@ export class Login {
       })
       .catch(error => {
         this.loginError = 'Email and/or password incorrect';
-        console.error('Login error:', error.message);
       });
   }
 }
