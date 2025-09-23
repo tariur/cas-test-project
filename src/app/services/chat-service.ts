@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
+import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { collection, doc, getDoc, query } from 'firebase/firestore';
+import { collection, doc, getDoc, orderBy, query } from 'firebase/firestore';
+import { Message } from '../model/Message';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,12 @@ export class ChatService {
       console.warn('Chat document does not exist');
       return null;
     }
+  }
+
+  getMessages(roomId:string):Observable<Message[]>{
+    const messageRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
+    const q = query(messageRef, orderBy('timestamp', 'asc'));
+    return collectionData(q, { idField: 'id' }) as Observable<Message[]>;
   }
 
 }

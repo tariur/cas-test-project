@@ -1,10 +1,12 @@
 <div class="window-container">
     <div class="room-name-container">
-        <h2>{{currentRoom.roomName}}</h2>
+        <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
     </div>
     <mat-divider></mat-divider>
     <div class="messages-container">
-        <p>chat-window works!</p>
+        <div *ngFor="let msg of messages$ | async" [ngClass]="msg.senderId === currentUserId ? 'current-user-message' : 'partner-message'">
+            <p>{{msg.content}}</p>
+        </div>
     </div>
     <mat-divider></mat-divider>
     <div class="input-field-container">
