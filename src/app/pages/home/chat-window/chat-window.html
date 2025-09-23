@@ -1,3 +1,14 @@
 <div class="window-container">
-    <p>chat-window works!</p>
+    <div class="room-name-container">
+        <h2>{{currentRoom.roomName}}</h2>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="messages-container">
+        <p>chat-window works!</p>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="input-field-container">
+        <input type="text" placeholder="Write a message...">
+        <button matIconButton class="send-button"><mat-icon>send</mat-icon></button>
+    </div>
 </div>

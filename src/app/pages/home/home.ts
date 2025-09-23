@@ -27,6 +27,7 @@ export class Home implements OnInit{
   username:string | null = null;
   allUsers: User[] = [];
   onlineUsers: User[] = [];
+  selectedRoom:string | null = "kuhwXHPNW9yBhGFb9CrS";
 
   constructor(private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
