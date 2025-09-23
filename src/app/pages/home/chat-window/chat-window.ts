@@ -10,6 +10,8 @@ import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
 import { Auth } from '@angular/fire/auth';
+import { ChangeChatnameDialog } from './change-chatname-dialog/change-chatname-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-chat-window',
@@ -30,7 +32,7 @@ export class ChatWindow implements OnInit{
     roomName:'Initial RoomName'
   };
 
-  constructor(private chatService:ChatService, private firebaseAuth:Auth){}
+  constructor(private chatService:ChatService, private firebaseAuth:Auth, private dialog: MatDialog){}
 
   
 
@@ -51,6 +53,15 @@ export class ChatWindow implements OnInit{
   }
 
   changeChatName(){
+    const dialogRef = this.dialog.open(ChangeChatnameDialog, {
+          width: '300px',
+          data:this.currentRoom.roomId
+        });
+    dialogRef.afterClosed().subscribe((newChatname: string) =>{
+      if(newChatname){
+        this.currentRoom.roomName = newChatname;
+      }
+    })
   }
 
 }

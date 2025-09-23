@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { collection, doc, getDoc, orderBy, query } from 'firebase/firestore';
+import { collection, doc, getDoc, orderBy, query, updateDoc } from 'firebase/firestore';
 import { Message } from '../model/Message';
 
 @Injectable({
@@ -22,6 +22,11 @@ export class ChatService {
       console.warn('Chat document does not exist');
       return null;
     }
+  }
+
+  async updateChatname(roomId:string, newChatname:string){
+    const chatRef = doc(this.firestore, 'chatRooms', roomId)
+    await updateDoc(chatRef, {roomName : newChatname})
   }
 
   getMessages(roomId:string):Observable<Message[]>{
