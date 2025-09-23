@@ -1,23 +1,35 @@
 <div class="main-container">
     <div class="navbar-container">
-        <button matButton="tonal" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
+        <button matButton="tonal" matTooltip="Click to change username" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
         <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
     </div>
     <mat-drawer-container>
         <mat-drawer #sidenav mode="side" closed>
             <mat-tab-group>
                 <mat-tab label="All users">
-                    <mat-list *ngFor="let user of users">
-                        <mat-list-item><mat-icon>person</mat-icon>{{user.username}}</mat-list-item>
+                    <mat-list *ngFor="let user of allUsers">
+                            <mat-list-item><button [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+                            <mat-divider></mat-divider>
+                    </mat-list>
+                </mat-tab>
+                <mat-tab label="Online users">
+                    <mat-list *ngFor="let user of onlineUsers">
+                        <mat-list-item><button matButton="outlined" class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item> 
                         <mat-divider></mat-divider>
                     </mat-list>
                 </mat-tab>
-                <mat-tab label="Online users"> Online users </mat-tab>
-                <mat-tab label="Groups"> Groups </mat-tab>
+                <mat-tab label="Groups">
+                    <mat-tab-group>
+                        <mat-tab label="Public Groups"></mat-tab>
+                        <mat-tab label="Password Groups"></mat-tab>
+                        <mat-tab label="Private Groups"></mat-tab>
+                    </mat-tab-group>
+                </mat-tab>
             </mat-tab-group>
         </mat-drawer>
         <mat-drawer-content>
-            <button matMiniFab (click)="sidenav.toggle()"><mat-icon>menu_open</mat-icon></button>
+            <button matMiniFab (click)="sidenav.toggle()"><mat-icon>chat</mat-icon></button>
+            <app-chat-window></app-chat-window>
         </mat-drawer-content>
     </mat-drawer-container>
 </div>

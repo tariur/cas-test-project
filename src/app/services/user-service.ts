@@ -77,5 +77,11 @@ export class UserService {
     const usersRef = collection(this.firestore, 'users');
     return collectionData(usersRef, {idField: 'id'}) as Observable<User[]>;
   }
+
+  getOnlineUsers():Observable<User[]>{
+    const userRef = collection(this.firestore, 'users');
+    const q = query(userRef, where("online", "==", true));
+    return collectionData(q, {idField: 'id'}) as Observable<User[]>;
+  }
   
 }
