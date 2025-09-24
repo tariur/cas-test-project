@@ -87,13 +87,25 @@ export class UserService {
 
   getAllUsers():Observable<User[]>{
     const usersRef = collection(this.firestore, 'users');
-    return collectionData(usersRef, {idField: 'id'}) as Observable<User[]>;
+    const user = this.firebaseAuth.currentUser;
+    if(user){
+      const q = query(usersRef, where('id', '!=', user.uid))
+      return collectionData(q, {idField: 'id'}) as Observable<User[]>;
+    }else{
+      return collectionData(usersRef, {idField: 'id'}) as Observable<User[]>;
+    }
+    
   }
 
   getOnlineUsers():Observable<User[]>{
     const userRef = collection(this.firestore, 'users');
-    const q = query(userRef, where("online", "==", true));
-    return collectionData(q, {idField: 'id'}) as Observable<User[]>;
+    const user = this.firebaseAuth.currentUser;
+    if(user){
+      const q = query(userRef, where("online", "==", true), where('id', '!=', user.uid));
+      return collectionData(q, {idField: 'id'}) as Observable<User[]>;
+    }
+    
+    return collectionData(userRef, {idField: 'id'}) as Observable<User[]>;
   }
   
 }
