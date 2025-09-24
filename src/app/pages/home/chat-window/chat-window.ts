@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -20,8 +20,10 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit{
+export class ChatWindow implements OnInit, AfterViewChecked{
   @Input() roomId!:string;
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+  @Output() closeChat = new EventEmitter<void>();
   messages$!:Observable<Message[]>;
   currentUserId = '';
   newMessage = '';
@@ -51,7 +53,19 @@ export class ChatWindow implements OnInit{
         console.warn("fetchRoomById didn't fetch a room");
       }
     });
+  }
 
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom():void{
+    try{
+      const container = this.scrollContainer.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    }catch(error){
+      console.error('Scroll error: ', error);
+    }
   }
 
   async sendMessage(){
@@ -73,6 +87,10 @@ export class ChatWindow implements OnInit{
         this.currentRoom.roomName = newChatname;
       }
     })
+  }
+
+  handleCloseChat(){
+    this.closeChat.emit();
   }
 
 }

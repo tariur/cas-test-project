@@ -1,9 +1,10 @@
 <div class="window-container">
     <div class="room-name-container">
         <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+        <button matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
     </div>
     <mat-divider></mat-divider>
-    <div class="messages-container">
+    <div #scrollContainer class="messages-container">
         <div *ngFor="let msg of messages$ | async" [ngClass]="msg.senderId === currentUserId ? 'current-user-message' : 'partner-message'">
             <p>{{msg.content}}</p>
         </div>

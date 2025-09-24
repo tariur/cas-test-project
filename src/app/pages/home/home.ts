@@ -29,6 +29,7 @@ export class Home implements OnInit{
   allUsers: User[] = [];
   onlineUsers: User[] = [];
   selectedRoom:string | null = "";
+  isLoading:boolean = false;
 
   constructor(private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
@@ -44,7 +45,9 @@ export class Home implements OnInit{
 
   async openPrivateChat(userId:string){
     this.selectedRoom = '';
+    this.isLoading = true;
     this.selectedRoom = await this.chatService.findPrivateChat(userId);
+    this.isLoading = false;
   }
 
   openChangeUsernameDialog(){
@@ -57,6 +60,10 @@ export class Home implements OnInit{
         this.username = newUsername;
       }
     })
+  }
+
+  chatCloseChildEvent(){
+    this.selectedRoom = '';
   }
 
 

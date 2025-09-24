@@ -31,7 +31,11 @@
         <mat-drawer-content>
             <button matMiniFab (click)="sidenav.toggle()"><mat-icon>chat</mat-icon></button>
             @if(selectedRoom){
-                <app-chat-window [roomId]="selectedRoom"></app-chat-window>
+                <app-chat-window (closeChat)="chatCloseChildEvent()" [roomId]="selectedRoom"></app-chat-window>
+            }@else if (isLoading){
+                <div class="no-chat-opened-container">
+                    <h2>Loading...</h2>
+                </div>
             }@else{
                 <div class="no-chat-opened-container">
                     <h2>Chat with other users, or create chatrooms!</h2>
