@@ -4,7 +4,7 @@
         <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
     </div>
     <mat-drawer-container>
-        <mat-drawer #sidenav mode="side" closed class="sidenav">
+        <mat-drawer #sidenav mode="over" closed class="sidenav">
             <mat-tab-group>
                 <mat-tab label="All users">
                     <mat-list *ngFor="let user of allUsers">
@@ -32,7 +32,10 @@
             @if(selectedRoom){
                 <app-chat-window [roomId]="selectedRoom"></app-chat-window>
             }@else{
-                <p>---- Start chatting</p>
+                <div class="no-chat-opened-container">
+                    <h2>Chat with other users, or create chatrooms!</h2>
+                    <button (click)="sidenav.toggle()" matButton="outlined" style="background-color: #faf9fd;">Start chatting...</button>
+                </div>
             }
         </mat-drawer-content>
     </mat-drawer-container>

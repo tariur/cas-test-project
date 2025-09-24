@@ -27,6 +27,13 @@ mat-drawer-content{
 .offline-user-button{
     color: red !important;
 }
-.sidenav{
-    max-width:330px;
+.no-chat-opened-container{
+    height: 80%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.no-chat-opened-container > h2{
+    text-align: center;
 }
