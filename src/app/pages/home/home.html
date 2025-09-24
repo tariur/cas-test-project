@@ -8,13 +8,13 @@
             <mat-tab-group>
                 <mat-tab label="All users">
                     <mat-list *ngFor="let user of allUsers">
-                            <mat-list-item><button [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+                            <mat-list-item><button (click)="openPrivateChat(user.id)" [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
                             <mat-divider></mat-divider>
                     </mat-list>
                 </mat-tab>
                 <mat-tab label="Online users">
                     <mat-list *ngFor="let user of onlineUsers">
-                        <mat-list-item><button matButton="outlined" class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item> 
+                        <mat-list-item><button (click)="openPrivateChat(user.id)" matButton="outlined" class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item> 
                         <mat-divider></mat-divider>
                     </mat-list>
                 </mat-tab>

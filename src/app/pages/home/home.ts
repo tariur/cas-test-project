@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
@@ -15,6 +15,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { NgClass } from '@angular/common';
 import { ChatWindow } from './chat-window/chat-window';
+import { ChatService } from '../../services/chat-service';
 
 @Component({
   selector: 'app-home',
@@ -27,9 +28,9 @@ export class Home implements OnInit{
   username:string | null = null;
   allUsers: User[] = [];
   onlineUsers: User[] = [];
-  selectedRoom:string | null = "kuhwXHPNW9yBhGFb9CrS";
+  selectedRoom:string | null = "";
 
-  constructor(private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
+  constructor(private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
   async ngOnInit(){
     this.username = await this.userService.fetchUsername();
@@ -39,6 +40,10 @@ export class Home implements OnInit{
     this.userService.getOnlineUsers().subscribe(users =>{
       this.onlineUsers = users;
     });
+  }
+
+  async openPrivateChat(userId:string){
+    this.selectedRoom = await this.chatService.findPrivateChat(userId);
   }
 
   openChangeUsernameDialog(){
