@@ -9,7 +9,10 @@
     <mat-divider></mat-divider>
     <div #scrollContainer class="messages-container">
         <div *ngFor="let msg of messages$ | async" [ngClass]="msg.senderId === currentUserId ? 'current-user-message' : 'partner-message'">
-            <p>{{msg.content}}</p>
+            <div class="message-contents">
+                <p class="sender-name">from: {{msg.senderName}}</p>
+                <p class="message-bubble">{{msg.content}}</p>
+            </div>
         </div>
     </div>
     <mat-divider></mat-divider>

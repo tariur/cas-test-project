@@ -41,10 +41,11 @@ export class ChatService {
     const messagesRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
     const docRef = await addDoc(messagesRef, {
       content: message.content,
-      senderId: message.senderId
+      senderId: message.senderId,
+      senderName:message.senderName
     });
 
-    await updateDoc(docRef, { id: docRef.id,  timestamp: serverTimestamp() });
+    await updateDoc(docRef, { id: docRef.id , timestamp: serverTimestamp() });
   }
 
   async findPrivateChat(otherUserId:string){

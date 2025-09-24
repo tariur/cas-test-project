@@ -14,6 +14,7 @@ import { ChangeChatnameDialog } from './change-chatname-dialog/change-chatname-d
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { DeleteChatDialog } from './delete-chat-dialog/delete-chat-dialog';
+import { UserService } from '../../../services/user-service';
 
 @Component({
   selector: 'app-chat-window',
@@ -37,7 +38,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     roomName:'Initial RoomName'
   };
 
-  constructor(private chatService:ChatService, private firebaseAuth:Auth, private dialog: MatDialog){}
+  constructor(private userService:UserService, private chatService:ChatService, private firebaseAuth:Auth, private dialog: MatDialog){}
 
   
 
@@ -72,10 +73,16 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   async sendMessage(){
     await this.chatService.createMessage(this.roomId, {
       content: this.newMessage.trim(),
-      senderId: this.currentUserId
+      senderId: this.currentUserId,
+      senderName:await this.userService.fetchUsernameById(this.currentUserId)
     });
 
     this.newMessage = '';
+  }
+
+  //not working properly
+  getUsername(userId:string):Promise<string>{
+    return this.userService.fetchUsernameById(userId);
   }
 
   deleteChat(){
