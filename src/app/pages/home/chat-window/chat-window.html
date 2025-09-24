@@ -1,7 +1,10 @@
 <div class="window-container">
     <div class="room-name-container">
         <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
-        <button matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
+        <div class="chat-room-buttons">
+            <button matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
+            <button matIconButton matTooltip="Delete chat" (click)="deleteChat()" style="color:red;"><mat-icon>delete</mat-icon></button>
+        </div>
     </div>
     <mat-divider></mat-divider>
     <div #scrollContainer class="messages-container">

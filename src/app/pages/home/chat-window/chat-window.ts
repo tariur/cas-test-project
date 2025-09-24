@@ -13,6 +13,7 @@ import { Auth } from '@angular/fire/auth';
 import { ChangeChatnameDialog } from './change-chatname-dialog/change-chatname-dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { DeleteChatDialog } from './delete-chat-dialog/delete-chat-dialog';
 
 @Component({
   selector: 'app-chat-window',
@@ -75,6 +76,18 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     });
 
     this.newMessage = '';
+  }
+
+  deleteChat(){
+    const dialogRef = this.dialog.open(DeleteChatDialog, {
+      width:'300px',
+      data:this.roomId
+    });
+    dialogRef.afterClosed().subscribe((roomDeleted:boolean)=>{
+      if(roomDeleted){
+        this.handleCloseChat();
+      }
+    })
   }
 
   changeChatName(){

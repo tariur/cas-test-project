@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable} from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -75,5 +75,14 @@ export class ChatService {
     });
     await updateDoc(docRef, { roomId:docRef.id });
     return docRef.id;
+  }
+
+  async deletePrivateChat(roomId:string){
+    const roomRef = doc(this.firestore, `chatRooms/${roomId}`);
+    const messagesRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
+    const messagesSnapshot = await getDocs(messagesRef);
+    const deletePromieses = messagesSnapshot.docs.map(m => deleteDoc(m.ref));
+    await Promise.all(deletePromieses);
+    await deleteDoc(roomRef);
   }
 }
