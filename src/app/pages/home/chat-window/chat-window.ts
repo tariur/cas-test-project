@@ -12,17 +12,19 @@ import { NgClass } from '@angular/common';
 import { Auth } from '@angular/fire/auth';
 import { ChangeChatnameDialog } from './change-chatname-dialog/change-chatname-dialog';
 import { MatDialog } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat-window',
-  imports: [CommonModule, NgClass, MatDividerModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, NgClass, MatDividerModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
 export class ChatWindow implements OnInit{
   @Input() roomId!:string;
   messages$!:Observable<Message[]>;
-  currentUserId:string | null = null;
+  currentUserId = '';
+  newMessage = '';
 
   currentRoom:ChatRoom = {
     members:[],
@@ -50,6 +52,15 @@ export class ChatWindow implements OnInit{
       }
     });
 
+  }
+
+  async sendMessage(){
+    await this.chatService.createMessage(this.roomId, {
+      content: this.newMessage.trim(),
+      senderId: this.currentUserId
+    });
+
+    this.newMessage = '';
   }
 
   changeChatName(){

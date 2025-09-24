@@ -10,7 +10,7 @@
     </div>
     <mat-divider></mat-divider>
     <div class="input-field-container">
-        <input type="text" placeholder="Write a message...">
-        <button matIconButton class="send-button"><mat-icon>send</mat-icon></button>
+        <input [(ngModel)]="newMessage" type="text" placeholder="Write a message..." class="message-input">
+        <button matIconButton (click)="sendMessage()" class="send-button"><mat-icon>send</mat-icon></button>
     </div>
 </div>
