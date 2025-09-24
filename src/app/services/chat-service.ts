@@ -5,13 +5,14 @@ import { ChatRoom } from '../model/ChatRoom';
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
+import { UserService } from './user-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
 
-  constructor(private firestore:Firestore, private firebaseAuth:Auth){}
+  constructor(private firestore:Firestore, private firebaseAuth:Auth, private userService:UserService){}
 
   async fetchRoomById(roomId:string):Promise<ChatRoom | null>{
     const chatRef = doc(this.firestore, "chatRooms", roomId);
@@ -59,11 +60,20 @@ export class ChatService {
       return members.includes(otherUserId);
     });
 
-    return match ? match.id : this.createPrivateChat(currentUserId, otherUserId);
+    return match ? match.id : this.createPrivateChat(currentUserId as string, otherUserId);
   }
 
-  async createPrivateChat(currentUserId:string | undefined, otherUserId:string):Promise<string>{
-    console.log("new private-chat created");
-    return "";
+  async createPrivateChat(currentUserId:string, otherUserId:string):Promise<string>{
+    const chatRef = collection(this.firestore, 'chatRooms');
+    const currentUsername = await this.userService.fetchUsernameById(currentUserId);
+    const otherUsername = await this.userService.fetchUsernameById(otherUserId);
+    const docRef = await addDoc(chatRef, {
+      members: [currentUserId, otherUserId],
+      ownerId: currentUserId,
+      restrictions: 'private-chat',
+      roomName: 'Private chatroom of ' + currentUsername + ' and ' + otherUsername
+    });
+    await updateDoc(docRef, { roomId:docRef.id });
+    return docRef.id;
   }
 }

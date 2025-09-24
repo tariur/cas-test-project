@@ -43,6 +43,7 @@ export class Home implements OnInit{
   }
 
   async openPrivateChat(userId:string){
+    this.selectedRoom = '';
     this.selectedRoom = await this.chatService.findPrivateChat(userId);
   }
 

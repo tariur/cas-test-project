@@ -5,6 +5,7 @@
     </div>
     <mat-drawer-container>
         <mat-drawer #sidenav mode="over" closed class="sidenav">
+            <button matMiniFab (click)="sidenav.toggle()" style="margin:10px;"><mat-icon>arrow_back</mat-icon></button>
             <mat-tab-group>
                 <mat-tab label="All users">
                     <mat-list *ngFor="let user of allUsers">

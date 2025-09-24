@@ -52,6 +52,18 @@ export class UserService {
     return !querySnapshot.empty;
   }
 
+  async fetchUsernameById(userId:string):Promise<string>{
+    const usersRef = doc(this.firestore, 'users', userId);
+    const userSnap = await getDoc(usersRef);
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      return data['username'] as string;
+    }else{
+      console.warn('User document not found');
+      return '';
+    }
+  }
+
   async fetchUsername():Promise<string | null>{
     const user = this.firebaseAuth.currentUser;
     if(!user) return null;
