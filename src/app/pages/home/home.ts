@@ -18,6 +18,7 @@ import { NgClass } from '@angular/common';
 import { ChatWindow } from './chat-window/chat-window';
 import { ChatService } from '../../services/chat-service';
 import { ChatRoom } from '../../model/ChatRoom';
+import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +34,7 @@ export class Home implements OnInit{
   onlineUsers: User[] = [];
   publicGroups: ChatRoom[] = [];
   privateGroups: ChatRoom[] = [];
+  passwordGroups: ChatRoom[] = [];
   selectedRoom:string | null = "";
   isLoading:boolean = false;
 
@@ -56,6 +58,9 @@ export class Home implements OnInit{
     this.chatService.getAllPrivateGroups(this.currentUserId).subscribe(groups =>{
       this.privateGroups = groups;
     });
+    this.chatService.getAllPasswordGroups().subscribe(groups =>{
+      this.passwordGroups = groups;
+    })
   }
 
   async openPrivateChat(userId:string){
@@ -82,6 +87,10 @@ export class Home implements OnInit{
     this.selectedRoom = await this.chatService.createPrivateGroup(this.currentUserId);
   }
 
+  async createPasswordGroup(password:string){
+    this.selectedRoom = await this.chatService.createPasswordGroup(this.currentUserId, password);
+  }
+
   openChangeUsernameDialog(){
     const dialogRef = this.dialog.open(ChangeUsernameDialog, {
       width: '300px',
@@ -90,6 +99,17 @@ export class Home implements OnInit{
     dialogRef.afterClosed().subscribe((newUsername) =>{
       if(newUsername){
         this.username = newUsername;
+      }
+    })
+  }
+
+  openPasswordGroupDialog(){
+    const dialogRef = this.dialog.open(CreateGroupPasswordDialog, {
+      width:'300px',
+    });
+    dialogRef.afterClosed().subscribe((password) =>{
+      if(password){
+        this.createPasswordGroup(password);
       }
     })
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable} from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -123,6 +123,10 @@ export class ChatService {
     const docRef = doc(this.firestore, 'chatRooms', roomId);
     await updateDoc(docRef, { members: arrayUnion(userId) });
   }
+  async removeUserFromPrivateGroup(userId:string, roomId:string){
+    const docRef = doc(this.firestore, 'chatRooms', roomId);
+    await updateDoc(docRef, { members: arrayRemove(userId) });
+  }
 
   getAllPrivateGroups(currentUserId:string): Observable<ChatRoom[]>{
     const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
@@ -130,6 +134,26 @@ export class ChatService {
       where('restrictions', '==', 'private-group'),
       where('members', 'array-contains', currentUserId)
     );
+    return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
+  }
+
+  async createPasswordGroup(currentUserId:string, password:string):Promise<string>{
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
+    const currentUsername = await this.userService.fetchUsernameById(currentUserId);
+    const docRef = await addDoc(chatRoomsCollRef, {
+      members:[currentUserId],
+      ownerId:currentUserId,
+      restrictions: 'password-group',
+      roomName: currentUsername + '\'s password protected group',
+      password:password
+    });
+    await updateDoc(docRef, { roomId:docRef.id });
+    return docRef.id;
+  }
+
+  getAllPasswordGroups(): Observable<ChatRoom[]>{
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
+    const q = query(chatRoomsCollRef, where('restrictions', '==', 'password-group'));
     return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
   }
 }

@@ -34,6 +34,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   messages$!:Observable<Message[]>;
   currentUserId = '';
   newMessage = '';
+  memberUsers:User[] = [];
 
   currentRoom:ChatRoom = {
     members:[],
@@ -122,13 +123,20 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     }
   }
 
-  async addUserToPrivateGroup(userId:string){
+  async addUserToPrivateGroup(userId:string, user:User){
     if(this.currentRoom.members.includes(userId)){
       this._snackBar.open('User is already a member', 'Ok');
     }else{
       await this.chatService.addUserToPrivateGroup(userId, this.roomId);
+      this.memberUsers.push(user);
       this._snackBar.open('User successfully added to group', 'Ok');
     }
+  }
+
+  async removeUserFromPrivateGroup(userId:string){
+    await this.chatService.removeUserFromPrivateGroup(userId, this.roomId);
+    this.memberUsers = this.memberUsers.filter(user => user.id !== userId);
+    this._snackBar.open('User successfully removed from group', 'Ok');
   }
 
   handleCloseChat(){

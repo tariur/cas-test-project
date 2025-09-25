@@ -30,7 +30,15 @@
                                 <button matButton="outlined" (click)="createPublicGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new public room</button>
                             </div>
                         </mat-tab>
-                        <mat-tab label="Password Groups"></mat-tab>
+                        <mat-tab label="Password Groups">
+                            <mat-list *ngFor="let group of passwordGroups">
+                                <mat-list-item><button matButton="outlined" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
+                                <mat-divider></mat-divider>
+                            </mat-list>
+                            <div class="create-group-button">
+                                <button matButton="outlined" (click)="openPasswordGroupDialog()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new password room</button>
+                            </div>
+                        </mat-tab>
                         <mat-tab label="Private Groups">
                             <mat-list *ngFor="let group of privateGroups">
                                 <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>

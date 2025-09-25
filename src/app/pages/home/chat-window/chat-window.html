@@ -3,9 +3,13 @@
         <div class="chat-room-name-add-buttons">
             <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
             @if(currentRoom.restrictions == 'private-group' && currentRoom.ownerId == currentUserId){
-                <button matIconButton [matMenuTriggerFor]="menu" matTooltip="Add users to group"><mat-icon>person_add</mat-icon></button>
-                <mat-menu #menu="matMenu">
-                    <button mat-menu-item *ngFor="let user of allUsers" (click)="addUserToPrivateGroup(user.id)"><mat-icon>person</mat-icon>{{user.username}}</button>
+                <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon>person_add</mat-icon></button>
+                <mat-menu #addMenu="matMenu">
+                    <button mat-menu-item *ngFor="let user of allUsers" (click)="addUserToPrivateGroup(user.id, user)"><mat-icon>person</mat-icon>{{user.username}}</button>
+                </mat-menu>
+                <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="Remove users group"><mat-icon>person_remove</mat-icon></button>
+                 <mat-menu #removeMenu="matMenu">
+                    <button mat-menu-item *ngFor="let user of memberUsers" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon>person</mat-icon>{{user.username}}</button>
                 </mat-menu>
             }
         </div>
