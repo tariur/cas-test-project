@@ -99,4 +99,10 @@ export class ChatService {
     await updateDoc(docRef, { roomId:docRef.id });
     return docRef.id;
   }
+
+  getAllPublicGroups(): Observable<ChatRoom[]>{
+    const chatRoomsRef = collection(this.firestore, 'chatRooms');
+    const q = query(chatRoomsRef, where('restrictions', '==', 'public-group'));
+    return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
+  }
 }

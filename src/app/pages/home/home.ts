@@ -17,6 +17,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { NgClass } from '@angular/common';
 import { ChatWindow } from './chat-window/chat-window';
 import { ChatService } from '../../services/chat-service';
+import { ChatRoom } from '../../model/ChatRoom';
 
 @Component({
   selector: 'app-home',
@@ -29,6 +30,7 @@ export class Home implements OnInit{
   username:string | null = null;
   allUsers: User[] = [];
   onlineUsers: User[] = [];
+  publicGroups: ChatRoom[] = [];
   selectedRoom:string | null = "";
   isLoading:boolean = false;
 
@@ -42,6 +44,9 @@ export class Home implements OnInit{
     this.userService.getOnlineUsers().subscribe(users =>{
       this.onlineUsers = users;
     });
+    this.chatService.getAllPublicGroups().subscribe(groups =>{
+      this.publicGroups = groups;
+    });
   }
 
   async openPrivateChat(userId:string){
@@ -49,6 +54,10 @@ export class Home implements OnInit{
     this.isLoading = true;
     this.selectedRoom = await this.chatService.findPrivateChat(userId);
     this.isLoading = false;
+  }
+
+  async openPublicGroup(roomId:string){
+    this.selectedRoom = roomId;
   }
 
   async createGroup(){

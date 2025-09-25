@@ -22,7 +22,13 @@
                 <mat-tab label="Groups">
                     <mat-tab-group>
                         <mat-tab label="Public Groups">
-                            <button class="create-public-button" matButton="outlined" (click)="createGroup()"><mat-icon>add</mat-icon>Create new public room</button>
+                            <mat-list *ngFor="let group of publicGroups">
+                                <mat-list-item><button matButton="outlined" (click)="openPublicGroup(group.roomId)"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
+                                <mat-divider></mat-divider>
+                            </mat-list>
+                            <div class="create-public-button">
+                                <button matButton="outlined" (click)="createGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new public room</button>
+                            </div>
                         </mat-tab>
                         <mat-tab label="Password Groups"></mat-tab>
                         <mat-tab label="Private Groups"></mat-tab>
