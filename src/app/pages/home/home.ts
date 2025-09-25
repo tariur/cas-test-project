@@ -27,16 +27,22 @@ import { ChatRoom } from '../../model/ChatRoom';
 })
 export class Home implements OnInit{
 
+  currentUserId = '';
   username:string | null = null;
   allUsers: User[] = [];
   onlineUsers: User[] = [];
   publicGroups: ChatRoom[] = [];
+  privateGroups: ChatRoom[] = [];
   selectedRoom:string | null = "";
   isLoading:boolean = false;
 
   constructor(private firebaseAuth:FirebaseAuth, private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
   async ngOnInit(){
+    const user = await this.firebaseAuth.currentUser;
+    if(user){
+      this.currentUserId = user.uid;
+    }
     this.username = await this.userService.fetchUsername();
     this.userService.getAllUsers().subscribe(users => {
       this.allUsers=users;
@@ -47,6 +53,9 @@ export class Home implements OnInit{
     this.chatService.getAllPublicGroups().subscribe(groups =>{
       this.publicGroups = groups;
     });
+    this.chatService.getAllPrivateGroups(this.currentUserId).subscribe(groups =>{
+      this.privateGroups = groups;
+    });
   }
 
   async openPrivateChat(userId:string){
@@ -56,13 +65,21 @@ export class Home implements OnInit{
     this.isLoading = false;
   }
 
-  async openPublicGroup(roomId:string){
-    this.selectedRoom = roomId;
+  openGroup(roomId:string){
+    this.selectedRoom = '';
+    this.isLoading = true;
+    setTimeout(()=>{
+      this.selectedRoom = roomId;
+      this.isLoading = false;
+    });
   }
 
-  async createGroup(){
-    const currentUserId = this.firebaseAuth.currentUser?.uid as string;
-    this.selectedRoom = await this.chatService.createPublicGroup(currentUserId);
+  async createPublicGroup(){
+    this.selectedRoom = await this.chatService.createPublicGroup(this.currentUserId);
+  }
+
+  async createPrivateGroup(){
+    this.selectedRoom = await this.chatService.createPrivateGroup(this.currentUserId);
   }
 
   openChangeUsernameDialog(){

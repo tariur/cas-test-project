@@ -88,9 +88,9 @@ export class ChatService {
   }
 
   async createPublicGroup(currentUserId:string):Promise<string>{
-    const groupRef = collection(this.firestore, 'chatRooms');
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
     const currentUsername = await this.userService.fetchUsernameById(currentUserId);
-    const docRef = await addDoc(groupRef, {
+    const docRef = await addDoc(chatRoomsCollRef, {
       members: [currentUserId],
       ownerId: currentUserId,
       restrictions: 'public-group',
@@ -101,8 +101,30 @@ export class ChatService {
   }
 
   getAllPublicGroups(): Observable<ChatRoom[]>{
-    const chatRoomsRef = collection(this.firestore, 'chatRooms');
-    const q = query(chatRoomsRef, where('restrictions', '==', 'public-group'));
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
+    const q = query(chatRoomsCollRef, where('restrictions', '==', 'public-group'));
+    return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
+  }
+
+  async createPrivateGroup(currentUserId:string):Promise<string>{
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
+    const currentUsername = await this.userService.fetchUsernameById(currentUserId);
+    const docRef = await addDoc(chatRoomsCollRef, {
+      members:[currentUserId],
+      ownerId:currentUserId,
+      restrictions: 'private-group',
+      roomName: currentUsername + '\'s private group'
+    });
+    await updateDoc(docRef, { roomId:docRef.id });
+    return docRef.id;
+  }
+
+  getAllPrivateGroups(currentUserId:string): Observable<ChatRoom[]>{
+    const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
+    const q = query(chatRoomsCollRef,
+      where('restrictions', '==', 'private-group'),
+      where('members', 'array-contains', currentUserId)
+    );
     return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
   }
 }

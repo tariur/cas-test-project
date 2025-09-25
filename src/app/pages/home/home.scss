@@ -37,8 +37,11 @@ mat-drawer-content{
 .no-chat-opened-container > h2{
     text-align: center;
 }
-.create-public-button{
+.create-group-button{
     display:flex;
     justify-content: center;
     margin-top:20px;
+}
+.owned-group{
+    background-color: #faf9fd;
 }
