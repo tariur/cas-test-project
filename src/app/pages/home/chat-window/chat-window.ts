@@ -16,15 +16,18 @@ import { FormsModule } from '@angular/forms';
 import { DeleteChatDialog } from './delete-chat-dialog/delete-chat-dialog';
 import { UserService } from '../../../services/user-service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { User } from '../../../model/User';
+import {MatMenuModule} from '@angular/material/menu';
 
 @Component({
   selector: 'app-chat-window',
-  imports: [CommonModule, FormsModule, NgClass, MatDividerModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [CommonModule, FormsModule, NgClass, MatMenuModule, MatDividerModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
 export class ChatWindow implements OnInit, AfterViewChecked{
   @Input() roomId!:string;
+  @Input() allUsers!:User[];
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
   private _snackBar = inject(MatSnackBar);
@@ -99,7 +102,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
         }
       });
     }else{
-      this._snackBar.open('Group can only be deleted by owner');
+      this._snackBar.open('Group can only be deleted by owner', 'Ok');
     }
   }
 
@@ -115,7 +118,16 @@ export class ChatWindow implements OnInit, AfterViewChecked{
         }
       });
     }else{
-      this._snackBar.open('Group name can only be changed by owner');
+      this._snackBar.open('Group name can only be changed by owner', 'Ok');
+    }
+  }
+
+  async addUserToPrivateGroup(userId:string){
+    if(this.currentRoom.members.includes(userId)){
+      this._snackBar.open('User is already a member', 'Ok');
+    }else{
+      await this.chatService.addUserToPrivateGroup(userId, this.roomId);
+      this._snackBar.open('User successfully added to group', 'Ok');
     }
   }
 

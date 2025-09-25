@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable} from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -117,6 +117,11 @@ export class ChatService {
     });
     await updateDoc(docRef, { roomId:docRef.id });
     return docRef.id;
+  }
+
+  async addUserToPrivateGroup(userId:string, roomId:string){
+    const docRef = doc(this.firestore, 'chatRooms', roomId);
+    await updateDoc(docRef, { members: arrayUnion(userId) });
   }
 
   getAllPrivateGroups(currentUserId:string): Observable<ChatRoom[]>{

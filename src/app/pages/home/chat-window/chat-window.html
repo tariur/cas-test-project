@@ -1,8 +1,17 @@
 <div class="window-container">
     <div class="room-name-container">
-        <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+        <div class="chat-room-name-add-buttons">
+            <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+            @if(currentRoom.restrictions == 'private-group' && currentRoom.ownerId == currentUserId){
+                <button matIconButton [matMenuTriggerFor]="menu" matTooltip="Add users to group"><mat-icon>person_add</mat-icon></button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let user of allUsers" (click)="addUserToPrivateGroup(user.id)"><mat-icon>person</mat-icon>{{user.username}}</button>
+                </mat-menu>
+            }
+        </div>
         <div class="chat-room-buttons">
             <button matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
+            
             <button matIconButton matTooltip="Delete chat" (click)="deleteChat()" style="color:red;"><mat-icon>delete</mat-icon></button>
         </div>
     </div>

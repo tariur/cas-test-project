@@ -16,6 +16,12 @@
     align-items:center;
     height:10%;
 }
+.chat-room-name-add-buttons{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
 .messages-container{
     display:flex;
     flex-direction: column;
