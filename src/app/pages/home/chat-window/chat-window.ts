@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { DeleteChatDialog } from './delete-chat-dialog/delete-chat-dialog';
 import { UserService } from '../../../services/user-service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-chat-window',
@@ -26,6 +27,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   @Input() roomId!:string;
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
+  private _snackBar = inject(MatSnackBar);
   messages$!:Observable<Message[]>;
   currentUserId = '';
   newMessage = '';
@@ -86,27 +88,35 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   }
 
   deleteChat(){
-    const dialogRef = this.dialog.open(DeleteChatDialog, {
+    if(this.currentRoom.restrictions==='private-chat' || this.currentRoom.ownerId === this.currentUserId){
+      const dialogRef = this.dialog.open(DeleteChatDialog, {
       width:'300px',
       data:this.roomId
-    });
-    dialogRef.afterClosed().subscribe((roomDeleted:boolean)=>{
-      if(roomDeleted){
-        this.handleCloseChat();
-      }
-    })
+      });
+      dialogRef.afterClosed().subscribe((roomDeleted:boolean)=>{
+        if(roomDeleted){
+          this.handleCloseChat();
+        }
+      });
+    }else{
+      this._snackBar.open('Group can only be deleted by owner');
+    }
   }
 
   changeChatName(){
-    const dialogRef = this.dialog.open(ChangeChatnameDialog, {
+    if(this.currentRoom.restrictions==='private-chat' || this.currentRoom.ownerId === this.currentUserId){
+      const dialogRef = this.dialog.open(ChangeChatnameDialog, {
           width: '300px',
           data:this.currentRoom.roomId
-        });
-    dialogRef.afterClosed().subscribe((newChatname: string) =>{
-      if(newChatname){
-        this.currentRoom.roomName = newChatname;
-      }
-    })
+      });
+      dialogRef.afterClosed().subscribe((newChatname: string) =>{
+        if(newChatname){
+          this.currentRoom.roomName = newChatname;
+        }
+      });
+    }else{
+      this._snackBar.open('Group name can only be changed by owner');
+    }
   }
 
   handleCloseChat(){
