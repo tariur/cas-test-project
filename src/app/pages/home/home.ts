@@ -19,6 +19,7 @@ import { ChatWindow } from './chat-window/chat-window';
 import { ChatService } from '../../services/chat-service';
 import { ChatRoom } from '../../model/ChatRoom';
 import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
+import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-password-group-dialog';
 
 @Component({
   selector: 'app-home',
@@ -112,6 +113,22 @@ export class Home implements OnInit{
         this.createPasswordGroup(password);
       }
     })
+  }
+
+  openPasswordValidationDialog(roomId:string, members:string[]){
+    if(members.includes(this.currentUserId)){
+      this.selectedRoom = roomId;
+    }else{
+      const dialogRef = this.dialog.open(JoinPasswordGroupDialog, {
+      width:'300px',
+      data:roomId
+      });
+      dialogRef.afterClosed().subscribe((roomId)=>{
+        if(roomId){
+          this.selectedRoom = roomId;
+        }
+      })
+    }
   }
 
   chatCloseChildEvent(){

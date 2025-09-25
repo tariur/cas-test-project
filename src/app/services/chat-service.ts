@@ -156,4 +156,23 @@ export class ChatService {
     const q = query(chatRoomsCollRef, where('restrictions', '==', 'password-group'));
     return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
   }
+
+  async validateGroupPassword(roomId:string, password:string):Promise<boolean>{
+    const docRef = doc(this.firestore, 'chatRooms', roomId);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()){
+      const data = docSnap.data();
+      const storedPassword = data['password'] as string;
+      return storedPassword === password;
+    }else{
+      console.warn('No document');
+      return false;
+    }
+  }
+
+  async addUserToPasswordGroup(roomId:string){
+    const currentUserId = await this.firebaseAuth.currentUser?.uid;
+    const docRef = doc(this.firestore, 'chatRooms', roomId);
+    await updateDoc(docRef, { members: arrayUnion(currentUserId) });
+  }
 }

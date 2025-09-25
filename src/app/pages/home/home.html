@@ -32,7 +32,7 @@
                         </mat-tab>
                         <mat-tab label="Password Groups">
                             <mat-list *ngFor="let group of passwordGroups">
-                                <mat-list-item><button matButton="outlined" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
+                                <mat-list-item><button matButton="outlined" (click)="openPasswordValidationDialog(group.roomId, group.members)" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>lock</mat-icon>{{group.roomName}}</button></mat-list-item>
                                 <mat-divider></mat-divider>
                             </mat-list>
                             <div class="create-group-button">
@@ -41,7 +41,7 @@
                         </mat-tab>
                         <mat-tab label="Private Groups">
                             <mat-list *ngFor="let group of privateGroups">
-                                <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
+                                <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId == currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>shield_person</mat-icon>{{group.roomName}}</button></mat-list-item>
                                 <mat-divider></mat-divider>
                             </mat-list>
                             <div class="create-group-button">
