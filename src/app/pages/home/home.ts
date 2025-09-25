@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import { Auth } from '../../services/auth';
+import { Auth as FirebaseAuth } from '@angular/fire/auth';
 import { UserService } from '../../services/user-service';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangeUsernameDialog } from './change-username-dialog/change-username-dialog';
@@ -31,7 +32,7 @@ export class Home implements OnInit{
   selectedRoom:string | null = "";
   isLoading:boolean = false;
 
-  constructor(private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
+  constructor(private firebaseAuth:FirebaseAuth, private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
   async ngOnInit(){
     this.username = await this.userService.fetchUsername();
@@ -48,6 +49,11 @@ export class Home implements OnInit{
     this.isLoading = true;
     this.selectedRoom = await this.chatService.findPrivateChat(userId);
     this.isLoading = false;
+  }
+
+  async createGroup(){
+    const currentUserId = this.firebaseAuth.currentUser?.uid as string;
+    this.selectedRoom = await this.chatService.createPublicGroup(currentUserId);
   }
 
   openChangeUsernameDialog(){

@@ -21,7 +21,9 @@
                 </mat-tab>
                 <mat-tab label="Groups">
                     <mat-tab-group>
-                        <mat-tab label="Public Groups"></mat-tab>
+                        <mat-tab label="Public Groups">
+                            <button class="create-public-button" matButton="outlined" (click)="createGroup()"><mat-icon>add</mat-icon>Create new public room</button>
+                        </mat-tab>
                         <mat-tab label="Password Groups"></mat-tab>
                         <mat-tab label="Private Groups"></mat-tab>
                     </mat-tab-group>

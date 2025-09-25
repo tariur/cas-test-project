@@ -86,4 +86,17 @@ export class ChatService {
     await Promise.all(deletePromieses);
     await deleteDoc(roomRef);
   }
+
+  async createPublicGroup(currentUserId:string):Promise<string>{
+    const groupRef = collection(this.firestore, 'chatRooms');
+    const currentUsername = await this.userService.fetchUsernameById(currentUserId);
+    const docRef = await addDoc(groupRef, {
+      members: [currentUserId],
+      ownerId: currentUserId,
+      restrictions: 'public-group',
+      roomName: currentUsername + '\'s public group'
+    });
+    await updateDoc(docRef, { roomId:docRef.id });
+    return docRef.id;
+  }
 }
