@@ -54,7 +54,14 @@ export class Login {
 
   //Sign in with Facebook
   signInWithFacebook(){
-    console.log('sign in with facebook button pressed');
+    this.authService.facebookSignIn().then(userCredential =>{
+      const user = userCredential.user;
+      this.userService.createUserData(user.email || '', user.uid);
+      this.userService.changeStatusOnline(user.uid);
+      this.router.navigateByUrl('/home');
+    }).catch(error =>{
+      console.error('Facebook login error: ', error.message);
+    });
   }
 
   //Logs in user using auth.ts service login() function

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { signInWithEmailAndPassword, Auth as FirebaseAuth, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, User } from 'firebase/auth';
+import { signInWithEmailAndPassword, Auth as FirebaseAuth, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, User, FacebookAuthProvider } from 'firebase/auth';
 import { Auth as FirebaseAuthToken } from '@angular/fire/auth';
 import { UserService } from './user-service';
 @Injectable({
@@ -19,6 +19,11 @@ export class Auth {
 
   googleSignIn(){
     const provider = new GoogleAuthProvider();
+    return signInWithPopup(this.auth, provider);
+  }
+
+  facebookSignIn(){
+    const provider = new FacebookAuthProvider();
     return signInWithPopup(this.auth, provider);
   }
 
