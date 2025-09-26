@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, RedirectCommand, Router} from '@angular/router';
+import { CanActivateFn, Router} from '@angular/router';
 import { Auth as FirebaseAuth } from '@angular/fire/auth';
 import { authState } from '@angular/fire/auth';
 import { map, take } from 'rxjs';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
   const firebaseAuth = inject(FirebaseAuth);
 
@@ -20,7 +20,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   );
 };
 
-export const publicGuard: CanActivateFn = (route, state) => {
+export const publicGuard: CanActivateFn = () => {
   const router = inject(Router);
   const firebaseAuth = inject(FirebaseAuth);
 

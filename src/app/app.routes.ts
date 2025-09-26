@@ -9,15 +9,18 @@ import { authGuard, publicGuard } from './guards/auth-guard';
 export const routes: Routes = [
     {
         path: "",
-        component: Landing
+        component: Landing,
+        canActivate: [publicGuard]
     },
     {
         path:"login",
-        component: Login
+        component: Login,
+        canActivate: [publicGuard]
     },
     {
         path:"signup",
-        component: Signup
+        component: Signup,
+        canActivate: [publicGuard]
     },
     {
         path:"home",
@@ -26,6 +29,7 @@ export const routes: Routes = [
     },
     {
         path:"**",
-        component: PageNotFound
+        component: PageNotFound,
+        canActivate: [publicGuard]
     }
 ];

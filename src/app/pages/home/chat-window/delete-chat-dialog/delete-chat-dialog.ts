@@ -1,7 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogRef, MatDialogActions, MatDialogContent, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
-import { ChatWindow } from '../chat-window';
 import { ChatService } from '../../../../services/chat-service';
 
 @Component({
@@ -11,7 +10,9 @@ import { ChatService } from '../../../../services/chat-service';
   styleUrl: './delete-chat-dialog.scss'
 })
 export class DeleteChatDialog {
-  constructor(@Inject(MAT_DIALOG_DATA) private roomId:string, private chatService: ChatService, private dialogRef:MatDialogRef<DeleteChatDialog>){}
+  private roomId = inject(MAT_DIALOG_DATA);
+  private chatService = inject(ChatService);
+  private dialogRef = inject<MatDialogRef<DeleteChatDialog>>(MatDialogRef);
 
   async confirm(){
     await this.chatService.deletePrivateChat(this.roomId);

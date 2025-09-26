@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ChatService } from '../../../services/chat-service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogActions, MatDialogContent } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
@@ -12,11 +12,13 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './join-password-group-dialog.scss'
 })
 export class JoinPasswordGroupDialog {
+  private roomId = inject(MAT_DIALOG_DATA);
+  private chatService = inject(ChatService);
+  private dialogRef = inject<MatDialogRef<JoinPasswordGroupDialog>>(MatDialogRef);
+
   password = '';
   loading = false;
   updateMessage = '';
-
-   constructor(@Inject(MAT_DIALOG_DATA) private roomId:string, private chatService:ChatService, private dialogRef:MatDialogRef<JoinPasswordGroupDialog>){}
 
    async save(){
     if(!this.password.trim()){

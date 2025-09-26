@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { collection, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { Auth as FirebaseAuth} from '@angular/fire/auth';
@@ -9,9 +9,9 @@ import { User } from '../model/User';
   providedIn: 'root'
 })
 export class UserService {
+  private firestore = inject(Firestore);
+  private firebaseAuth = inject(FirebaseAuth);
   
-  constructor(private firestore:Firestore, private firebaseAuth:FirebaseAuth){}
-
   async createUserData(email:string, uid:string){
     if(await this.checkEmailAlreadyExists(email)){
       console.log("email already in database");

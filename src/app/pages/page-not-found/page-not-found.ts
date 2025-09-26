@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrl: './page-not-found.scss'
 })
 export class PageNotFound {
-  constructor(private router:Router){}
+  private router = inject(Router);
 
   landingPage(){
     this.router.navigateByUrl("");

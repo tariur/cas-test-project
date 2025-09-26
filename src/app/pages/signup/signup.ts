@@ -15,9 +15,10 @@ import { UserService } from '../../services/user-service';
   styleUrl: './signup.scss'
 })
 export class Signup {
-
-  constructor(private userService:UserService, private authService:Auth, private router:Router){}
-  signupError: string = '';
+  private userService = inject(UserService);
+  private authService = inject(Auth);
+  private router = inject(Router);
+  signupError = '';
 
   //Signup reactive form
   private formBuilder = inject(FormBuilder);

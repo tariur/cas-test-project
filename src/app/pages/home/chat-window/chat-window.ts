@@ -26,6 +26,11 @@ import {MatMenuModule} from '@angular/material/menu';
   styleUrl: './chat-window.scss'
 })
 export class ChatWindow implements OnInit, AfterViewChecked{
+  private userService = inject(UserService);
+  private chatService = inject(ChatService);
+  private firebaseAuth = inject(Auth);
+  private dialog = inject(MatDialog);
+
   @Input() roomId!:string;
   @Input() allUsers!:User[];
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
@@ -43,8 +48,6 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     roomId:'',
     roomName:'Initial RoomName'
   };
-
-  constructor(private userService:UserService, private chatService:ChatService, private firebaseAuth:Auth, private dialog: MatDialog){}
 
   
 

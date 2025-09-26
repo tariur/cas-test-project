@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { signInWithEmailAndPassword, Auth as FirebaseAuth, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, User, FacebookAuthProvider } from 'firebase/auth';
+import { signInWithEmailAndPassword, Auth as FirebaseAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, FacebookAuthProvider } from 'firebase/auth';
 import { Auth as FirebaseAuthToken } from '@angular/fire/auth';
 import { UserService } from './user-service';
 @Injectable({
@@ -34,8 +34,8 @@ export class Auth {
     try{
       await signOut(this.auth);
     }
-    catch(error:any){
-      console.error('signout error:', error.message);
+    catch(error:unknown){
+      console.error('signout error:', (error instanceof Error ? error.message : String(error)));
     }
   }
 

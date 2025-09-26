@@ -16,11 +16,12 @@ import { UserService } from '../../services/user-service';
   styleUrl: './login.scss'
 })
 export class Login {
-
-  constructor(private userService:UserService, private authService:Auth, private router:Router){}
+  private userService = inject(UserService);
+  private authService = inject(Auth);
+  private router = inject(Router);
 
   //Template prints loginError, after submitting invalid loginForm
-  loginError:string = '';
+  loginError = '';
 
   //Login reactive form
   private formBuilder = inject(FormBuilder);
@@ -76,7 +77,7 @@ export class Login {
         console.log('user logged in');
         this.router.navigateByUrl('/home');
       })
-      .catch(error => {
+      .catch(() => {
         this.loginError = 'Email and/or password incorrect';
       });
   }

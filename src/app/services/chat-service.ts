@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { collectionData, Firestore } from '@angular/fire/firestore';
 import { Observable} from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -11,8 +11,9 @@ import { UserService } from './user-service';
   providedIn: 'root'
 })
 export class ChatService {
-
-  constructor(private firestore:Firestore, private firebaseAuth:Auth, private userService:UserService){}
+  private firestore = inject(Firestore);
+  private firebaseAuth = inject(Auth);
+  private userService = inject(UserService);
 
   async fetchRoomById(roomId:string):Promise<ChatRoom | null>{
     const chatRef = doc(this.firestore, "chatRooms", roomId);

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UserService } from '../../../services/user-service';
 import { MatDialogRef, MatDialogActions, MatDialogContent } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
@@ -13,11 +13,11 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './change-username-dialog.scss'
 })
 export class ChangeUsernameDialog {
+  private userService = inject(UserService);
+  private dialogRef = inject(MatDialogRef<ChangeUsernameDialog>);
   newUsername = '';
   loading = false    ;
   updateMessage = '';
-
-  constructor(private userService:UserService, private dialogRef:MatDialogRef<ChangeUsernameDialog>){}
 
   async save(){
     if(!this.newUsername.trim()){
@@ -30,8 +30,8 @@ export class ChangeUsernameDialog {
     try{
       await this.userService.updateUsername(this.newUsername.trim());
       this.dialogRef.close(this.newUsername);
-    }catch(error:any){
-      this.updateMessage = 'Error updating username: ' + error.message;
+    }catch(error){
+      this.updateMessage = 'Error updating username: ' + error;
     } finally{
       this.loading = false;
     }

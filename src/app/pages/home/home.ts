@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
@@ -28,6 +28,13 @@ import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-passw
   styleUrl: './home.scss'
 })
 export class Home implements OnInit{
+  private firebaseAuth = inject(FirebaseAuth);
+  private chatService = inject(ChatService);
+  private authService = inject(Auth);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private dialog = inject(MatDialog);
+
 
   currentUserId = '';
   username:string | null = null;
@@ -37,9 +44,8 @@ export class Home implements OnInit{
   privateGroups: ChatRoom[] = [];
   passwordGroups: ChatRoom[] = [];
   selectedRoom:string | null = "";
-  isLoading:boolean = false;
+  isLoading = false;
 
-  constructor(private firebaseAuth:FirebaseAuth, private chatService:ChatService, private authService:Auth, private router:Router, private userService:UserService, private dialog: MatDialog){}
 
   async ngOnInit(){
     const user = await this.firebaseAuth.currentUser;
@@ -137,8 +143,8 @@ export class Home implements OnInit{
 
 
   //Routes to landing component
-  signout(){
-    this.authService.signOutUser();
+  async signout(){
+    await this.authService.signOutUser();
     this.router.navigateByUrl('');
   }
 }
