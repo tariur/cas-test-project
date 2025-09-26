@@ -1,4 +1,7 @@
 <div class="window-container">
+  @if(currentRoom.restrictions !== "private-chat"){
+    <button matButton="outlined" [disabled]="true" class="owner-name">{{ownerUsername}}'s Room</button>
+  }
   <div class="room-name-container">
     <div class="chat-room-name-add-buttons">
       <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>

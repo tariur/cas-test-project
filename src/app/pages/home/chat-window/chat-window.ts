@@ -40,6 +40,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   currentUserId = '';
   newMessage = '';
   memberUsers:User[] = [];
+  ownerUsername = '';
   currentRoom:ChatRoom = {
     members:[],
     ownerId:'',
@@ -62,6 +63,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
         console.warn("fetchRoomById didn't fetch a room");
       }
     });
+    this.getOwnerUsername();
     this.loadMembers();
   }
 
@@ -72,6 +74,11 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     );
     this.memberUsers = await Promise.all(userPromises);
     this.memberUsers = this.memberUsers.filter(user => user.id !== this.currentUserId);
+  }
+
+  async getOwnerUsername(){
+    if(!this.currentRoom?.ownerId) return;
+    this.ownerUsername = await this.userService.fetchUsernameById(this.currentRoom.ownerId);
   }
 
   //Shows the chat from the last message sent
