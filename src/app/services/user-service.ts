@@ -64,6 +64,7 @@ export class UserService {
     }
   }
 
+  //For currently logged in user
   async fetchUsername():Promise<string | null>{
     const user = this.firebaseAuth.currentUser;
     if(!user) return null;
@@ -76,6 +77,23 @@ export class UserService {
       console.warn('User document does not exist');
       return null;
     }
+  }
+
+  //Fetch user as User object by Id
+  async fetchUser(userId:string): Promise<User>{
+    const userDocRef = doc(this.firestore, 'users', userId);
+    const userSnap = await getDoc(userDocRef);
+    if(!userSnap.exists()){
+      throw new Error('User not found!');
+    }
+    const data = userSnap.data();
+    return{
+      id:userId,
+      email:data['email'],
+      username:data['username'],
+      online:data['online'],
+      avatarURL:data['avatarUrl']
+    } as User;
   }
 
   async updateUsername(newUsername: string): Promise<void>{

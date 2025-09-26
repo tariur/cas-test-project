@@ -28,7 +28,10 @@ export class JoinPasswordGroupDialog {
     this.loading = true;
     const validationResult = await this.chatService.validateGroupPassword(this.roomId, this.password);
     this.loading = false;
-    if(!validationResult) return;
+    if(!validationResult) {
+      this.updateMessage = 'Incorrect password';
+      return;
+    }  
     this.chatService.addUserToPasswordGroup(this.roomId);
     this.dialogRef.close(this.roomId);
    }

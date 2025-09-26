@@ -1,71 +1,81 @@
 <div class="main-container">
-    <div class="navbar-container">
-        <button matButton="tonal" matTooltip="Click to change username" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
-        <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
-    </div>
-    <mat-drawer-container>
-        <mat-drawer #sidenav mode="over" closed class="sidenav">
-            <button matMiniFab (click)="sidenav.toggle()" style="margin:10px;"><mat-icon>arrow_back</mat-icon></button>
-            <mat-tab-group>
-                <mat-tab label="All users">
-                    <mat-list *ngFor="let user of allUsers">
-                            <mat-list-item><button (click)="openPrivateChat(user.id)" [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
-                            <mat-divider></mat-divider>
-                    </mat-list>
-                </mat-tab>
-                <mat-tab label="Online users">
-                    <mat-list *ngFor="let user of onlineUsers">
-                        <mat-list-item><button (click)="openPrivateChat(user.id)" matButton="outlined" class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item> 
-                        <mat-divider></mat-divider>
-                    </mat-list>
-                </mat-tab>
-                <mat-tab label="Groups">
-                    <mat-tab-group>
-                        <mat-tab label="Public Groups">
-                            <mat-list *ngFor="let group of publicGroups">
-                                <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
-                                <mat-divider></mat-divider>
-                            </mat-list>
-                            <div class="create-group-button">
-                                <button matButton="outlined" (click)="createPublicGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new public room</button>
-                            </div>
-                        </mat-tab>
-                        <mat-tab label="Password Groups">
-                            <mat-list *ngFor="let group of passwordGroups">
-                                <mat-list-item><button matButton="outlined" (click)="openPasswordValidationDialog(group.roomId, group.members)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>lock</mat-icon>{{group.roomName}}</button></mat-list-item>
-                                <mat-divider></mat-divider>
-                            </mat-list>
-                            <div class="create-group-button">
-                                <button matButton="outlined" (click)="openPasswordGroupDialog()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new password room</button>
-                            </div>
-                        </mat-tab>
-                        <mat-tab label="Private Groups">
-                            <mat-list *ngFor="let group of privateGroups">
-                                <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>shield_person</mat-icon>{{group.roomName}}</button></mat-list-item>
-                                <mat-divider></mat-divider>
-                            </mat-list>
-                            <div class="create-group-button">
-                                <button matButton="outlined" (click)="createPrivateGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new private room</button>
-                            </div>
-                        </mat-tab>
-                    </mat-tab-group>
-                </mat-tab>
-            </mat-tab-group>
-        </mat-drawer>
-        <mat-drawer-content>
-            <button matMiniFab (click)="sidenav.toggle()"><mat-icon>chat</mat-icon></button>
-            @if(selectedRoom){
-                <app-chat-window (closeChat)="chatCloseChildEvent()" [roomId]="selectedRoom" [allUsers]="allUsers"></app-chat-window>
-            }@else if (isLoading){
-                <div class="no-chat-opened-container">
-                    <h2>Loading...</h2>
-                </div>
-            }@else{
-                <div class="no-chat-opened-container">
-                    <h2>Chat with other users, or create chatrooms!</h2>
-                    <button (click)="sidenav.toggle()" matButton="outlined" style="background-color: #faf9fd;">Start chatting...</button>
-                </div>
-            }
-        </mat-drawer-content>
-    </mat-drawer-container>
+  <div class="navbar-container">
+    <button matButton="tonal" matTooltip="Click to change username" (click)="openChangeUsernameDialog()">Hello, {{username}}</button>
+    <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
+  </div>
+  <mat-drawer-container>
+    <mat-drawer #sidenav mode="over" closed class="sidenav">
+      <button matMiniFab (click)="sidenav.toggle()" style="margin:10px;"><mat-icon>arrow_back</mat-icon></button>
+      <mat-tab-group>
+        <mat-tab label="All users">
+          @for (user of allUsers; track user) {
+            <mat-list>
+              <mat-list-item><button (click)="openPrivateChat(user.id)" [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+              <mat-divider></mat-divider>
+            </mat-list>
+          }
+        </mat-tab>
+        <mat-tab label="Online users">
+          @for (user of onlineUsers; track user) {
+            <mat-list>
+              <mat-list-item><button (click)="openPrivateChat(user.id)" matButton="outlined" class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+              <mat-divider></mat-divider>
+            </mat-list>
+          }
+        </mat-tab>
+        <mat-tab label="Groups">
+          <mat-tab-group>
+            <mat-tab label="Public Groups">
+              @for (group of publicGroups; track group) {
+                <mat-list>
+                  <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
+                  <mat-divider></mat-divider>
+                </mat-list>
+              }
+              <div class="create-group-button">
+                <button matButton="outlined" (click)="createPublicGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new public room</button>
+              </div>
+            </mat-tab>
+            <mat-tab label="Password Groups">
+              @for (group of passwordGroups; track group) {
+                <mat-list>
+                  <mat-list-item><button matButton="outlined" (click)="openPasswordValidationDialog(group.roomId, group.members)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>lock</mat-icon>{{group.roomName}}</button></mat-list-item>
+                  <mat-divider></mat-divider>
+                </mat-list>
+              }
+              <div class="create-group-button">
+                <button matButton="outlined" (click)="openPasswordGroupDialog()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new password room</button>
+              </div>
+            </mat-tab>
+            <mat-tab label="Private Groups">
+              @for (group of privateGroups; track group) {
+                <mat-list>
+                  <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)" [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>shield_person</mat-icon>{{group.roomName}}</button></mat-list-item>
+                  <mat-divider></mat-divider>
+                </mat-list>
+              }
+              <div class="create-group-button">
+                <button matButton="outlined" (click)="createPrivateGroup()" style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new private room</button>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-drawer>
+    <mat-drawer-content>
+      <button matMiniFab (click)="sidenav.toggle()"><mat-icon>chat</mat-icon></button>
+      @if(selectedRoom){
+        <app-chat-window (closeChat)="chatCloseChildEvent()" [roomId]="selectedRoom" [allUsers]="allUsers"></app-chat-window>
+        }@else if (isLoading){
+        <div class="no-chat-opened-container">
+          <h2>Loading...</h2>
+        </div>
+        }@else{
+        <div class="no-chat-opened-container">
+          <h2>Chat with other users, or create chatrooms!</h2>
+          <button (click)="sidenav.toggle()" matButton="outlined" style="background-color: #faf9fd;">Start chatting...</button>
+        </div>
+      }
+    </mat-drawer-content>
+  </mat-drawer-container>
 </div>

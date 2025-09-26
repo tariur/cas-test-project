@@ -82,6 +82,7 @@ export class Home implements OnInit{
     this.isLoading = true;
     setTimeout(()=>{
       this.selectedRoom = roomId;
+      this.chatService.addUserToPasswordGroup(roomId);
       this.isLoading = false;
     });
   }

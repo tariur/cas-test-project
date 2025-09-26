@@ -49,6 +49,7 @@ export class ChatService {
     await updateDoc(docRef, { id: docRef.id , timestamp: serverTimestamp() });
   }
 
+  //Find one-on-one chatroom when clicked on a user in the home list
   async findPrivateChat(otherUserId:string){
     const chatRoomRef = collection(this.firestore, 'chatRooms');
     const currentUserId = await this.firebaseAuth.currentUser?.uid;
@@ -65,6 +66,7 @@ export class ChatService {
     return match ? match.id : this.createPrivateChat(currentUserId as string, otherUserId);
   }
 
+  //Create the one-on-one chatroom with other user
   async createPrivateChat(currentUserId:string, otherUserId:string):Promise<string>{
     const chatRef = collection(this.firestore, 'chatRooms');
     const currentUsername = await this.userService.fetchUsernameById(currentUserId);
@@ -79,6 +81,7 @@ export class ChatService {
     return docRef.id;
   }
 
+  //One-on-one chat
   async deletePrivateChat(roomId:string){
     const roomRef = doc(this.firestore, `chatRooms/${roomId}`);
     const messagesRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
@@ -158,6 +161,7 @@ export class ChatService {
     return collectionData(q, { idField:'roomId' }) as Observable<ChatRoom[]>;
   }
 
+  //Checks if password is correct when trying to join a password protected group
   async validateGroupPassword(roomId:string, password:string):Promise<boolean>{
     const docRef = doc(this.firestore, 'chatRooms', roomId);
     const docSnap = await getDoc(docRef);
@@ -171,6 +175,8 @@ export class ChatService {
     }
   }
 
+  /* Adds user to password protected group (works for public group too) if the password was correct
+      -> User only has to type in password once */ 
   async addUserToPasswordGroup(roomId:string){
     const currentUserId = await this.firebaseAuth.currentUser?.uid;
     const docRef = doc(this.firestore, 'chatRooms', roomId);

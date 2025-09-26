@@ -23,7 +23,6 @@ export const authGuard: CanActivateFn = () => {
 export const publicGuard: CanActivateFn = () => {
   const router = inject(Router);
   const firebaseAuth = inject(FirebaseAuth);
-
   return authState(firebaseAuth).pipe(
     take(1),
     map(user => {

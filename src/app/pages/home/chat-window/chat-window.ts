@@ -40,7 +40,6 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   currentUserId = '';
   newMessage = '';
   memberUsers:User[] = [];
-
   currentRoom:ChatRoom = {
     members:[],
     ownerId:'',
@@ -49,14 +48,13 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     roomName:'Initial RoomName'
   };
 
-  
-
+  //Loads in chatroom, messages and members on opening chat
   async ngOnInit(): Promise<void> {
     const user = await this.firebaseAuth.currentUser;
     if(user){
       this.currentUserId = user.uid;
     }
-    this.chatService.fetchRoomById(this.roomId).then(room =>{
+    await this.chatService.fetchRoomById(this.roomId).then(room =>{
       if(room){
         this.currentRoom = room;
         this.messages$ = this.chatService.getMessages(this.roomId);
@@ -64,12 +62,22 @@ export class ChatWindow implements OnInit, AfterViewChecked{
         console.warn("fetchRoomById didn't fetch a room");
       }
     });
+    this.loadMembers();
   }
 
+  async loadMembers(){
+    if(!this.currentRoom?.members) return;
+    const userPromises = this.currentRoom.members.map(userId=>
+      this.userService.fetchUser(userId)
+    );
+    this.memberUsers = await Promise.all(userPromises);
+    this.memberUsers = this.memberUsers.filter(user => user.id !== this.currentUserId);
+  }
+
+  //Shows the chat from the last message sent
   ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
-
   private scrollToBottom():void{
     try{
       const container = this.scrollContainer.nativeElement;
@@ -89,7 +97,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
     this.newMessage = '';
   }
 
-  //not working properly
+  //Not working properly -- doesn't show username on home before changing it for the first time
   getUsername(userId:string):Promise<string>{
     return this.userService.fetchUsernameById(userId);
   }
@@ -127,7 +135,7 @@ export class ChatWindow implements OnInit, AfterViewChecked{
   }
 
   async addUserToPrivateGroup(userId:string, user:User){
-    if(this.currentRoom.members.includes(userId)){
+    if(this.memberUsers.includes(user)){
       this._snackBar.open('User is already a member', 'Ok');
     }else{
       await this.chatService.addUserToPrivateGroup(userId, this.roomId);

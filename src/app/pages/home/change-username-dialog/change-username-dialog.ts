@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../../services/user-service';
 import { MatDialogRef, MatDialogActions, MatDialogContent } from '@angular/material/dialog';
-import {MatButtonModule} from '@angular/material/button';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-change-username-dialog',
@@ -16,28 +16,26 @@ export class ChangeUsernameDialog {
   private userService = inject(UserService);
   private dialogRef = inject(MatDialogRef<ChangeUsernameDialog>);
   newUsername = '';
-  loading = false    ;
+  loading = false;
   updateMessage = '';
 
-  async save(){
-    if(!this.newUsername.trim()){
+  async save() {
+    if (!this.newUsername.trim()) {
       this.updateMessage = 'Please enter a valid username';
       return;
     }
-
     this.loading = true;
-
-    try{
+    try {
       await this.userService.updateUsername(this.newUsername.trim());
       this.dialogRef.close(this.newUsername);
-    }catch(error){
+    } catch (error) {
       this.updateMessage = 'Error updating username: ' + error;
-    } finally{
+    } finally {
       this.loading = false;
     }
   }
 
-  cancel(){
+  cancel() {
     this.dialogRef.close();
   }
 
