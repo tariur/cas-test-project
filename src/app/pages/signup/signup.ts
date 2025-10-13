@@ -49,11 +49,7 @@ export class Signup {
     //Signing up user, using auth.ts service signup() function
     this.authService.signup(emailValue, passwordValue)
       .then(userCredential => {
-        console.log('user signed up');
-
-        //user data stored in const user
         const user = userCredential.user;
-        //Adds user data to Firestore, using user-service.ts createUserData()
         this.userService.createUserData(user.email || '', user.uid);
         this.router.navigateByUrl('/home');
       })
@@ -66,7 +62,6 @@ export class Signup {
             this.signupError = 'Password should be at least 6 characters';
             break;
           default:
-            console.error('Signup error:', error.message);
             break;
         }
       });

@@ -74,7 +74,6 @@ export class Login {
       .then(userCredential =>{
         const user = userCredential.user;
         this.userService.changeStatusOnline(user.uid);
-        console.log('user logged in');
         this.router.navigateByUrl('/home');
       })
       .catch(() => {

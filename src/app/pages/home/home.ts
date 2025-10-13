@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
@@ -48,11 +48,11 @@ export class Home implements OnInit{
 
 
   async ngOnInit(){
-    const user = await this.firebaseAuth.currentUser;
+    this.username = await this.userService.fetchUsername();
+    const user = this.firebaseAuth.currentUser;
     if(user){
       this.currentUserId = user.uid;
     }
-    this.username = await this.userService.fetchUsername();
     this.userService.getAllUsers().subscribe(users => {
       this.allUsers=users;
     });
@@ -67,7 +67,7 @@ export class Home implements OnInit{
     });
     this.chatService.getAllPasswordGroups().subscribe(groups =>{
       this.passwordGroups = groups;
-    })
+    });
   }
 
   async openPrivateChat(userId:string){

@@ -14,7 +14,6 @@ export class UserService {
   
   async createUserData(email:string, uid:string){
     if(await this.checkEmailAlreadyExists(email)){
-      console.log("email already in database");
       return;
     }
 
@@ -27,20 +26,16 @@ export class UserService {
         online:true,
         id:uid
       });
-      console.log("uid: ", uid)
-      console.log("Document added to firestore, ID:", docRef.id);
     }catch(e){
       console.error("Error adding doc:", e);
     }
   }
 
   async changeStatusOnline(uid:string){
-    console.log('changeStatusOnline param:',uid);
     const docRef = doc(this.firestore, "users", uid);
     await updateDoc(docRef, { online: true});
   }
   async changeStatusOffline(uid:string){
-    console.log('changeStatusOffline param:',uid);
     const docRef = doc(this.firestore, "users", uid);
     await updateDoc(docRef, { online: false});
   }  
@@ -75,7 +70,7 @@ export class UserService {
       return data['username'] as string;
     }else{
       console.warn('User document does not exist');
-      return null;
+      return user.email;
     }
   }
 
