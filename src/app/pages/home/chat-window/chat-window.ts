@@ -124,6 +124,12 @@ export class ChatWindow implements OnInit, OnDestroy{
     this.newMessage = '';
   }
 
+  sendWithEnter(event: KeyboardEvent): void{
+    if(event.key === 'Enter'){
+      this.sendMessage();
+    }
+  }
+
   getUsername(userId:string):Promise<string>{
     return this.userService.fetchUsernameById(userId);
   }
