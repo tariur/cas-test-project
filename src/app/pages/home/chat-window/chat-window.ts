@@ -114,6 +114,7 @@ export class ChatWindow implements OnInit, OnDestroy{
   }
 
   async sendMessage(){
+    if(this.newMessage.trim() === '') return;
     await this.chatService.createMessage(this.roomId, {
       content: this.newMessage.trim(),
       senderId: this.currentUserId,
