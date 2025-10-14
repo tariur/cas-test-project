@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { collectionData, Firestore } from '@angular/fire/firestore';
+import { collectionData, docData, Firestore } from '@angular/fire/firestore';
 import { Observable} from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
@@ -15,16 +15,9 @@ export class ChatService {
   private firebaseAuth = inject(Auth);
   private userService = inject(UserService);
 
-  async fetchRoomById(roomId:string):Promise<ChatRoom | null>{
+  fetchRoomById(roomId:string):Observable<ChatRoom>{
     const chatRef = doc(this.firestore, "chatRooms", roomId);
-    const chatSnap = await getDoc(chatRef);
-    if(chatSnap.exists()){
-      const data = chatSnap.data() as ChatRoom;
-      return data;
-    }else{
-      console.warn('Chat document does not exist');
-      return null;
-    }
+    return docData(chatRef, { idField: 'roomId' }) as Observable<ChatRoom>;
   }
 
   async updateChatname(roomId:string, newChatname:string){
