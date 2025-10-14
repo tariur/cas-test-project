@@ -16,6 +16,37 @@
     align-items:center;
     height:10%;
 }
+.room-name-container-private{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items:center;
+    height:10%;
+}
+@media (max-width: 530px){
+    #room-name{
+        display:inline;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .room-name-container{
+        justify-content: center;
+        gap:50px;
+    }
+    .room-name-container-private{
+        justify-content: flex-start;
+    }
+    #delete-chat{
+        margin-left:-10px;
+        margin-right:-20px;
+        padding:0px;
+    }
+    .message-bubble{
+        max-width:150px !important;
+    }
+}
 .chat-room-name-add-buttons{
     display:flex;
     flex-direction: row;
@@ -90,4 +121,8 @@
     font-style: italic;
     font-size: 12px;
     color:#abc7ff;
+}
+.message-bubble{
+    max-width: 280px;
+    word-wrap: break-word;
 }

@@ -1,36 +1,38 @@
 <div class="window-container">
   @if(currentRoom){
     @if(currentRoom.restrictions !== "private-chat"){
-      <button matButton="outlined" [disabled]="true" class="owner-name">{{ownerUsername}}'s Room</button>
+      <button matButton="outlined" [disabled]="true" class="owner-name">Owner: {{ownerUsername}}</button>
+      <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
     }
-    <div class="room-name-container">
+    <div [ngClass]="currentRoom.restrictions === 'private-chat' ? 'room-name-container-private' : 'room-name-container' ">
       <div class="chat-room-name-add-buttons">
-        <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
+        @if(currentRoom.restrictions === "private-chat"){
+        <button id="room-name" matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
+        }
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
           <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon style="color:green;">person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
-            @for (user of allUsers; track user) {
+            @for (user of allUsers; track user.id) {
               <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id, user)"><mat-icon style="color:green;">person_add</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
           <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="Remove users group"><mat-icon style="color:red;">person_remove</mat-icon></button>
           <mat-menu #removeMenu="matMenu">
-            @for (user of memberUsers; track user) {
+            @for (user of memberUsers; track user.id) {
               <button mat-menu-item matTooltip="Remove user" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon style="color:red;">person_remove</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
         }  
           <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="Show other users in group"><mat-icon style="color:#00458f;">group</mat-icon></button>
           <mat-menu #membersMenu="matMenu">
-            @for (user of memberUsers; track user) {
+            @for (user of memberUsers; track user.id) {
               <button mat-menu-item><mat-icon style="color:#00458f;">person</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
       </div>
       <div class="chat-room-buttons">
-        <button matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
-
-        <button matIconButton matTooltip="Delete chat" (click)="deleteChat()" style="color:red;"><mat-icon>delete</mat-icon></button>
+        <button id="close-chat" matIconButton matTooltip="Close chat" (click)="handleCloseChat()" style="margin:10px;"><mat-icon>keyboard_return</mat-icon></button>
+        <button id="delete-chat" matIconButton matTooltip="Delete chat" (click)="deleteChat()" style="color:red;"><mat-icon>delete</mat-icon></button>
       </div>
     </div>
     <mat-divider></mat-divider>

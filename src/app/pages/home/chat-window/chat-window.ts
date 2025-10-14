@@ -104,6 +104,7 @@ export class ChatWindow implements OnInit, OnDestroy{
   }
 
   private scrollToBottom():void{
+    if(!this.scrollContainer) return;
     try{
       const container = this.scrollContainer.nativeElement;
       container.scrollTop = container.scrollHeight;
