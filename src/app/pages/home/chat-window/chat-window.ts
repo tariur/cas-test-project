@@ -57,12 +57,17 @@ export class ChatWindow implements OnInit, OnDestroy{
         this.roomDeleted = true;
         this.currentRoom = null;
         this.handleCloseChat();
-      }else{
+      }
+      else{
         this.currentRoom = room;
         this.loadedOnce = true;
         this.getOwnerUsername();
         this.loadMembers();
         this.scrollToBottom();
+      }
+      if(this.currentRoom && !this.currentRoom?.members.includes(this.currentUserId)){
+        this.currentRoom = null;
+        this.handleCloseChat();
       }
     });
     this.messages$ = this.chatService.getMessages(this.roomId);
