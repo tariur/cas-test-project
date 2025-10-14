@@ -1,19 +1,19 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { Auth } from '../../services/auth';
 import { Auth as FirebaseAuth } from '@angular/fire/auth';
 import { UserService } from '../../services/user-service';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangeUsernameDialog } from './change-username-dialog/change-username-dialog';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
 import { User } from '../../model/User';
-import {MatListModule} from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { CommonModule } from '@angular/common';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgClass } from '@angular/common';
 import { ChatWindow } from './chat-window/chat-window';
 import { ChatService } from '../../services/chat-service';
@@ -27,7 +27,7 @@ import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-passw
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class Home implements OnInit{
+export class Home implements OnInit {
   private firebaseAuth = inject(FirebaseAuth);
   private chatService = inject(ChatService);
   private authService = inject(Auth);
@@ -37,114 +37,125 @@ export class Home implements OnInit{
 
 
   currentUserId = '';
-  username:string | null = null;
+  username: string | null = null;
   allUsers: User[] = [];
   onlineUsers: User[] = [];
   publicGroups: ChatRoom[] = [];
   privateGroups: ChatRoom[] = [];
   passwordGroups: ChatRoom[] = [];
-  selectedRoom:string | null = "";
+  selectedRoom: string | null = "";
   isLoading = false;
 
 
-  async ngOnInit(){
+  async ngOnInit() {
     this.username = await this.userService.fetchUsername();
     const user = this.firebaseAuth.currentUser;
-    if(user){
+    if (user) {
       this.currentUserId = user.uid;
     }
     this.userService.getAllUsers().subscribe(users => {
-      this.allUsers=users;
+      this.allUsers = users;
     });
-    this.userService.getOnlineUsers().subscribe(users =>{
+    this.userService.getOnlineUsers().subscribe(users => {
       this.onlineUsers = users;
     });
-    this.chatService.getAllPublicGroups().subscribe(groups =>{
+    this.chatService.getAllPublicGroups().subscribe(groups => {
       this.publicGroups = groups;
     });
-    this.chatService.getAllPrivateGroups(this.currentUserId).subscribe(groups =>{
+    this.chatService.getAllPrivateGroups(this.currentUserId).subscribe(groups => {
       this.privateGroups = groups;
     });
-    this.chatService.getAllPasswordGroups().subscribe(groups =>{
+    this.chatService.getAllPasswordGroups().subscribe(groups => {
       this.passwordGroups = groups;
     });
   }
 
-  async openPrivateChat(userId:string){
+  async openPrivateChat(userId: string) {
     this.selectedRoom = '';
     this.isLoading = true;
     this.selectedRoom = await this.chatService.findPrivateChat(userId);
     this.isLoading = false;
   }
 
-  openGroup(roomId:string){
+  openGroup(roomId: string) {
     this.selectedRoom = '';
     this.isLoading = true;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.selectedRoom = roomId;
-      this.chatService.addUserToPasswordGroup(roomId);
+      this.chatService.addUserToPasswordAndPrivateGroup(roomId);
       this.isLoading = false;
     });
   }
 
-  async createPublicGroup(){
+  async createPublicGroup() {
     this.selectedRoom = await this.chatService.createPublicGroup(this.currentUserId);
   }
 
-  async createPrivateGroup(){
+  async createPrivateGroup() {
     this.selectedRoom = await this.chatService.createPrivateGroup(this.currentUserId);
   }
 
-  async createPasswordGroup(password:string){
-    this.selectedRoom = await this.chatService.createPasswordGroup(this.currentUserId, password);
+  async createPasswordGroup(password: string) {
+    const roomID = await this.chatService.createPasswordGroup(this.currentUserId, password);
+    this.openGroup(roomID);
   }
 
-  openChangeUsernameDialog(){
+  openChangeUsernameDialog() {
     const dialogRef = this.dialog.open(ChangeUsernameDialog, {
       width: '300px',
     });
 
-    dialogRef.afterClosed().subscribe((newUsername) =>{
-      if(newUsername){
+    dialogRef.afterClosed().subscribe((newUsername) => {
+      if (newUsername) {
         this.username = newUsername;
       }
     })
   }
 
-  openPasswordGroupDialog(){
+  openPasswordGroupDialog() {
     const dialogRef = this.dialog.open(CreateGroupPasswordDialog, {
-      width:'300px',
+      width: '300px',
     });
-    dialogRef.afterClosed().subscribe((password) =>{
-      if(password){
+    dialogRef.afterClosed().subscribe((password) => {
+      if (password) {
         this.createPasswordGroup(password);
       }
     })
   }
 
-  openPasswordValidationDialog(roomId:string, members:string[]){
-    if(members.includes(this.currentUserId)){
-      this.selectedRoom = roomId;
-    }else{
-      const dialogRef = this.dialog.open(JoinPasswordGroupDialog, {
-      width:'300px',
-      data:roomId
+  openPasswordValidationDialog(roomId: string, members: string[]) {
+    if (members.includes(this.currentUserId)) {
+      this.selectedRoom = '';
+      this.isLoading = true;
+      setTimeout(() => {
+        this.selectedRoom = roomId;
+        this.isLoading = false;
       });
-      dialogRef.afterClosed().subscribe((roomId)=>{
-        if(roomId){
-          this.selectedRoom = roomId;
+    } else {
+      const dialogRef = this.dialog.open(JoinPasswordGroupDialog, {
+        width: '300px',
+        data: roomId
+      });
+      dialogRef.afterClosed().subscribe((roomId) => {
+        if (roomId) {
+          this.selectedRoom = '';
+          this.isLoading = true;
+          setTimeout(() => {
+            this.selectedRoom = roomId;
+            this.isLoading = false;
+          });
         }
       })
     }
   }
 
-  chatCloseChildEvent(){
+  chatCloseChildEvent() {
     this.selectedRoom = '';
   }
 
 
   //Routes to landing component
-  async signout(){
+  async signout() {
     await this.authService.signOutUser();
     this.router.navigateByUrl('');
   }

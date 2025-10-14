@@ -32,7 +32,7 @@ export class JoinPasswordGroupDialog {
       this.updateMessage = 'Incorrect password';
       return;
     }  
-    this.chatService.addUserToPasswordGroup(this.roomId);
+    this.chatService.addUserToPasswordAndPrivateGroup(this.roomId);
     this.dialogRef.close(this.roomId);
    }
 

@@ -170,7 +170,7 @@ export class ChatService {
 
   /* Adds user to password protected group (works for public group too) if the password was correct
       -> User only has to type in password once */ 
-  async addUserToPasswordGroup(roomId:string){
+  async addUserToPasswordAndPrivateGroup(roomId:string){
     const currentUserId = await this.firebaseAuth.currentUser?.uid;
     const docRef = doc(this.firestore, 'chatRooms', roomId);
     await updateDoc(docRef, { members: arrayUnion(currentUserId) });
