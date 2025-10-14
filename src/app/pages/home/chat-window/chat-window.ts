@@ -43,6 +43,8 @@ export class ChatWindow implements OnInit, OnDestroy{
   memberUsers:User[] = [];
   ownerUsername = '';
   currentRoom?: ChatRoom | null;
+  loadedOnce = false;
+  roomDeleted = false;
 
   //Loads in chatroom, messages and members on opening chat
   ngOnInit(): void {
@@ -51,16 +53,19 @@ export class ChatWindow implements OnInit, OnDestroy{
       this.currentUserId = user.uid;
     }
     this.sub = this.chatService.fetchRoomById(this.roomId).subscribe(room => {
-      if(!room){
+      if(!room && this.loadedOnce){
+        this.roomDeleted = true;
+        this.currentRoom = null;
         this.handleCloseChat();
       }else{
         this.currentRoom = room;
+        this.loadedOnce = true;
+        this.getOwnerUsername();
+        this.loadMembers();
+        this.scrollToBottom();
       }
     });
     this.messages$ = this.chatService.getMessages(this.roomId);
-    this.getOwnerUsername();
-    this.loadMembers();
-    this.scrollToBottom();
   }
 
   ngOnDestroy(): void {
