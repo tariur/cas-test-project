@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
@@ -25,7 +25,7 @@ import {MatMenuModule} from '@angular/material/menu';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit, OnDestroy{
+export class ChatWindow implements OnInit, OnDestroy, AfterViewInit{
   private userService = inject(UserService);
   private chatService = inject(ChatService);
   private firebaseAuth = inject(Auth);
@@ -77,6 +77,10 @@ export class ChatWindow implements OnInit, OnDestroy{
     this.sub?.unsubscribe();
   }
 
+  ngAfterViewInit(): void{
+    this.scrollToBottom();
+  }
+
   async loadMembers(){
     if(this.currentRoom){
       if(!this.currentRoom.members) return;
@@ -114,7 +118,11 @@ export class ChatWindow implements OnInit, OnDestroy{
   }
 
   async sendMessage(){
-    if(this.newMessage.trim() === '') return;
+    if(this.newMessage.trim() === ''){
+      this.newMessage = '';
+      return;
+    }
+      
     await this.chatService.createMessage(this.roomId, {
       content: this.newMessage.trim(),
       senderId: this.currentUserId,

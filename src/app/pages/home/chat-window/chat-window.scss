@@ -31,18 +31,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .room-name-container{
-        justify-content: center;
-        gap:50px;
-    }
-    .room-name-container-private{
-        justify-content: flex-start;
-    }
-    #delete-chat{
-        margin-left:-10px;
-        margin-right:-20px;
-        padding:0px;
-    }
     .message-bubble{
         max-width:150px !important;
     }

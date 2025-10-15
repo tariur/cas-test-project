@@ -66,10 +66,9 @@ export class Login {
   }
 
   //Logs in user using auth.ts service login() function
-  onLogin(){
+  async onLogin(){
     const emailValue = this.loginForm.get('email')?.value  || '';
     const passwordValue = this.loginForm.get('password')?.value || '';
-
     this.authService.login(emailValue, passwordValue)
       .then(userCredential =>{
         const user = userCredential.user;
