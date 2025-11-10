@@ -19,20 +19,24 @@ export class ChangeUsernameDialog {
   loading = false;
   updateMessage = '';
 
-  async save() {
+  save() {
     if (!this.newUsername.trim()) {
       this.updateMessage = 'Please enter a valid username';
       return;
     }
     this.loading = true;
-    try {
-      await this.userService.updateUsername(this.newUsername.trim());
-      this.dialogRef.close(this.newUsername);
-    } catch (error) {
-      this.updateMessage = 'Error updating username: ' + error;
-    } finally {
-      this.loading = false;
-    }
+
+    this.userService.updateUsername(this.newUsername.trim()).subscribe({
+      next: () =>{
+        this.dialogRef.close();
+      },
+      error: (err) =>{
+        this.updateMessage = 'Error updating username: ' + err;
+      },
+      complete: () =>{
+        this.loading = false;
+      }
+    });
   }
 
   cancel() {

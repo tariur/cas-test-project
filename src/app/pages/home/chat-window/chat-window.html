@@ -1,7 +1,7 @@
 <div class="window-container">
-  @if(currentRoom){
+  @if(selectedRoom$ | async; as currentRoom){
     @if(currentRoom.restrictions !== "private-chat"){
-      <button matButton="outlined" [disabled]="true" class="owner-name">Owner: {{ownerUsername}}</button>
+      <button matButton="outlined" [disabled]="true" class="owner-name">Owner: {{ (owner$ | async)?.username}}</button>
       <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
     }
     <div [ngClass]="currentRoom.restrictions === 'private-chat' ? 'room-name-container-private' : 'room-name-container' ">
@@ -12,9 +12,9 @@
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
           <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon style="color:green;">person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
-            @for (user of allUsers; track user.id) {
-              <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id, user)"><mat-icon style="color:green;">person_add</mat-icon>{{user.username}}</button>
-            }
+          @for(user of allUsers$ | async; track user.id){
+            <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id, user)"><mat-icon style="color:green;">person_add</mat-icon>{{user.username}}</button>
+          } 
           </mat-menu>
           <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="Remove users group"><mat-icon style="color:red;">person_remove</mat-icon></button>
           <mat-menu #removeMenu="matMenu">

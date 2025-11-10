@@ -20,6 +20,7 @@ import { ChatService } from '../../services/chat-service';
 import { ChatRoom } from '../../model/ChatRoom';
 import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
 import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-password-group-dialog';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -37,8 +38,6 @@ export class Home implements OnInit {
 
 
   currentUserId = '';
-  username: string | null = null;
-  allUsers: User[] = [];
   onlineUsers: User[] = [];
   publicGroups: ChatRoom[] = [];
   privateGroups: ChatRoom[] = [];
@@ -46,16 +45,21 @@ export class Home implements OnInit {
   selectedRoom: string | null = "";
   isLoading = false;
 
+  //New
+  allUsers$!: Observable<User[]>;
+  currentUser$!:Observable<User>;
+  selectedRoom$!:Observable<ChatRoom> | null;
 
-  async ngOnInit() {
-    this.username = await this.userService.fetchUsername();
+
+  ngOnInit() {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
+      //New
+      this.currentUser$ = this.userService.getUser(this.currentUserId);
     }
-    this.userService.getAllUsers().subscribe(users => {
-      this.allUsers = users;
-    });
+    //New
+    this.allUsers$ = this.userService.getAllUsers();
     this.userService.getOnlineUsers().subscribe(users => {
       this.onlineUsers = users;
     });
@@ -70,46 +74,37 @@ export class Home implements OnInit {
     });
   }
 
-  async openPrivateChat(userId: string) {
-    this.selectedRoom = '';
-    this.isLoading = true;
-    this.selectedRoom = await this.chatService.findPrivateChat(userId);
-    this.isLoading = false;
+  openPrivateChat(userId: string) {
+    this.selectedRoom$ = this.chatService.findPrivateChat(userId);
   }
 
   openGroup(roomId: string) {
     this.selectedRoom = '';
     this.isLoading = true;
     setTimeout(() => {
-      this.selectedRoom = roomId;
+      this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
       this.chatService.addUserToPasswordAndPrivateGroup(roomId);
       this.isLoading = false;
     });
   }
 
-  async createPublicGroup() {
-    this.selectedRoom = await this.chatService.createPublicGroup(this.currentUserId);
+  createPublicGroup() {
+    this.selectedRoom$ = this.chatService.createPublicGroup(this.currentUserId);
   }
 
-  async createPrivateGroup() {
-    this.selectedRoom = await this.chatService.createPrivateGroup(this.currentUserId);
+  createPrivateGroup() {
+    this.selectedRoom$ = this.chatService.createPrivateGroup(this.currentUserId);
   }
 
-  async createPasswordGroup(password: string) {
-    const roomID = await this.chatService.createPasswordGroup(this.currentUserId, password);
-    this.openGroup(roomID);
+  createPasswordGroup(password: string) {
+    this.selectedRoom$ = this.chatService.createPasswordGroup(this.currentUserId, password);
   }
 
   openChangeUsernameDialog() {
     const dialogRef = this.dialog.open(ChangeUsernameDialog, {
       width: '300px',
     });
-
-    dialogRef.afterClosed().subscribe((newUsername) => {
-      if (newUsername) {
-        this.username = newUsername;
-      }
-    })
+    dialogRef.afterClosed();
   }
 
   openPasswordGroupDialog() {
@@ -128,7 +123,7 @@ export class Home implements OnInit {
       this.selectedRoom = '';
       this.isLoading = true;
       setTimeout(() => {
-        this.selectedRoom = roomId;
+        this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
         this.isLoading = false;
       });
     } else {
@@ -150,7 +145,7 @@ export class Home implements OnInit {
   }
 
   chatCloseChildEvent() {
-    this.selectedRoom = '';
+    this.selectedRoom$ = null;
   }
 
 

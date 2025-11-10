@@ -21,7 +21,7 @@ export class ChangeChatnameDialog {
   loading = false;
   updateMessage = '';
 
-  async save(){
+  save(){
     if(!this.newChatname.trim()){
       this.updateMessage = 'Please enter a valid chat name';
       return;
@@ -29,14 +29,17 @@ export class ChangeChatnameDialog {
 
     this.loading = true;
 
-    try{
-      await this.chatService.updateChatname(this.roomId, this.newChatname.trim());
-      this.dialogRef.close(this.newChatname);
-    }catch(error:unknown){
-      this.updateMessage = 'Error updating chatname: ' + (error instanceof Error ? error.message : String(error));
-    }finally{
-      this.loading = false;
-    }
+    this.chatService.updateChatname(this.roomId, this.newChatname.trim()).subscribe({
+      next: () => {
+        this.dialogRef.close();
+      },
+      error : (err) => {
+        this.updateMessage = 'Error updating username: ' + err;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 
   cancel(){

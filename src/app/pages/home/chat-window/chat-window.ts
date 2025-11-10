@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
+import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ChatRoom } from '../../../model/ChatRoom';
 import { ChatService } from '../../../services/chat-service';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import { Observable, Subscription } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { combineLatest, Observable, switchMap, take, tap } from 'rxjs';
 import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
@@ -15,9 +15,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { DeleteChatDialog } from './delete-chat-dialog/delete-chat-dialog';
 import { UserService } from '../../../services/user-service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '../../../model/User';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+//import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-chat-window',
@@ -25,179 +26,183 @@ import {MatMenuModule} from '@angular/material/menu';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit, OnDestroy, AfterViewInit{
+export class ChatWindow implements OnInit, AfterViewInit {
   private userService = inject(UserService);
   private chatService = inject(ChatService);
   private firebaseAuth = inject(Auth);
   private dialog = inject(MatDialog);
 
-  @Input() roomId!:string;
-  @Input() allUsers!:User[];
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
   private _snackBar = inject(MatSnackBar);
-  private sub?: Subscription;
-  messages$!:Observable<Message[]>;
+  messages$!: Observable<Message[]>;
   currentUserId = '';
   newMessage = '';
-  memberUsers:User[] = [];
-  ownerUsername = '';
-  currentRoom?: ChatRoom | null;
+  memberUsers: User[] = [];
+  currentRoom?: ChatRoom;
   loadedOnce = false;
   roomDeleted = false;
+
+  //-------New with observables--------
+  @Input() allUsers$!: Observable<User[]>;
+  @Input() selectedRoom$!: Observable<ChatRoom>;
+  memberUsers$!: Observable<User[]>;
+  owner$!: Observable<User>;
+  currentUser$!:Observable<User>;
 
   //Loads in chatroom, messages and members on opening chat
   ngOnInit(): void {
     const user = this.firebaseAuth.currentUser;
-    if(user){
+    if (user) {
       this.currentUserId = user.uid;
     }
-    this.sub = this.chatService.fetchRoomById(this.roomId).subscribe(room => {
-      if(!room && this.loadedOnce){
-        this.roomDeleted = true;
-        this.currentRoom = null;
-        this.handleCloseChat();
-      }
-      else{
-        this.currentRoom = room;
-        this.loadedOnce = true;
-        this.getOwnerUsername();
-        this.loadMembers();
-        this.scrollToBottom();
-      }
-      if(this.currentRoom && !this.currentRoom?.members.includes(this.currentUserId)){
-        this.currentRoom = null;
-        this.handleCloseChat();
-      }
-    });
-    this.messages$ = this.chatService.getMessages(this.roomId);
+    //TODO: takeUntilDestroyed()
+    this.selectedRoom$
+      .subscribe(room => {
+        if (!room && this.loadedOnce) {
+          this.roomDeleted = true;
+          this.handleCloseChat();
+        }
+        else {
+          this.currentRoom = room;
+          this.loadedOnce = true;
+          this.loadMembers();
+          this.scrollToBottom();
+
+          //New
+          this.owner$ = this.userService.getUser(this.currentRoom?.ownerId);
+          this.currentUser$ = this.userService.getUser(this.currentUserId);
+        }
+        if (this.currentRoom && !this.currentRoom?.members.includes(this.currentUserId)) {
+          this.handleCloseChat();
+        }
+      });
+    this.messages$ = this.selectedRoom$.pipe(
+      switchMap(room => this.chatService.getMessages(room.roomId))
+    );
   }
 
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-  }
-
-  ngAfterViewInit(): void{
+  ngAfterViewInit(): void {
     this.scrollToBottom();
   }
 
-  async loadMembers(){
-    if(this.currentRoom){
-      if(!this.currentRoom.members) return;
-      const userPromises = this.currentRoom.members.map(userId=>
-      this.userService.fetchUser(userId)
+  async loadMembers() {
+    if (this.currentRoom) {
+      if (!this.currentRoom.members) return;
+      const userPromises = this.currentRoom.members.map(userId =>
+        this.userService.fetchUser(userId)
       );
       this.memberUsers = await Promise.all(userPromises);
       this.memberUsers = this.memberUsers.filter(user => user.id !== this.currentUserId);
     }
   }
 
-  async getOwnerUsername(){
-    if(this.currentRoom){
-      if(!this.currentRoom.ownerId) return;
-      this.ownerUsername = await this.userService.fetchUsernameById(this.currentRoom.ownerId);
+  getRoomName(): string {
+    if (this.currentRoom) {
+      return this.currentRoom.roomName;
+    } else {
+      return '';
     }
   }
 
-  getRoomName():string{
-    if(this.currentRoom){
-      return this.currentRoom.roomName;
-    }else{
-      return '';
-    }  
-  }
-
-  private scrollToBottom():void{
-    if(!this.scrollContainer) return;
-    try{
+  private scrollToBottom(): void {
+    if (!this.scrollContainer) return;
+    try {
       const container = this.scrollContainer.nativeElement;
       container.scrollTop = container.scrollHeight;
-    }catch(error){
+    } catch (error) {
       console.error('Scroll error: ', error);
     }
   }
 
-  async sendMessage(){
-    if(this.newMessage.trim() === ''){
+  //-------------------------------------------------
+
+  sendMessage(){
+    const trimmed = this.newMessage.trim();
+    if(!trimmed){
       this.newMessage = '';
       return;
     }
-      
-    await this.chatService.createMessage(this.roomId, {
-      content: this.newMessage.trim(),
-      senderId: this.currentUserId,
-      senderName:await this.userService.fetchUsernameById(this.currentUserId)
-    });
-    this.scrollToBottom();
-    this.newMessage = '';
+
+    combineLatest([this.selectedRoom$.pipe(take(1)), this.currentUser$.pipe(take(1))])
+      .pipe(
+        switchMap(([room, user]) =>{
+          return this.chatService.createMessage(room.roomId, {
+            content: trimmed,
+            senderId: user.id,
+            senderName: user.username
+          });
+        }),
+        tap(() => {
+          this.scrollToBottom();
+          this.newMessage = '';
+        })
+      ).subscribe();
   }
 
-  sendWithEnter(event: KeyboardEvent): void{
-    if(event.key === 'Enter'){
+  //-------------------------
+
+  sendWithEnter(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
       this.sendMessage();
     }
   }
 
-  getUsername(userId:string):Promise<string>{
+  getUsername(userId: string): Promise<string> {
     return this.userService.fetchUsernameById(userId);
   }
 
-  deleteChat(){
-    if(this.currentRoom){
-      if(this.currentRoom.restrictions==='private-chat' || this.currentRoom.ownerId === this.currentUserId){
+  deleteChat() {
+    if (this.currentRoom) {
+      if (this.currentRoom.restrictions === 'private-chat' || this.currentRoom.ownerId === this.currentUserId) {
         const dialogRef = this.dialog.open(DeleteChatDialog, {
-        width:'300px',
-        data:this.roomId
+          width: '300px',
+          data: this.currentRoom.roomId
         });
-        dialogRef.afterClosed().subscribe((roomDeleted:boolean)=>{
-          if(roomDeleted){
+        dialogRef.afterClosed().subscribe((roomDeleted: boolean) => {
+          if (roomDeleted) {
             this.handleCloseChat();
           }
         });
-      }else{
+      } else {
         this._snackBar.open('Group can only be deleted by owner', 'Ok');
       }
     }
-    
+
   }
 
-  changeChatName(){
-    if(this.currentRoom){
-      if(this.currentRoom.restrictions==='private-chat' || this.currentRoom.ownerId === this.currentUserId){
+  changeChatName() {
+    if (this.currentRoom) {
+      if (this.currentRoom.restrictions === 'private-chat' || this.currentRoom.ownerId === this.currentUserId) {
         const dialogRef = this.dialog.open(ChangeChatnameDialog, {
-            width: '300px',
-            data:this.currentRoom.roomId
+          width: '300px',
+          data: this.currentRoom.roomId
         });
-        dialogRef.afterClosed().subscribe((newChatname: string) =>{
-        if(newChatname && this.currentRoom){
-          this.currentRoom.roomName = newChatname;
-        }
-        });
-      }else{
+        dialogRef.afterClosed();
+      } else {
         this._snackBar.open('Group name can only be changed by owner', 'Ok');
       }
     }
-    
+
   }
 
-  async addUserToPrivateGroup(userId:string, user:User){
-    if(this.memberUsers.includes(user)){
+  async addUserToPrivateGroup(userId: string, user: User) {
+    if (this.memberUsers.includes(user)) {
       this._snackBar.open('User is already a member', 'Ok');
-    }else{
-      await this.chatService.addUserToPrivateGroup(userId, this.roomId);
+    } else {
+      await this.chatService.addUserToPrivateGroup(userId, this.currentRoom!.roomId);
       this.memberUsers.push(user);
       this._snackBar.open('User successfully added to group', 'Ok');
     }
   }
 
-  async removeUserFromPrivateGroup(userId:string){
-    await this.chatService.removeUserFromPrivateGroup(userId, this.roomId);
+  async removeUserFromPrivateGroup(userId: string) {
+    await this.chatService.removeUserFromPrivateGroup(userId, this.currentRoom!.roomId);
     this.memberUsers = this.memberUsers.filter(user => user.id !== userId);
     this._snackBar.open('User successfully removed from group', 'Ok');
   }
 
-  handleCloseChat(){
+  handleCloseChat() {
     this.closeChat.emit();
   }
-
 }
