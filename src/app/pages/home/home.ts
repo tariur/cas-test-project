@@ -42,10 +42,9 @@ export class Home implements OnInit {
   publicGroups: ChatRoom[] = [];
   privateGroups: ChatRoom[] = [];
   passwordGroups: ChatRoom[] = [];
-  selectedRoom: string | null = "";
+  selectedRoom: string | null = '';
   isLoading = false;
 
-  //New
   allUsers$!: Observable<User[]>;
   currentUser$!:Observable<User>;
   selectedRoom$!:Observable<ChatRoom> | null;
@@ -55,10 +54,8 @@ export class Home implements OnInit {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
-      //New
       this.currentUser$ = this.userService.getUser(this.currentUserId);
     }
-    //New
     this.allUsers$ = this.userService.getAllUsers();
     this.userService.getOnlineUsers().subscribe(users => {
       this.onlineUsers = users;
@@ -120,12 +117,7 @@ export class Home implements OnInit {
 
   openPasswordValidationDialog(roomId: string, members: string[]) {
     if (members.includes(this.currentUserId)) {
-      this.selectedRoom = '';
-      this.isLoading = true;
-      setTimeout(() => {
-        this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
-        this.isLoading = false;
-      });
+      this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
     } else {
       const dialogRef = this.dialog.open(JoinPasswordGroupDialog, {
         width: '300px',
@@ -148,8 +140,6 @@ export class Home implements OnInit {
     this.selectedRoom$ = null;
   }
 
-
-  //Routes to landing component
   async signout() {
     await this.authService.signOutUser();
     this.router.navigateByUrl('');

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
 import { collection, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { Auth as FirebaseAuth } from '@angular/fire/auth';
-import { Observable, from } from 'rxjs';
+import { Observable, combineLatest, from, of } from 'rxjs';
 import { User } from '../model/User';
 
 @Injectable({
@@ -16,10 +16,10 @@ export class UserService {
     const docRef = doc(this.firestore, "users", uid);
     updateDoc(docRef, { online: true });
   }
-  changeStatusOffline(uid: string) {
+  async changeStatusOffline(uid:string){
     const docRef = doc(this.firestore, "users", uid);
-    updateDoc(docRef, { online: false });
-  }
+    await updateDoc(docRef, { online: false});
+  }  
 
   async fetchUsernameById(userId: string): Promise<string> {
     const usersRef = doc(this.firestore, 'users', userId);
@@ -49,9 +49,6 @@ export class UserService {
       avatarURL: data['avatarUrl']
     } as User;
   }
-
-
-  //---------------------Observables---------------------------
 
   createUserData(email: string, uid: string) {
     const docRef = doc(this.firestore, 'users', uid);
@@ -97,6 +94,17 @@ export class UserService {
     }
 
     return collectionData(userRef, { idField: 'id' }) as Observable<User[]>;
+  }
+
+  getMembers(members: string[]): Observable<User[]> {
+    if (members.length <= 1) return of([]);
+    const currentUserId = this.firebaseAuth.currentUser?.uid;
+    if (!currentUserId) throw new Error('No user signed in');
+    const memberDocs$ = members.filter(id => id !== currentUserId).map(id => {
+      const userDoc = doc(this.firestore, `users/${id}`);
+      return docData(userDoc, { idField: 'id' }) as Observable<User>;
+    });
+    return combineLatest(memberDocs$);
   }
 
 }

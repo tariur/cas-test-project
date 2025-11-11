@@ -13,19 +13,19 @@
           <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon style="color:green;">person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
           @for(user of allUsers$ | async; track user.id){
-            <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id, user)"><mat-icon style="color:green;">person_add</mat-icon>{{user.username}}</button>
+            <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id)"><mat-icon style="color:green;">person_add</mat-icon>{{user.username}}</button>
           } 
           </mat-menu>
           <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="Remove users group"><mat-icon style="color:red;">person_remove</mat-icon></button>
           <mat-menu #removeMenu="matMenu">
-            @for (user of memberUsers; track user.id) {
+            @for (user of memberUsers$ | async; track user.id) {
               <button mat-menu-item matTooltip="Remove user" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon style="color:red;">person_remove</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
         }  
           <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="Show other users in group"><mat-icon style="color:#00458f;">group</mat-icon></button>
           <mat-menu #membersMenu="matMenu">
-            @for (user of memberUsers; track user.id) {
+            @for (user of memberUsers$ | async; track user.id) {
               <button mat-menu-item><mat-icon style="color:#00458f;">person</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
@@ -37,7 +37,7 @@
     </div>
     <mat-divider></mat-divider>
     <div #scrollContainer class="messages-container">
-      @for (msg of messages$ | async; track msg) {
+      @for (msg of messages$ | async; track msg.id) {
         <div [ngClass]="msg.senderId === currentUserId ? 'current-user-message' : 'partner-message'">
           <div class="message-contents">
             <p class="sender-name">from: {{msg.senderName}}</p>

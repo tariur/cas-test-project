@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChatRoom } from '../../../model/ChatRoom';
 import { ChatService } from '../../../services/chat-service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { combineLatest, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, EMPTY, map, Observable, switchMap, take, tap } from 'rxjs';
 import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
@@ -38,17 +38,16 @@ export class ChatWindow implements OnInit, AfterViewInit {
   messages$!: Observable<Message[]>;
   currentUserId = '';
   newMessage = '';
-  memberUsers: User[] = [];
+
   currentRoom?: ChatRoom;
   loadedOnce = false;
   roomDeleted = false;
 
-  //-------New with observables--------
   @Input() allUsers$!: Observable<User[]>;
   @Input() selectedRoom$!: Observable<ChatRoom>;
   memberUsers$!: Observable<User[]>;
   owner$!: Observable<User>;
-  currentUser$!:Observable<User>;
+  currentUser$!: Observable<User>;
 
   //Loads in chatroom, messages and members on opening chat
   ngOnInit(): void {
@@ -66,12 +65,10 @@ export class ChatWindow implements OnInit, AfterViewInit {
         else {
           this.currentRoom = room;
           this.loadedOnce = true;
-          this.loadMembers();
           this.scrollToBottom();
-
-          //New
           this.owner$ = this.userService.getUser(this.currentRoom?.ownerId);
           this.currentUser$ = this.userService.getUser(this.currentUserId);
+          this.memberUsers$ = this.userService.getMembers(room.members);
         }
         if (this.currentRoom && !this.currentRoom?.members.includes(this.currentUserId)) {
           this.handleCloseChat();
@@ -84,17 +81,6 @@ export class ChatWindow implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.scrollToBottom();
-  }
-
-  async loadMembers() {
-    if (this.currentRoom) {
-      if (!this.currentRoom.members) return;
-      const userPromises = this.currentRoom.members.map(userId =>
-        this.userService.fetchUser(userId)
-      );
-      this.memberUsers = await Promise.all(userPromises);
-      this.memberUsers = this.memberUsers.filter(user => user.id !== this.currentUserId);
-    }
   }
 
   getRoomName(): string {
@@ -115,32 +101,29 @@ export class ChatWindow implements OnInit, AfterViewInit {
     }
   }
 
-  //-------------------------------------------------
-
-  sendMessage(){
+  sendMessage() {
     const trimmed = this.newMessage.trim();
-    if(!trimmed){
+    if (!trimmed) {
       this.newMessage = '';
       return;
     }
 
-    combineLatest([this.selectedRoom$.pipe(take(1)), this.currentUser$.pipe(take(1))])
-      .pipe(
-        switchMap(([room, user]) =>{
-          return this.chatService.createMessage(room.roomId, {
-            content: trimmed,
-            senderId: user.id,
-            senderName: user.username
-          });
-        }),
-        tap(() => {
-          this.scrollToBottom();
-          this.newMessage = '';
-        })
-      ).subscribe();
+  combineLatest([this.selectedRoom$, this.currentUser$])
+    .pipe(
+      take(1),
+      switchMap(([room, user]) => {
+        return this.chatService.createMessage(room.roomId, {
+          content: trimmed,
+          senderId: user.id,
+          senderName: user.username
+        });
+      }),
+      tap(() => {
+        this.scrollToBottom();
+        this.newMessage = '';
+      })
+    ).subscribe();
   }
-
-  //-------------------------
 
   sendWithEnter(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
@@ -186,20 +169,32 @@ export class ChatWindow implements OnInit, AfterViewInit {
 
   }
 
-  async addUserToPrivateGroup(userId: string, user: User) {
-    if (this.memberUsers.includes(user)) {
-      this._snackBar.open('User is already a member', 'Ok');
-    } else {
-      await this.chatService.addUserToPrivateGroup(userId, this.currentRoom!.roomId);
-      this.memberUsers.push(user);
-      this._snackBar.open('User successfully added to group', 'Ok');
-    }
+  addUserToPrivateGroup(userId: string) {
+    this.memberUsers$.pipe(
+      take(1),
+      map(u => u.some(u => u.id === userId)),
+    ).subscribe(exists => {
+      if (exists) {
+        this._snackBar.open('User is already a member', 'Ok');
+      } else {
+        this.chatService.addUserToPrivateGroup(userId, this.currentRoom!.roomId).subscribe(() => {
+          this._snackBar.open('User successfully added to group', 'Ok');
+        });
+      }
+    });
   }
 
-  async removeUserFromPrivateGroup(userId: string) {
-    await this.chatService.removeUserFromPrivateGroup(userId, this.currentRoom!.roomId);
-    this.memberUsers = this.memberUsers.filter(user => user.id !== userId);
-    this._snackBar.open('User successfully removed from group', 'Ok');
+  removeUserFromPrivateGroup(userId: string) {
+    this.memberUsers$.pipe(
+      take(1),
+      switchMap(user => {
+        if (!user.some(u => u.id === userId)) return EMPTY;
+        return this.chatService.removeUserFromPrivateGroup(userId, this.currentRoom!.roomId);
+      })
+    ).subscribe(() => {
+      this._snackBar.open('User successfully removed from group', 'Ok');
+    }
+    );
   }
 
   handleCloseChat() {

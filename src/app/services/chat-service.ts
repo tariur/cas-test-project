@@ -45,7 +45,6 @@ export class ChatService {
   }
 
   findPrivateChat(otherUserId: string): Observable<ChatRoom> {
-    console.log('findPrivateChat called')
     const chatRoomRef = collection(this.firestore, 'chatRooms');
     const currentUserId = this.firebaseAuth.currentUser?.uid;
     if (!currentUserId) throw new Error('User not logged in!');
@@ -78,6 +77,9 @@ export class ChatService {
     const messagesRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
     return from(getDocs(messagesRef)).pipe(
       switchMap(messagesSnapshot => {
+        if(messagesSnapshot.empty){
+          return of(null);
+        }
         const deleteObservables = messagesSnapshot.docs.map(m => from(deleteDoc(m.ref)));
         return forkJoin(deleteObservables);
       }),
@@ -162,13 +164,13 @@ export class ChatService {
     )
   }
 
-  async addUserToPrivateGroup(userId: string, roomId: string) {
+  addUserToPrivateGroup(userId: string, roomId: string):Observable<void> {
     const docRef = doc(this.firestore, 'chatRooms', roomId);
-    await updateDoc(docRef, { members: arrayUnion(userId) });
+    return from(updateDoc(docRef, { members: arrayUnion(userId) }));
   }
-  async removeUserFromPrivateGroup(userId: string, roomId: string) {
+  removeUserFromPrivateGroup(userId: string, roomId: string):Observable<void> {
     const docRef = doc(this.firestore, 'chatRooms', roomId);
-    await updateDoc(docRef, { members: arrayRemove(userId) });
+    return from(updateDoc(docRef, { members: arrayRemove(userId) }));
   }
 
   getAllPrivateGroups(currentUserId: string): Observable<ChatRoom[]> {
