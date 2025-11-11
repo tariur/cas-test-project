@@ -107,22 +107,21 @@ export class ChatWindow implements OnInit, AfterViewInit {
       this.newMessage = '';
       return;
     }
-
-  combineLatest([this.selectedRoom$, this.currentUser$])
-    .pipe(
-      take(1),
-      switchMap(([room, user]) => {
-        return this.chatService.createMessage(room.roomId, {
-          content: trimmed,
-          senderId: user.id,
-          senderName: user.username
-        });
-      }),
-      tap(() => {
-        this.scrollToBottom();
-        this.newMessage = '';
-      })
-    ).subscribe();
+    combineLatest([this.selectedRoom$, this.currentUser$])
+      .pipe(
+        take(1),
+        switchMap(([room, user]) => {
+          return this.chatService.createMessage(room.roomId, {
+            content: trimmed,
+            senderId: user.id,
+            senderName: user.username
+          });
+        }),
+        tap(() => {
+          this.scrollToBottom();
+          this.newMessage = '';
+        })
+      ).subscribe();
   }
 
   sendWithEnter(event: KeyboardEvent): void {

@@ -6,7 +6,7 @@
   </div>
   <mat-drawer-container>
     <mat-drawer #sidenav mode="over" closed class="sidenav">
-      <button matMiniFab (click)="sidenav.toggle()" style="margin:10px;"><mat-icon>arrow_back</mat-icon></button>
+      <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
       <mat-tab-group>
         <mat-tab label="All users">
           <mat-list>
@@ -37,9 +37,8 @@
                 <mat-divider></mat-divider>
               </mat-list>
               }
-              <div class="create-group-button">
-                <button matButton="outlined" (click)="createPublicGroup()"
-                  style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new public room</button>
+              <div class="create-group-button-container">
+                <button class="create-group-button" matButton="outlined" (click)="createPublicGroup()"><mat-icon>add</mat-icon>Create new public room</button>
               </div>
             </mat-tab>
             <mat-tab label="Password Groups">
@@ -51,9 +50,8 @@
                 <mat-divider></mat-divider>
               </mat-list>
               }
-              <div class="create-group-button">
-                <button matButton="outlined" (click)="openPasswordGroupDialog()"
-                  style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new password room</button>
+              <div class="create-group-button-container">
+                <button class="create-group-button" matButton="outlined" (click)="openPasswordGroupDialog()"><mat-icon>add</mat-icon>Create new password room</button>
               </div>
             </mat-tab>
             <mat-tab label="Private Groups">
@@ -64,9 +62,8 @@
                 <mat-divider></mat-divider>
               </mat-list>
               }
-              <div class="create-group-button">
-                <button matButton="outlined" (click)="createPrivateGroup()"
-                  style="background-color:#faf9fd;"><mat-icon>add</mat-icon>Create new private room</button>
+              <div class="create-group-button-container">
+                <button class="create-group-button" matButton="outlined" (click)="createPrivateGroup()"><mat-icon>add</mat-icon>Create new private room</button>
               </div>
             </mat-tab>
           </mat-tab-group>
@@ -85,7 +82,7 @@
       }@else{
       <div class="no-chat-opened-container">
         <h2>Chat with other users, or create chatrooms!</h2>
-        <button (click)="sidenav.toggle()" matButton="outlined" style="background-color: #faf9fd;">Start
+        <button (click)="sidenav.toggle()" matButton="outlined">Start
           chatting...</button>
       </div>
       }

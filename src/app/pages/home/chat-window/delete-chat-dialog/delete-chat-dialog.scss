@@ -1,3 +1,9 @@
 .dialog-container{
     margin:0px 20px 0px 20px;
 }
+#confirm-button{
+    color:red;
+}
+mat-dialog-content > strong{
+    color:red;
+}

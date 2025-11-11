@@ -37,11 +37,21 @@ mat-drawer-content{
 .no-chat-opened-container > h2{
     text-align: center;
 }
-.create-group-button{
+.no-chat-opened-container > button{
+    background-color:#faf9fd;
+}
+.create-group-button-container{
     display:flex;
     justify-content: center;
     margin-top:20px;
+
+}
+.create-group-button{
+    background-color:#faf9fd;
 }
 .owned-group{
     background-color: #faf9fd;
+}
+.sidenav > button{
+    margin:10px;
 }
