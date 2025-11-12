@@ -19,7 +19,7 @@
           </mat-list>
         </mat-tab>
         <mat-tab label="Online users">
-          @for (user of onlineUsers; track user.id) {
+          @for (user of onlineUsers$ | async; track user.id) {
           <mat-list>
             <mat-list-item><button (click)="openPrivateChat(user.id)" matButton="outlined"
                 class="online-user-button"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
@@ -30,7 +30,7 @@
         <mat-tab label="Groups">
           <mat-tab-group>
             <mat-tab label="Public Groups">
-              @for (group of publicGroups; track group.roomId) {
+              @for (group of publicGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)"
                     [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>group</mat-icon>{{group.roomName}}</button></mat-list-item>
@@ -42,7 +42,7 @@
               </div>
             </mat-tab>
             <mat-tab label="Password Groups">
-              @for (group of passwordGroups; track group.roomId) {
+              @for (group of passwordGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined"
                     (click)="openPasswordValidationDialog(group.roomId, group.members)"
@@ -55,7 +55,7 @@
               </div>
             </mat-tab>
             <mat-tab label="Private Groups">
-              @for (group of privateGroups; track group.roomId) {
+              @for (group of privateGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)"
                     [ngClass]="group.ownerId === currentUserId ? 'owned-group' : 'not-owned-group'"><mat-icon>shield_person</mat-icon>{{group.roomName}}</button></mat-list-item>

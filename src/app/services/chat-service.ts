@@ -18,7 +18,7 @@ export class ChatService {
 
   fetchRoomById(roomId: string): Observable<ChatRoom> {
     const chatRef = doc(this.firestore, "chatRooms", roomId);
-    return docData(chatRef, { idField: 'roomId' }) as Observable<ChatRoom>;
+    return from(docData(chatRef, { idField: 'roomId' }) as Observable<ChatRoom>);
   }
 
   updateChatname(roomId: string, newChatname: string): Observable<void> {
@@ -32,15 +32,13 @@ export class ChatService {
     return collectionData(q, { idField: 'id' }) as Observable<Message[]>;
   }
 
-  createMessage(roomId: string, message: Omit<Message, 'id' | 'timestamp'>): Observable<void> {
+  createMessage(roomId: string, message: Omit<Message, 'id' | 'timestamp'>) {
     const messagesRef = collection(this.firestore, `chatRooms/${roomId}/messages`);
     return from(
       addDoc(messagesRef, {
         ...message,
         timestamp: serverTimestamp()
       })
-    ).pipe(
-      map(() => void 0)
     );
   }
 
@@ -205,7 +203,7 @@ export class ChatService {
   addUserToPasswordAndPrivateGroup(roomId: string) {
     const currentUserId = this.firebaseAuth.currentUser?.uid;
     const docRef = doc(this.firestore, 'chatRooms', roomId);
-    updateDoc(docRef, { members: arrayUnion(currentUserId) });
+    return from(updateDoc(docRef, { members: arrayUnion(currentUserId) }));
   }
 
 }

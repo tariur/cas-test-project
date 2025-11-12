@@ -36,16 +36,14 @@ export class Home implements OnInit {
   private userService = inject(UserService);
   private dialog = inject(MatDialog);
 
-
   currentUserId = '';
-  onlineUsers: User[] = [];
-  publicGroups: ChatRoom[] = [];
-  privateGroups: ChatRoom[] = [];
-  passwordGroups: ChatRoom[] = [];
-  selectedRoom: string | null = '';
   isLoading = false;
 
   allUsers$!: Observable<User[]>;
+  onlineUsers$!: Observable<User[]>
+  publicGroups$!: Observable<ChatRoom[]>
+  privateGroups$!: Observable<ChatRoom[]>
+  passwordGroups$!: Observable<ChatRoom[]>
   currentUser$!:Observable<User>;
   selectedRoom$!:Observable<ChatRoom> | null;
 
@@ -55,34 +53,34 @@ export class Home implements OnInit {
     if (user) {
       this.currentUserId = user.uid;
       this.currentUser$ = this.userService.getUser(this.currentUserId);
+      this.privateGroups$ = this.chatService.getAllPrivateGroups(this.currentUserId);
+      this.allUsers$ = this.userService.getAllUsers();
+      this.onlineUsers$ = this.userService.getOnlineUsers();
+      this.publicGroups$ = this.chatService.getAllPublicGroups();
+      this.passwordGroups$ = this.chatService.getAllPasswordGroups();
+    }else{
+      console.error('User needs to sign in to access this page');
+      this.router.navigateByUrl('**');
     }
-    this.allUsers$ = this.userService.getAllUsers();
-    this.userService.getOnlineUsers().subscribe(users => {
-      this.onlineUsers = users;
-    });
-    this.chatService.getAllPublicGroups().subscribe(groups => {
-      this.publicGroups = groups;
-    });
-    this.chatService.getAllPrivateGroups(this.currentUserId).subscribe(groups => {
-      this.privateGroups = groups;
-    });
-    this.chatService.getAllPasswordGroups().subscribe(groups => {
-      this.passwordGroups = groups;
-    });
   }
 
   openPrivateChat(userId: string) {
-    this.selectedRoom$ = this.chatService.findPrivateChat(userId);
+    this.selectedRoom$ = null;
+    this.isLoading = true;
+    setTimeout(()=>{
+      this.selectedRoom$ = this.chatService.findPrivateChat(userId);
+    }, 4000);
+    this.isLoading = false;
   }
 
   openGroup(roomId: string) {
-    this.selectedRoom = '';
+    this.selectedRoom$ = null;
     this.isLoading = true;
-    setTimeout(() => {
+    setTimeout(()=>{
       this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
       this.chatService.addUserToPasswordAndPrivateGroup(roomId);
       this.isLoading = false;
-    });
+    }, 4000);
   }
 
   createPublicGroup() {
@@ -125,10 +123,8 @@ export class Home implements OnInit {
       });
       dialogRef.afterClosed().subscribe((roomId) => {
         if (roomId) {
-          this.selectedRoom = '';
           this.isLoading = true;
           setTimeout(() => {
-            this.selectedRoom = roomId;
             this.isLoading = false;
           });
         }

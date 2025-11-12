@@ -2,12 +2,12 @@
   @if(selectedRoom$ | async; as currentRoom){
     @if(currentRoom.restrictions !== "private-chat"){
       <button matButton="outlined" [disabled]="true" class="owner-name">Owner: {{ (owner$ | async)?.username}}</button>
-      <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
+      <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
     }
     <div [ngClass]="currentRoom.restrictions === 'private-chat' ? 'room-name-container-private' : 'room-name-container' ">
       <div class="chat-room-name-add-buttons">
         @if(currentRoom.restrictions === "private-chat"){
-        <button id="room-name" matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{getRoomName()}}</button>
+        <button id="room-name" matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
         }
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
           <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon id="add-user" >person_add</mat-icon></button>
@@ -22,11 +22,13 @@
               <button mat-menu-item matTooltip="Remove user" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon id="remove-member">person_remove</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
-        }  
+        }
           <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="Show other users in group"><mat-icon id="chat-members">group</mat-icon></button>
           <mat-menu #membersMenu="matMenu">
-            @for (user of memberUsers$ | async; track user.id) {
+            @for (user of memberUsers$ | async; track user) {
+              @if(user){
               <button mat-menu-item><mat-icon id="chat-members">person</mat-icon>{{user.username}}</button>
+              }
             }
           </mat-menu>
       </div>

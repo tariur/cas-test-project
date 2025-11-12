@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,7 +18,8 @@ import { UserService } from '../../../services/user-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '../../../model/User';
 import { MatMenuModule } from '@angular/material/menu';
-//import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat-window',
@@ -27,10 +28,12 @@ import { MatMenuModule } from '@angular/material/menu';
   styleUrl: './chat-window.scss'
 })
 export class ChatWindow implements OnInit, AfterViewInit {
+  private router = inject(Router);
   private userService = inject(UserService);
   private chatService = inject(ChatService);
   private firebaseAuth = inject(Auth);
   private dialog = inject(MatDialog);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
@@ -41,7 +44,6 @@ export class ChatWindow implements OnInit, AfterViewInit {
 
   currentRoom?: ChatRoom;
   loadedOnce = false;
-  roomDeleted = false;
 
   @Input() allUsers$!: Observable<User[]>;
   @Input() selectedRoom$!: Observable<ChatRoom>;
@@ -54,41 +56,30 @@ export class ChatWindow implements OnInit, AfterViewInit {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
-    }
-    //TODO: takeUntilDestroyed()
-    this.selectedRoom$
+      this.selectedRoom$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(room => {
-        if (!room && this.loadedOnce) {
-          this.roomDeleted = true;
-          this.handleCloseChat();
-        }
-        else {
-          this.currentRoom = room;
+        if(room){
           this.loadedOnce = true;
+          this.currentRoom = room;
           this.scrollToBottom();
-          this.owner$ = this.userService.getUser(this.currentRoom?.ownerId);
+          this.owner$ = this.userService.getUser(room.ownerId);
           this.currentUser$ = this.userService.getUser(this.currentUserId);
           this.memberUsers$ = this.userService.getMembers(room.members);
-        }
-        if (this.currentRoom && !this.currentRoom?.members.includes(this.currentUserId)) {
-          this.handleCloseChat();
+          this.messages$ = this.chatService.getMessages(room.roomId);
+          if(!room.members.includes(this.currentUserId)){
+            console.log('User not member of the room anymore');
+            this.handleCloseChat();
+          }
         }
       });
-    this.messages$ = this.selectedRoom$.pipe(
-      switchMap(room => this.chatService.getMessages(room.roomId))
-    );
+    }else{
+      console.log('User has to be signed in to access this page');
+      this.router.navigateByUrl('**');
+    }
   }
 
   ngAfterViewInit(): void {
     this.scrollToBottom();
-  }
-
-  getRoomName(): string {
-    if (this.currentRoom) {
-      return this.currentRoom.roomName;
-    } else {
-      return '';
-    }
   }
 
   private scrollToBottom(): void {
@@ -128,10 +119,6 @@ export class ChatWindow implements OnInit, AfterViewInit {
     if (event.key === 'Enter') {
       this.sendMessage();
     }
-  }
-
-  getUsername(userId: string): Promise<string> {
-    return this.userService.fetchUsernameById(userId);
   }
 
   deleteChat() {
