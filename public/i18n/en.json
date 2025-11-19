@@ -1,0 +1,11 @@
+{
+    "app": {
+        "english":"English",
+        "german": "German",
+        "landing":{
+            "title": "Chat-App",
+            "loginButton": "Login",
+            "signupButton": "Signup"
+        }
+    }
+}

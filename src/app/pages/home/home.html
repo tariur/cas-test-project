@@ -2,7 +2,10 @@
   <div class="navbar-container">
     <button matButton="tonal" matTooltip="Click to change username" (click)="openChangeUsernameDialog()">Hello, {{
       (currentUser$ | async)?.username }}</button>
-    <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
+    <div class="lang-logout-container">
+      <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
+      <app-language-selector></app-language-selector>
+    </div>
   </div>
   <mat-drawer-container>
     <mat-drawer #sidenav mode="over" closed class="sidenav">

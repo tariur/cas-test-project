@@ -21,10 +21,11 @@ import { ChatRoom } from '../../model/ChatRoom';
 import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
 import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-password-group-dialog';
 import { Observable } from 'rxjs';
+import { LanguageSelector } from '../language-selector/language-selector';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, ChatWindow, NgClass, MatTooltipModule, MatDividerModule, MatButtonModule, MatIconModule, MatSidenavModule, MatTabsModule, MatListModule],
+  imports: [CommonModule, LanguageSelector, ChatWindow, NgClass, MatTooltipModule, MatDividerModule, MatButtonModule, MatIconModule, MatSidenavModule, MatTabsModule, MatListModule],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })

@@ -5,6 +5,9 @@ import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import {provideHttpClient} from "@angular/common/http";
+import {provideTranslateService} from "@ngx-translate/core";
+import {provideTranslateHttpLoader} from "@ngx-translate/http-loader";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +20,15 @@ export const appConfig: ApplicationConfig = {
       storageBucket: "cas-chat-app-df45a.firebasestorage.app",
       messagingSenderId: "782939595753",
       appId: "1:782939595753:web:7e72fed873f75ce9e22178"
-    })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore())
+    })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
+    provideHttpClient(),
+    provideTranslateService({
+      lang: localStorage.getItem("language") || 'en',
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({
+        prefix: '/i18n/',
+        suffix: '.json'
+      })
+    }),
   ]
 };

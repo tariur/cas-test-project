@@ -12,6 +12,10 @@ $owner-related-button-color: #faf9fd;
     padding:10px;
     gap: 20px;
 }
+.lang-logout-container{
+    display:flex;
+    flex-direction: row;
+}
 mat-drawer-container{
     height:100%;
 }
