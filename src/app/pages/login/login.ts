@@ -53,9 +53,11 @@ export class Login {
       });
   }
 
+
   //Sign in with Facebook
   signInWithFacebook(){
-    this.authService.facebookSignIn().then(userCredential =>{
+    this.authService.facebookSignIn()
+    .then(userCredential =>{
       const user = userCredential.user;
       this.userService.createUserData(user.email || '', user.uid);
       this.userService.changeStatusOnline(user.uid);

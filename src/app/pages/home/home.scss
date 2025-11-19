@@ -1,3 +1,5 @@
+$owner-related-button-color: #faf9fd;
+
 .main-container{
     display:flex;
     flex-direction:column;
@@ -37,11 +39,21 @@ mat-drawer-content{
 .no-chat-opened-container > h2{
     text-align: center;
 }
-.create-group-button{
+.no-chat-opened-container > button{
+    background-color:$owner-related-button-color;
+}
+.create-group-button-container{
     display:flex;
     justify-content: center;
     margin-top:20px;
+
+}
+.create-group-button{
+    background-color: $owner-related-button-color;
 }
 .owned-group{
-    background-color: #faf9fd;
+    background-color: $owner-related-button-color;
+}
+.sidenav > button{
+    margin:10px;
 }

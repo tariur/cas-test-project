@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { collectionData, Firestore } from '@angular/fire/firestore';
-import { collection, getDocs, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
-import { Auth as FirebaseAuth} from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { collectionData, docData, Firestore } from '@angular/fire/firestore';
+import { collection, query, where, doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { Auth as FirebaseAuth } from '@angular/fire/auth';
+import { Observable, combineLatest, from, of } from 'rxjs';
 import { User } from '../model/User';
 
 @Injectable({
@@ -11,114 +11,100 @@ import { User } from '../model/User';
 export class UserService {
   private firestore = inject(Firestore);
   private firebaseAuth = inject(FirebaseAuth);
-  
-  async createUserData(email:string, uid:string){
-    if(await this.checkEmailAlreadyExists(email)){
-      return;
-    }
 
-    try{
-      const docRef = doc(this.firestore, "users", uid);
-      await setDoc(docRef, {
-        avatarURL: "",
-        email:email,
-        username:email,
-        online:true,
-        id:uid
-      });
-    }catch(e){
-      console.error("Error adding doc:", e);
-    }
-  }
-
-  async changeStatusOnline(uid:string){
+  changeStatusOnline(uid: string) {
     const docRef = doc(this.firestore, "users", uid);
-    await updateDoc(docRef, { online: true});
+    updateDoc(docRef, { online: true });
   }
   async changeStatusOffline(uid:string){
     const docRef = doc(this.firestore, "users", uid);
     await updateDoc(docRef, { online: false});
   }  
 
-  async checkEmailAlreadyExists(email:string):Promise<boolean>{
-    const usersRef = collection(this.firestore, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  }
-
-  async fetchUsernameById(userId:string):Promise<string>{
+  async fetchUsernameById(userId: string): Promise<string> {
     const usersRef = doc(this.firestore, 'users', userId);
     const userSnap = await getDoc(usersRef);
-    if(userSnap.exists()){
+    if (userSnap.exists()) {
       const data = userSnap.data();
       return data['username'] as string;
-    }else{
+    } else {
       console.warn('User document not found');
       return '';
     }
   }
 
-  //For currently logged in user
-  async fetchUsername():Promise<string | null>{
-    const user = this.firebaseAuth.currentUser;
-    if(!user) return null;
-    const userDocRef = doc(this.firestore, 'users', user.uid);
-    const userSnap = await getDoc(userDocRef);
-    if(userSnap.exists()){
-      const data = userSnap.data();
-      return data['username'] as string;
-    }else{
-      console.warn('User document does not exist');
-      return user.email;
-    }
-  }
-
   //Fetch user as User object by Id
-  async fetchUser(userId:string): Promise<User>{
+  async fetchUser(userId: string): Promise<User> {
     const userDocRef = doc(this.firestore, 'users', userId);
     const userSnap = await getDoc(userDocRef);
-    if(!userSnap.exists()){
+    if (!userSnap.exists()) {
       throw new Error('User not found!');
     }
     const data = userSnap.data();
-    return{
-      id:userId,
-      email:data['email'],
-      username:data['username'],
-      online:data['online'],
-      avatarURL:data['avatarUrl']
+    return {
+      id: userId,
+      email: data['email'],
+      username: data['username'],
+      online: data['online'],
+      avatarURL: data['avatarUrl']
     } as User;
   }
 
-  async updateUsername(newUsername: string): Promise<void>{
-    const user = this.firebaseAuth.currentUser;
-    if(!user) throw new Error('No user logged in');
-    const userDocRef = doc(this.firestore, 'users', user.uid);
-    await updateDoc(userDocRef, {username: newUsername});
+  createUserData(email: string, uid: string) {
+    const docRef = doc(this.firestore, 'users', uid);
+    return from(setDoc(docRef, {
+      avatarURL: '',
+      email: email,
+      username: email,
+      online: true,
+      id: uid
+    }));
   }
 
-  getAllUsers():Observable<User[]>{
+  updateUsername(newUsername: string): Observable<void> {
+    const user = this.firebaseAuth.currentUser;
+    if (!user) throw new Error('No user logged in');
+    const docRef = doc(this.firestore, 'users', user.uid);
+    return from(updateDoc(docRef, { 'username': newUsername }));
+  }
+
+  getUser(userId: string): Observable<User> {
+    const docRef = doc(this.firestore, 'users', userId);
+    return docData(docRef) as Observable<User>;
+  }
+
+  getAllUsers(): Observable<User[]> {
     const usersRef = collection(this.firestore, 'users');
     const user = this.firebaseAuth.currentUser;
-    if(user){
+    if (user) {
       const q = query(usersRef, where('id', '!=', user.uid))
-      return collectionData(q, {idField: 'id'}) as Observable<User[]>;
-    }else{
-      return collectionData(usersRef, {idField: 'id'}) as Observable<User[]>;
+      return collectionData(q, { idField: 'id' }) as Observable<User[]>;
+    } else {
+      return collectionData(usersRef, { idField: 'id' }) as Observable<User[]>;
     }
-    
+
   }
 
-  getOnlineUsers():Observable<User[]>{
+  getOnlineUsers(): Observable<User[]> {
     const userRef = collection(this.firestore, 'users');
     const user = this.firebaseAuth.currentUser;
-    if(user){
+    if (user) {
       const q = query(userRef, where("online", "==", true), where('id', '!=', user.uid));
-      return collectionData(q, {idField: 'id'}) as Observable<User[]>;
+      return collectionData(q, { idField: 'id' }) as Observable<User[]>;
     }
-    
-    return collectionData(userRef, {idField: 'id'}) as Observable<User[]>;
+
+    return collectionData(userRef, { idField: 'id' }) as Observable<User[]>;
   }
-  
+
+  getMembers(members: string[]): Observable<User[]> {
+    if (members.length <= 1) return of([]);
+    const currentUserId = this.firebaseAuth.currentUser?.uid;
+    if (!currentUserId) throw new Error('No user signed in');
+    const memberDocs$ = members.filter(id => id !== currentUserId).map(id => {
+      const userDoc = doc(this.firestore, `users/${id}`);
+      return docData(userDoc, { idField: 'id' }) as Observable<User>;
+    });
+    return combineLatest(memberDocs$);
+  }
+
 }

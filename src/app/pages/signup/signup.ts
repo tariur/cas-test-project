@@ -36,7 +36,6 @@ export class Signup {
   onSubmit(){
     this.signupError = '';
 
-    //Fetching signupForm properties
     const passwordValue = this.signupForm.get('password')?.value || '';
     const rePasswordValue = this.signupForm.get('passwordAgain')?.value || '';
     const emailValue = this.signupForm.get('email')?.value  || '';
@@ -46,15 +45,13 @@ export class Signup {
       return;
     }
 
-    //Signing up user, using auth.ts service signup() function
-    this.authService.signup(emailValue, passwordValue)
-      .then(userCredential => {
+    this.authService.signup(emailValue, passwordValue).subscribe({
+      next: userCredential =>{
         const user = userCredential.user;
-        this.userService.createUserData(user.email || '', user.uid);
-        this.router.navigateByUrl('/home');
-      })
-      .catch(error => {
-        switch(error.code){
+        this.userService.createUserData(user.email || '', user.uid)
+      },
+      error: e => {
+        switch(e.code){
           case 'auth/email-already-in-use':
             this.signupError = 'Email already in use';
             break;
@@ -64,7 +61,10 @@ export class Signup {
           default:
             break;
         }
-      });
-  }
-
+      },
+      complete:()=> {
+        this.router.navigateByUrl('/home');
+      }
+    });
+  }  
 }

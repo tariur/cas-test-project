@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { signInWithEmailAndPassword, Auth as FirebaseAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, FacebookAuthProvider } from 'firebase/auth';
 import { Auth as FirebaseAuthToken } from '@angular/fire/auth';
 import { UserService } from './user-service';
+import { from } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +15,7 @@ export class Auth {
   }
 
   signup(email:string, password:string){
-    return createUserWithEmailAndPassword(this.auth, email, password);
+    return from(createUserWithEmailAndPassword(this.auth, email, password));
   }
 
   googleSignIn(){
