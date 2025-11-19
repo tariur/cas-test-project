@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild, input } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,7 +18,7 @@ import { UserService } from '../../../services/user-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '../../../model/User';
 import { MatMenuModule } from '@angular/material/menu';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 @Component({
@@ -45,8 +45,9 @@ export class ChatWindow implements OnInit, AfterViewInit {
   currentRoom?: ChatRoom;
   loadedOnce = false;
 
-  @Input() allUsers$!: Observable<User[]>;
-  @Input() selectedRoom$!: Observable<ChatRoom>;
+  readonly allUsers$ = input.required<Observable<User[]>>();
+  readonly selectedRoom$ = input.required<Observable<ChatRoom>>();
+
   memberUsers$!: Observable<User[]>;
   owner$!: Observable<User>;
   currentUser$!: Observable<User>;
@@ -56,7 +57,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
-      this.selectedRoom$.pipe(takeUntilDestroyed(this.destroyRef))
+      this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(room => {
         if(room){
           this.loadedOnce = true;
@@ -98,7 +99,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
       this.newMessage = '';
       return;
     }
-    combineLatest([this.selectedRoom$, this.currentUser$])
+    combineLatest([this.selectedRoom$(), this.currentUser$])
       .pipe(
         take(1),
         switchMap(([room, user]) => {

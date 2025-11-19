@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
-import { forkJoin, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { forkJoin, from, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
 import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
@@ -94,7 +94,6 @@ export class ChatService {
 
   createPublicGroup(currentUserId: string): Observable<ChatRoom> {
     const chatRoomsCollRef = collection(this.firestore, 'chatRooms');
-
     return this.userService.getUser(currentUserId).pipe(
       take(1),
       switchMap((user: User) => {
@@ -112,7 +111,8 @@ export class ChatService {
             )
           )
         )
-      })
+      }),
+      shareReplay(1)
     );
   }
 
@@ -136,7 +136,8 @@ export class ChatService {
             )
           )
         )
-      })
+      }),
+      shareReplay(1)
     );
   }
 
@@ -158,8 +159,9 @@ export class ChatService {
             )
           )
         )
-      })
-    )
+      }),
+      shareReplay(1)
+    );
   }
 
   addUserToPrivateGroup(userId: string, roomId: string):Observable<void> {

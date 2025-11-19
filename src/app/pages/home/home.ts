@@ -65,34 +65,49 @@ export class Home implements OnInit {
   }
 
   openPrivateChat(userId: string) {
-    this.selectedRoom$ = null;
     this.isLoading = true;
+    this.selectedRoom$ = null;
     setTimeout(()=>{
       this.selectedRoom$ = this.chatService.findPrivateChat(userId);
-    }, 4000);
-    this.isLoading = false;
+      this.isLoading = false;
+    }, 300);
   }
 
   openGroup(roomId: string) {
-    this.selectedRoom$ = null;
     this.isLoading = true;
+    this.selectedRoom$ = null;
     setTimeout(()=>{
       this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
       this.chatService.addUserToPasswordAndPrivateGroup(roomId);
       this.isLoading = false;
-    }, 4000);
+    }, 300);
   }
 
   createPublicGroup() {
-    this.selectedRoom$ = this.chatService.createPublicGroup(this.currentUserId);
+    this.isLoading = true;
+    this.selectedRoom$ = null;
+    setTimeout(()=>{
+      this.selectedRoom$ = this.chatService.createPublicGroup(this.currentUserId);
+      this.isLoading = false;
+    }, 300);
   }
 
   createPrivateGroup() {
-    this.selectedRoom$ = this.chatService.createPrivateGroup(this.currentUserId);
+    this.isLoading = true;
+    this.selectedRoom$ = null;
+    setTimeout(()=>{
+      this.selectedRoom$ = this.chatService.createPrivateGroup(this.currentUserId);
+      this.isLoading = false;
+    }, 300);
   }
 
   createPasswordGroup(password: string) {
-    this.selectedRoom$ = this.chatService.createPasswordGroup(this.currentUserId, password);
+    this.isLoading = true;
+    this.selectedRoom$ = null;
+    setTimeout(()=>{
+      this.selectedRoom$ = this.chatService.createPasswordGroup(this.currentUserId, password);
+      this.isLoading = false;
+    }, 300);
   }
 
   openChangeUsernameDialog() {
