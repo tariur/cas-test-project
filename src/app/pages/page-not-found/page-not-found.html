@@ -1,8 +1,9 @@
 <div class="main-container">
     <div>
-        <h1>Page Not Found</h1>
+        <h1>{{'app.page-not-found.title' | translate}}</h1>
     </div>
     <div class="landing-button">
-        <button matButton="outlined" (click)="landingPage()">Return to Landing Page</button>
+        <button matButton="outlined" (click)="landingPage()">{{'app.page-not-found.landing-redirect' | translate}}</button>
     </div>
+    <app-language-selector></app-language-selector>
 </div>

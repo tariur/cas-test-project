@@ -1,11 +1,105 @@
 {
     "app": {
-        "english":"Englisch",
+        "english": "English",
         "german": "Deutsch",
         "landing": {
             "title": "Chat-App",
             "loginButton": "Anmelden",
             "signupButton": "Registrieren"
+        },
+        "login": {
+            "title": "Anmelden",
+            "email": "E-mail",
+            "password": "Passwort",
+            "email-format-error": "Ungültiges E-Mail-Format",
+            "login": "Anmelden",
+            "signup": "Stattdessen registrieren",
+            "google-login": "Anmelden mit Google",
+            "facebook-login": "Anmelden mit Facebook"
+        },
+        "signup": {
+            "title": "Registrierung",
+            "email": "E-Mail",
+            "password": "Passwort",
+            "repassword": "Passwort erneut",
+            "submit": "Absenden",
+            "login-redirect": "Zurück zum Login"
+        },
+        "page-not-found": {
+            "title": "Seite nicht gefunden",
+            "landing-redirect": "Zurück zur Startseite"
+        },
+        "home": {
+            "title": "Chatte mit anderen Benutzern oder erstelle Chaträume!",
+            "greet": "Hallo",
+            "signout": "Abmelden",
+            "all-users-label": "Alle Benutzer",
+            "online-users-label": "Online-Benutzer",
+            "groups-label": "Räume",
+            "public-groups-label": "Öffentliche Räume",
+            "password-groups-label": "Passwortgeschützte Räume",
+            "private-groups-label": "Private Räume",
+            "username-tooltip": "Klicken, um den Benutzernamen zu ändern",
+            "open-chatlist": "Starte den Chat...",
+            "public-room-add": "Neuen öffentlichen Raum erstellen",
+            "password-room-add": "Neuen passwortgeschützten Raum erstellen",
+            "private-room-add": "Neuen privaten Raum erstellen",
+            "loading": "Lädt..."
+        },
+        "password-room-create-dialog": {
+            "title": "Passwort für Raum erstellen",
+            "password": "Passwort",
+            "repassword": "Passwort erneut",
+            "save": "Raum erstellen",
+            "cancel": "Abbrechen"
+        },
+        "password-room-join-dialog": {
+            "title": "Passwortraum beitreten",
+            "password": "Passwort",
+            "save": "Raum beitreten",
+            "cancel": "Abbrechen"
+        },
+        "username-change-dialog": {
+            "title": "Benutzernamen ändern",
+            "label": "Neuer Benutzername",
+            "saving": "Speichern...",
+            "save": "Speichern",
+            "cancel": "Abbrechen"
+        },
+        "delete-room-dialog": {
+            "title": "Chatraum löschen",
+            "content": "Möchten Sie diesen Chatraum löschen? <strong>Dies wird alle Nachrichten löschen</strong>",
+            "confirm": "Löschen",
+            "cancel": "Abbrechen"
+        },
+        "chatname-change-dialog": {
+            "title": "Chatraum-Namen ändern",
+            "label": "Neuer Chatraum-Name",
+            "saving": "Speichern...",
+            "save": "Speichern",
+            "cancel": "Abbrechen"
+        },
+        "chat": {
+            "owner-name": "Besitzer",
+            "chatname-tooltip": "Klicken, um den Chatraum-Namen zu ändern",
+            "add-users-tooltip": "Benutzer zum Chatraum hinzufügen",
+            "add-user-tooltip": "Benutzer hinzufügen",
+            "remove-users-tooltip": "Benutzer aus dem Chatraum entfernen",
+            "remove-user": "Benutzer entfernen",
+            "users-tooltip": "Andere Benutzer im Chatraum anzeigen",
+            "close-tooltip": "Chat schließen",
+            "delete-tooltip": "Chatraum löschen",
+            "message-bubble": "von",
+            "textbox-placeholder": "Nachricht schreiben..."
+        },
+        "error": {
+            "email-password": "E-Mail und/oder Passwort falsch",
+            "password-match": "Passwörter stimmen nicht überein",
+            "password-short": "Das Passwort muss mindestens 6 Zeichen lang sein",
+            "email-used": "E-Mail wird bereits verwendet",
+            "enter-password-create": "Bitte geben Sie ein Passwort ein",
+            "enter-password-join": "Bitte geben Sie das Passwort ein",
+            "password-incorrect": "Falsches Passwort"
         }
     }
 }

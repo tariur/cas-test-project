@@ -2,10 +2,15 @@ import { Component, inject } from '@angular/core';
 import { MatDialogRef, MatDialogActions, MatDialogContent, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ChatService } from '../../../../services/chat-service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete-chat-dialog',
-  imports: [MatButtonModule, MatDialogActions, MatDialogContent],
+  imports: [TranslatePipe, 
+    MatButtonModule, 
+    MatDialogActions, 
+    MatDialogContent
+  ],
   templateUrl: './delete-chat-dialog.html',
   styleUrl: './delete-chat-dialog.scss'
 })

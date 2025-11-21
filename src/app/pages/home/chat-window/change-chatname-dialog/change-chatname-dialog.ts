@@ -5,10 +5,19 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-change-chatname-dialog',
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, FormsModule, MatDialogActions, MatDialogContent],
+  imports: [
+    TranslatePipe, 
+    MatButtonModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    FormsModule, 
+    MatDialogActions, 
+    MatDialogContent
+  ],
   templateUrl: './change-chatname-dialog.html',
   styleUrl: './change-chatname-dialog.scss'
 })

@@ -1,28 +1,29 @@
 <div class="main-container">
     <div class="form-container">
-        <h1>Signup</h1>
+        <h1>{{'app.signup.title' | translate}}</h1>
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="input-fields">
             <mat-form-field appearance="outline">
-                <mat-label>Email</mat-label>
+                <mat-label>{{'app.signup.email' | translate}}</mat-label>
                 <input matInput type="email" formControlName="email">
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Password</mat-label>
+                <mat-label>{{'app.signup.password' | translate}}</mat-label>
                 <input matInput type="password" formControlName="password">
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Password again</mat-label>
+                <mat-label>{{'app.signup.repassword' | translate}}</mat-label>
                 <input matInput type="password" formControlName="passwordAgain">
             </mat-form-field>
             <div class="error-messages">
                 @if(signupError){
-                    <p class="error-message">{{signupError}}</p>
+                    <p class="error-message">{{signupError | translate}}</p>
                 }
             </div>
             <div class="form-buttons">
-                <button matButton="outlined" type="submit" [disabled]="!signupForm.valid">Submit</button>
-                <button matButton="outlined" (click)="loginPage()">Back to Login</button>
+                <button matButton="outlined" type="submit" [disabled]="!signupForm.valid">{{'app.signup.submit' | translate}}</button>
+                <button matButton="outlined" (click)="loginPage()">{{'app.signup.login-redirect' | translate}}</button>
             </div>
         </form>
     </div>
+    <app-language-selector></app-language-selector>
 </div>

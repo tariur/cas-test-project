@@ -22,10 +22,24 @@ import { CreateGroupPasswordDialog } from './create-group-password-dialog/create
 import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-password-group-dialog';
 import { Observable } from 'rxjs';
 import { LanguageSelector } from '../language-selector/language-selector';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, LanguageSelector, ChatWindow, NgClass, MatTooltipModule, MatDividerModule, MatButtonModule, MatIconModule, MatSidenavModule, MatTabsModule, MatListModule],
+  imports: [
+    CommonModule, 
+    TranslatePipe, 
+    LanguageSelector, 
+    ChatWindow, 
+    NgClass, 
+    MatTooltipModule, 
+    MatDividerModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    MatSidenavModule, 
+    MatTabsModule, 
+    MatListModule
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })

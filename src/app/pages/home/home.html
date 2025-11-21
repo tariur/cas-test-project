@@ -1,9 +1,9 @@
 <div class="main-container">
   <div class="navbar-container">
-    <button matButton="tonal" matTooltip="Click to change username" (click)="openChangeUsernameDialog()">Hello, {{
+    <button matButton="tonal" matTooltip="{{'app.home.username-tooltip' | translate}}" (click)="openChangeUsernameDialog()">{{'app.home.greet' | translate}}, {{
       (currentUser$ | async)?.username }}</button>
     <div class="lang-logout-container">
-      <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>Signout</button>
+      <button matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>{{'app.home.signout' | translate}}</button>
       <app-language-selector></app-language-selector>
     </div>
   </div>
@@ -11,7 +11,7 @@
     <mat-drawer #sidenav mode="over" closed class="sidenav">
       <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
       <mat-tab-group>
-        <mat-tab label="All users">
+        <mat-tab label="{{'app.home.all-users-label' | translate}}">
           <mat-list>
             @for(user of allUsers$ | async; track user.id){
               <mat-list-item><button (click)="openPrivateChat(user.id)"
@@ -21,7 +21,7 @@
             }
           </mat-list>
         </mat-tab>
-        <mat-tab label="Online users">
+        <mat-tab label="{{'app.home.online-users-label' | translate}}">
           @for (user of onlineUsers$ | async; track user.id) {
           <mat-list>
             <mat-list-item><button (click)="openPrivateChat(user.id)" matButton="outlined"
@@ -30,9 +30,9 @@
           </mat-list>
           }
         </mat-tab>
-        <mat-tab label="Groups">
+        <mat-tab label="{{'app.home.groups-label' | translate}}">
           <mat-tab-group>
-            <mat-tab label="Public Groups">
+            <mat-tab label="{{'app.home.public-groups-label' | translate}}">
               @for (group of publicGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)"
@@ -41,10 +41,10 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="createPublicGroup()"><mat-icon>add</mat-icon>Create new public room</button>
+                <button class="create-group-button" matButton="outlined" (click)="createPublicGroup()"><mat-icon>add</mat-icon>{{'app.home.public-room-add' | translate}}</button>
               </div>
             </mat-tab>
-            <mat-tab label="Password Groups">
+            <mat-tab label="{{'app.home.password-groups-label' | translate}}">
               @for (group of passwordGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined"
@@ -54,10 +54,10 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="openPasswordGroupDialog()"><mat-icon>add</mat-icon>Create new password room</button>
+                <button class="create-group-button" matButton="outlined" (click)="openPasswordGroupDialog()"><mat-icon>add</mat-icon>{{'app.home.password-room-add' | translate}}</button>
               </div>
             </mat-tab>
-            <mat-tab label="Private Groups">
+            <mat-tab label="{{'app.home.private-groups-label' | translate}}">
               @for (group of privateGroups$ | async; track group.roomId) {
               <mat-list>
                 <mat-list-item><button matButton="outlined" (click)="openGroup(group.roomId)"
@@ -66,7 +66,7 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="createPrivateGroup()"><mat-icon>add</mat-icon>Create new private room</button>
+                <button class="create-group-button" matButton="outlined" (click)="createPrivateGroup()"><mat-icon>add</mat-icon>{{'app.home.private-room-add' | translate}}</button>
               </div>
             </mat-tab>
           </mat-tab-group>
@@ -80,13 +80,12 @@
         [allUsers$]="allUsers$"></app-chat-window>
       }@else if (isLoading){
       <div class="no-chat-opened-container">
-        <h2>Loading...</h2>
+        <h2>{{'app.home.loading' | translate}}</h2>
       </div>
       }@else{
       <div class="no-chat-opened-container">
-        <h2>Chat with other users, or create chatrooms!</h2>
-        <button (click)="sidenav.toggle()" matButton="outlined">Start
-          chatting...</button>
+        <h2>{{'app.home.title' | translate}}</h2>
+        <button (click)="sidenav.toggle()" matButton="outlined">{{'app.home.open-chatlist' | translate}}</button>
       </div>
       }
     </mat-drawer-content>

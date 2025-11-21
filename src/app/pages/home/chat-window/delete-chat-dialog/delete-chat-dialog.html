@@ -1,10 +1,8 @@
 <div class="dialog-container">
-    <h2 mat-dialog-title>Delete chatroom</h2>
-    <mat-dialog-content>
-        Would you like to delete this chatroom? <strong>this will delete all messages</strong>
-    </mat-dialog-content>
+    <h2 mat-dialog-title>{{'app.delete-room-dialog.title' | translate}}</h2>
+    <mat-dialog-content [innerHTML]="'app.delete-room-dialog.content' | translate"></mat-dialog-content>
     <mat-dialog-actions>
-        <button matButton (click)="cancel()">Cancel</button>
-        <button matButton (click)="confirm()" id="confirm-button">Delete</button>
+        <button matButton (click)="confirm()" id="confirm-button">{{'app.delete-room-dialog.confirm' | translate}}</button>
+        <button matButton (click)="cancel()">{{'app.delete-room-dialog.cancel' | translate}}</button>
     </mat-dialog-actions>
 </div>

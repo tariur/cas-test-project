@@ -20,10 +20,20 @@ import { User } from '../../../model/User';
 import { MatMenuModule } from '@angular/material/menu';
 import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat-window',
-  imports: [CommonModule, FormsModule, NgClass, MatMenuModule, MatDividerModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [TranslatePipe, 
+    CommonModule, 
+    FormsModule, 
+    NgClass, 
+    MatMenuModule, 
+    MatDividerModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    MatTooltipModule
+  ],
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
