@@ -99,7 +99,12 @@
             "email-used": "E-Mail wird bereits verwendet",
             "enter-password-create": "Bitte geben Sie ein Passwort ein",
             "enter-password-join": "Bitte geben Sie das Passwort ein",
-            "password-incorrect": "Falsches Passwort"
+            "password-incorrect": "Falsches Passwort",
+            "room-delete-restricted": "Der Raum kann nur vom Besitzer gelöscht werden",
+            "room-namechange-restricted": "Der Raumname kann nur vom Besitzer geändert werden",
+            "user-already-member": "Der Benutzer ist bereits Mitglied",
+            "user-added": "Benutzer wurde der Gruppe erfolgreich hinzugefügt",
+            "user-removed": "Benutzer wurde erfolgreich aus der Gruppe entfernt"
         }
     }
 }

@@ -99,7 +99,12 @@
             "email-used": "Email already in use",
             "enter-password-create": "Please enter a password",
             "enter-password-join": "Please enter the password",
-            "password-incorrect": "Incorrect password"
+            "password-incorrect": "Incorrect password",
+            "room-delete-restricted": "Room can only be deleted by owner",
+            "room-namechange-restricted": "Room name can only be changed by owner",
+            "user-already-member": "User is already a member",
+            "user-added": "User successfully added to group",
+            "user-removed": "User successfully removed from group"
         }
     }
 }

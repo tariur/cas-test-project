@@ -21,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguagesService } from '../../../services/languages-service';
 
 @Component({
   selector: 'app-chat-window',
@@ -44,6 +45,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
   private firebaseAuth = inject(Auth);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
+  private languagesService = inject(LanguagesService);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
@@ -145,7 +147,9 @@ export class ChatWindow implements OnInit, AfterViewInit {
           }
         });
       } else {
-        this._snackBar.open('Group can only be deleted by owner', 'Ok');
+        this.languagesService.getTranslate('app.error.room-delete-restricted').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res:string) =>{
+          this._snackBar.open(res, 'Ok');
+        });
       }
     }
 
@@ -160,7 +164,11 @@ export class ChatWindow implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed();
       } else {
-        this._snackBar.open('Group name can only be changed by owner', 'Ok');
+        this.languagesService.getTranslate('app.error.room-namechange-restricted')
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((res:string)=>{
+          this._snackBar.open(res, 'Ok');
+        });
       }
     }
 
@@ -172,10 +180,18 @@ export class ChatWindow implements OnInit, AfterViewInit {
       map(u => u.some(u => u.id === userId)),
     ).subscribe(exists => {
       if (exists) {
-        this._snackBar.open('User is already a member', 'Ok');
+        this.languagesService.getTranslate('app.error.user-already-member')
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((res:string)=>{
+          this._snackBar.open(res, 'Ok');
+        });
       } else {
         this.chatService.addUserToPrivateGroup(userId, this.currentRoom!.roomId).subscribe(() => {
-          this._snackBar.open('User successfully added to group', 'Ok');
+          this.languagesService.getTranslate('app.error.user-added')
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((res:string)=>{
+            this._snackBar.open(res, 'Ok');
+          });
         });
       }
     });
@@ -189,7 +205,11 @@ export class ChatWindow implements OnInit, AfterViewInit {
         return this.chatService.removeUserFromPrivateGroup(userId, this.currentRoom!.roomId);
       })
     ).subscribe(() => {
-      this._snackBar.open('User successfully removed from group', 'Ok');
+      this.languagesService.getTranslate('app.error.user-removed')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res:string)=>{
+        this._snackBar.open(res, 'Ok');
+      });
     }
     );
   }
