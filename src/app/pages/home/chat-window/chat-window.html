@@ -1,29 +1,29 @@
 <div class="window-container">
   @if(selectedRoom$() | async; as currentRoom){
     @if(currentRoom.restrictions !== "private-chat"){
-      <button matButton="outlined" [disabled]="true" class="owner-name">Owner: {{ (owner$ | async)?.username}}</button>
-      <button matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+      <button matButton="outlined" [disabled]="true" class="owner-name">{{'app.chat.owner-name' | translate}}: {{(owner$ | async)?.username}}</button>
+      <button matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()">{{currentRoom.roomName}}</button>
     }
     <div [ngClass]="currentRoom.restrictions === 'private-chat' ? 'room-name-container-private' : 'room-name-container' ">
       <div class="chat-room-name-add-buttons">
         @if(currentRoom.restrictions === "private-chat"){
-        <button id="room-name" matButton="tonal" matTooltip="Click to change chat name" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+        <button id="room-name" matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()">{{currentRoom.roomName}}</button>
         }
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
-          <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="Add users to group"><mat-icon id="add-user" >person_add</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="{{'app.chat.add-users-tooltip' | translate}}"><mat-icon id="add-user" >person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
           @for(user of allUsers$() | async; track user.id){
-            <button mat-menu-item matTooltip="Add user" (click)="addUserToPrivateGroup(user.id)"><mat-icon id="add-user">person_add</mat-icon>{{user.username}}</button>
+            <button mat-menu-item matTooltip="{{'app.chat.add-user-tooltip' | translate}}" (click)="addUserToPrivateGroup(user.id)"><mat-icon id="add-user">person_add</mat-icon>{{user.username}}</button>
           } 
           </mat-menu>
-          <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="Remove users group"><mat-icon id="remove-member">person_remove</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="{{'app.chat.remove-users-tooltip' | translate}}"><mat-icon id="remove-member">person_remove</mat-icon></button>
           <mat-menu #removeMenu="matMenu">
             @for (user of memberUsers$ | async; track user.id) {
-              <button mat-menu-item matTooltip="Remove user" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon id="remove-member">person_remove</mat-icon>{{user.username}}</button>
+              <button mat-menu-item matTooltip="{{'app.chat.remove-user' | translate}}" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon id="remove-member">person_remove</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
         }
-          <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="Show other users in group"><mat-icon id="chat-members">group</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="{{'app.chat.users-tooltip' | translate}}"><mat-icon id="chat-members">group</mat-icon></button>
           <mat-menu #membersMenu="matMenu">
             @for (user of memberUsers$ | async; track user) {
               @if(user){
@@ -33,8 +33,8 @@
           </mat-menu>
       </div>
       <div class="chat-room-buttons">
-        <button id="close-chat" matIconButton matTooltip="Close chat" (click)="handleCloseChat()"><mat-icon>keyboard_return</mat-icon></button>
-        <button id="delete-chat" matIconButton matTooltip="Delete chat" (click)="deleteChat()"><mat-icon>delete</mat-icon></button>
+        <button id="close-chat" matIconButton matTooltip="{{'app.chat.close-tooltip' | translate}}" (click)="handleCloseChat()"><mat-icon>keyboard_return</mat-icon></button>
+        <button id="delete-chat" matIconButton matTooltip="{{'app.chat.delete-tooltip' | translate}}" (click)="deleteChat()"><mat-icon>delete</mat-icon></button>
       </div>
     </div>
     <mat-divider></mat-divider>
@@ -42,7 +42,7 @@
       @for (msg of messages$ | async; track msg.id) {
         <div [ngClass]="msg.senderId === currentUserId ? 'current-user-message' : 'partner-message'">
           <div class="message-contents">
-            <p class="sender-name">from: {{msg.senderName}}</p>
+            <p class="sender-name">{{'app.chat.message-bubble' | translate}}: {{msg.senderName}}</p>
             <p class="message-bubble">{{msg.content}}</p>
           </div>
         </div>
@@ -50,7 +50,7 @@
     </div>
     <mat-divider></mat-divider>
     <div class="input-field-container">
-        <input (keyup)="sendWithEnter($event)" [(ngModel)]="newMessage" type="text" placeholder="Write a message..." class="message-input">
+        <input (keyup)="sendWithEnter($event)" [(ngModel)]="newMessage" type="text" placeholder="{{'app.chat.textbox-placeholder' | translate}}" class="message-input">
         <button matIconButton (click)="sendMessage()" class="send-button"><mat-icon>send</mat-icon></button>
     </div>
   }

@@ -8,10 +8,12 @@ import { Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import {MatDividerModule} from '@angular/material/divider';
 import { UserService } from '../../services/user-service';
+import { LanguageSelector } from '../language-selector/language-selector';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDividerModule],
+  imports: [ReactiveFormsModule, TranslatePipe, LanguageSelector, MatFormFieldModule, MatInputModule, MatButtonModule, MatDividerModule],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
@@ -21,7 +23,7 @@ export class Login {
   private router = inject(Router);
 
   //Template prints loginError, after submitting invalid loginForm
-  loginError = '';
+  loginErrorKey = '';
 
   //Login reactive form
   private formBuilder = inject(FormBuilder);
@@ -78,7 +80,7 @@ export class Login {
         this.router.navigateByUrl('/home');
       })
       .catch(() => {
-        this.loginError = 'Email and/or password incorrect';
+        this.loginErrorKey = 'app.error.email-password';
       });
   }
 }

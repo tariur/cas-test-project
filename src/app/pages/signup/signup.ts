@@ -7,10 +7,19 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
 import { UserService } from '../../services/user-service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSelector } from '../language-selector/language-selector';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [
+    TranslatePipe,
+    LanguageSelector,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './signup.html',
   styleUrl: './signup.scss'
 })
@@ -41,7 +50,7 @@ export class Signup {
     const emailValue = this.signupForm.get('email')?.value  || '';
 
     if(passwordValue !== rePasswordValue){
-      this.signupError = 'Passwords are not mathcing'
+      this.signupError = 'app.error.password-match'
       return;
     }
 
@@ -53,10 +62,10 @@ export class Signup {
       error: e => {
         switch(e.code){
           case 'auth/email-already-in-use':
-            this.signupError = 'Email already in use';
+            this.signupError = 'app.error.email-used';
             break;
           case 'auth/weak-password':
-            this.signupError = 'Password should be at least 6 characters';
+            this.signupError = 'app.error.password-short';
             break;
           default:
             break;

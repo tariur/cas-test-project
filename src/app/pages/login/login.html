@@ -1,32 +1,33 @@
 <div class="main-container">
     <div class="form-container">
-        <h1>Login</h1>
+        <h1>{{'app.login.title' | translate}}</h1>
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="input-fields">
             <mat-form-field appearance="outline">
-                <mat-label>Email</mat-label>
+                <mat-label>{{'app.login.email' | translate}}</mat-label>
                 <input matInput type="email" formControlName="email">
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Password</mat-label>
+                <mat-label>{{'app.login.password' | translate}}</mat-label>
                 <input matInput type="password" formControlName="password">
             </mat-form-field>
             <div class="error-messages">
                 @if(email?.hasError('email')){
-                    <p class="error-message">Invalid email format</p>
+                    <p class="error-message">{{'app.login.email-format-error' | translate}}</p>
                 }
-                @if(loginError){
-                    <p class="error-message">{{loginError}}</p>
+                @if(loginErrorKey){
+                    <p class="error-message">{{loginErrorKey | translate}}</p>
                 }
             </div>
             <div class="form-buttons">
-                <button matButton="outlined" type="submit" [disabled]="!loginForm.valid">Login</button>
-                <button matButton="outlined" (click)="signupPage()">Sign up instead</button>
+                <button matButton="outlined" type="submit" [disabled]="!loginForm.valid">{{'app.login.login' | translate}}</button>
+                <button matButton="outlined" (click)="signupPage()">{{'app.login.signup' | translate}}</button>
             </div>
             <mat-divider></mat-divider>
         </form>
         <div class="google-facebook-buttons">
-            <button matButton="elevated" (click)="signInWithGoogle()">Sign in with Google</button>
-            <button matButton="filled" (click)="signInWithFacebook()">Sign in with Facebook</button>
+            <button matButton="elevated" (click)="signInWithGoogle()">{{'app.login.google-login' | translate}}</button>
+            <button matButton="filled" (click)="signInWithFacebook()">{{'app.login.facebook-login' | translate}}</button>
         </div>
     </div>
+    <app-language-selector></app-language-selector>
 </div>

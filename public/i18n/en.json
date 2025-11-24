@@ -1,0 +1,110 @@
+{
+    "app": {
+        "english": "English",
+        "german": "Deutsch",
+        "landing": {
+            "title": "Chat-App",
+            "loginButton": "Login",
+            "signupButton": "Signup"
+        },
+        "login": {
+            "title": "Login",
+            "email": "Email",
+            "password": "Password",
+            "email-format-error": "Invalid email format",
+            "login": "Login",
+            "signup": "Sign up instead",
+            "google-login": "Sign in with Google",
+            "facebook-login": "Sign in with Facebook"
+        },
+        "signup": {
+            "title": "Sign-Up",
+            "email": "Email",
+            "password": "Password",
+            "repassword": "Password again",
+            "submit": "Submit",
+            "login-redirect": "Back to Login"
+        },
+        "page-not-found": {
+            "title": "Page Not Found",
+            "landing-redirect": "Return to Landing Page"
+        },
+        "home": {
+            "title": "Chat with other users, or create chatrooms!",
+            "greet": "Hello",
+            "signout": "Signout",
+            "all-users-label": "All users",
+            "online-users-label": "Online users",
+            "groups-label": "Rooms",
+            "public-groups-label": "Public rooms",
+            "password-groups-label": "Password rooms",
+            "private-groups-label": "Private rooms",
+            "username-tooltip": "Click to change username",
+            "open-chatlist": "Start chatting...",
+            "public-room-add": "Create new public room",
+            "password-room-add": "Create new password room",
+            "private-room-add": "Create new private room",
+            "loading": "Loading..."
+        },
+        "password-room-create-dialog": {
+            "title": "Create password for room",
+            "password": "Password",
+            "repassword": "Password again",
+            "save": "Create room",
+            "cancel": "Cancel"
+        },
+        "password-room-join-dialog": {
+            "title": "Join password room",
+            "password": "password",
+            "save": "Join room",
+            "cancel": "Cancel"
+        },
+        "username-change-dialog": {
+            "title": "Change username",
+            "label": "New username",
+            "saving": "Saving...",
+            "save": "Save",
+            "cancel": "Cancel"
+        },
+        "delete-room-dialog":{
+            "title":"Delete chatroom",
+            "content": "Would you like to delete this chatroom? <strong>this will delete all messages</strong>",
+            "confirm": "Delete",
+            "cancel": "Cancel"
+        },
+        "chatname-change-dialog": {
+            "title": "Change chatroom name",
+            "label": "New chatroom name",
+            "saving": "Saving...",
+            "save": "Save",
+            "cancel": "Cancel"
+        },
+        "chat":{
+            "owner-name": "Owner",
+            "chatname-tooltip": "Click to change chatroom name",
+            "add-users-tooltip": "Add users to chatroom",
+            "add-user-tooltip": "Add user",
+            "remove-users-tooltip": "Remove users from chatroom",
+            "remove-user": "Remove user",
+            "users-tooltip": "Show other users in chatroom",
+            "close-tooltip": "Close chat",
+            "delete-tooltip": "Delete chatroom",
+            "message-bubble": "from",
+            "textbox-placeholder": "Write a message..."
+        },
+        "error":{
+            "email-password": "Email and/or password incorrect",
+            "password-match": "Passswords are not matching",
+            "password-short": "Password should be at least 6 characters",
+            "email-used": "Email already in use",
+            "enter-password-create": "Please enter a password",
+            "enter-password-join": "Please enter the password",
+            "password-incorrect": "Incorrect password",
+            "room-delete-restricted": "Room can only be deleted by owner",
+            "room-namechange-restricted": "Room name can only be changed by owner",
+            "user-already-member": "User is already a member",
+            "user-added": "User successfully added to group",
+            "user-removed": "User successfully removed from group"
+        }
+    }
+}

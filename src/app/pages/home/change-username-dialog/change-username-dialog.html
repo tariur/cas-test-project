@@ -1,8 +1,8 @@
 <div class="dialog-container">
-    <h2 mat-dialog-title>Change username</h2>
+    <h2 mat-dialog-title>{{'app.username-change-dialog.title' | translate}}</h2>
 <mat-dialog-content>
     <mat-form-field appearance="fill">
-        <mat-label>New Username</mat-label>
+        <mat-label>{{'app.username-change-dialog.label' | translate}}</mat-label>
         <input matInput [(ngModel)]="newUsername"/>
     </mat-form-field>
     @if(updateMessage){
@@ -10,7 +10,7 @@
     }
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button matButton (click) ="save()" [disabled]="loading">{{loading ? 'Saving...' : 'Save'}}</button>
-    <button matButton (click)="cancel()" [disabled]="loading">Cancel</button>
+    <button matButton (click) ="save()" [disabled]="loading">{{loading ? ('app.username-change-dialog.saving' | translate) : ('app.username-change-dialog.save' | translate)}}</button>
+    <button matButton (click)="cancel()" [disabled]="loading">{{'app.username-change-dialog.cancel' | translate}}</button>
 </mat-dialog-actions>
 </div>

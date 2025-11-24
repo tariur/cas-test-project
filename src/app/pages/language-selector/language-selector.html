@@ -1,0 +1,7 @@
+<div class="language-selector-container">
+    <button matIconButton [matMenuTriggerFor]="menu" id="menu"><mat-icon>language</mat-icon></button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="useLanguage('en')">{{'app.english' | translate}}</button>
+        <button mat-menu-item (click)="useLanguage('de')">{{'app.german' | translate}}</button>
+    </mat-menu>
+</div>
