@@ -16,7 +16,7 @@
             @for(user of allUsers$ | async; track user.id){
               <mat-list-item><button (click)="openPrivateChat(user.id)"
                   [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'"
-                  matButton="outlined"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+                  matButton="outlined" class="allUsersButtons"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
               <mat-divider></mat-divider>
             }
           </mat-list>
