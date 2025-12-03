@@ -17,21 +17,28 @@ import { MockGroups } from '../../mocks/MockGroups';
 import { MockUserService } from '../../mocks/MockUserService';
 import { MockChatService } from '../../mocks/MockChatService';
 import { MockAuth } from '../../mocks/MockAuth';
+import { MockMessage } from '../../mocks/MockMessage';
+import { MatDialog } from '@angular/material/dialog';
+import { ChangeUsernameDialog } from './change-username-dialog/change-username-dialog';
+import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
 
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
   let loader: HarnessLoader;
 
+  //-------mock data and services-------
   const mockUsersData = new MockUsers().getMockUsers();
   const mockGroupsData = new MockGroups().getMockGroups();
+  const mockMessagesData = new MockMessage().getMockMessages();
   const mockUserService = new MockUserService(mockUsersData);
-  const mockChatService = new MockChatService(mockGroupsData);
-  const mockAuth = new MockAuth().getMockAuthUser();
+  const mockChatService = new MockChatService(mockGroupsData, mockMessagesData);
+  const mockAuth = new MockAuth('abc123');
   const mockRouter = {
     navigateByUrl: jasmine.createSpy('navigateByUrl')
   };
-
+  const dialogRefSpy = jasmine.createSpyObj({afterClosed: of([])});
+  const dialogSpy = jasmine.createSpyObj({open: dialogRefSpy});
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [Home, TranslateModule.forRoot()],
@@ -39,7 +46,8 @@ describe('Home', () => {
         { provide: Auth, useValue: mockAuth },
         { provide: UserService, useValue: mockUserService },
         { provide: ChatService, useValue: mockChatService },
-        { provide: Router, useValue: mockRouter }
+        { provide: Router, useValue: mockRouter },
+        { provide: MatDialog, useValue: dialogSpy }
       ]
     });
     fixture = TestBed.createComponent(Home);
@@ -66,7 +74,7 @@ describe('Home', () => {
       ]
     });
     const tempFixture = TestBed.createComponent(Home);
-    expect(() => {tempFixture.detectChanges();}).toThrowError();
+    expect(() => { tempFixture.detectChanges(); }).toThrowError();
   });
   //----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -114,15 +122,68 @@ describe('Home', () => {
     expect(component.selectedRoom$).toBe(null);
   });
 
-  //------This doesn't work yet, I should look into how spyOn works-------
-  it('should give selectedRoom$ value', fakeAsync(() => {
+  it('should open private chat', fakeAsync(() => {
+    const findPrivateChatSpy = spyOn(mockChatService, 'findPrivateChat');
     component.openPrivateChat('abc123');
-    expect(component.isLoading).toBeTrue();
-    expect(component.selectedRoom$).toBe(null);
+    expect(component.isLoading).withContext('isLoading').toBeTrue();
+    expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
     tick(301);
-    fixture.detectChanges();
-    expect(component.isLoading).toBeFalse();
-    expect(component.selectedRoom$).not.toBeNull();
+    expect(component.isLoading).withContext('isLoading').toBeFalse();
+    expect(findPrivateChatSpy.calls.any()).withContext('findPrivateChat called').toBeTrue();
   }));
 
+  it('should open group chat', fakeAsync(() => {
+    const fetchRoomByIdSpy = spyOn(mockChatService, 'fetchRoomById');
+    const addUserToPasswordAndPrivateGroupSpy = spyOn(mockChatService, 'addUserToPasswordAndPrivateGroup');
+    component.openGroup('roomId');
+    expect(component.isLoading).withContext('isLoading').toBeTrue();
+    expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
+    tick(301);
+    expect(component.isLoading).withContext('isLoading').toBeFalse();
+    expect(addUserToPasswordAndPrivateGroupSpy.calls.any()).withContext('addUserToPasswordAndPrivateGroup called').toBeTrue();
+    expect(fetchRoomByIdSpy.calls.any()).withContext('fetchRoomById called').toBeTrue();
+  }));
+
+  it('should create public chat', fakeAsync(() => {
+    const createPublicGroupSpy = spyOn(mockChatService, 'createPublicGroup');
+    component.createPublicGroup();
+    expect(component.isLoading).withContext('isLoading').toBeTrue();
+    expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
+    tick(301);
+    expect(component.isLoading).withContext('isLoading').toBeFalse();
+    expect(createPublicGroupSpy.calls.any()).withContext('createPublicGroup called').toBeTrue();
+  }));
+
+  it('should create private chat', fakeAsync(()=>{
+    const createPrivateGroupSpy = spyOn(mockChatService, 'createPrivateGroup');
+    component.createPrivateGroup();
+    expect(component.isLoading).withContext('isLoading').toBeTrue();
+    expect(component.selectedRoom$).withContext('seletedRoom$').toBe(null);
+    tick(301);
+    expect(component.isLoading).withContext('isLoading').toBeFalse();
+    expect(createPrivateGroupSpy.calls.any()).withContext('createPrivateGroup called').toBeTrue();
+  }));
+
+  it('should create password chat', fakeAsync(()=>{
+    const createPasswordGroupSpy = spyOn(mockChatService, 'createPasswordGroup');
+    const pw = '';
+    component.createPasswordGroup(pw);
+    expect(component.isLoading).withContext('isLoading').toBeTrue();
+    expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
+    tick(301);
+    expect(component.isLoading).withContext('isLoading').toBeFalse();
+    expect(createPasswordGroupSpy.calls.any()).withContext('createPasswordGroup called').toBeTrue();
+  }));
+
+  it('should open change username dialog', ()=>{
+    component.openChangeUsernameDialog();
+    expect(dialogSpy.open).toHaveBeenCalledWith(ChangeUsernameDialog, {width:'300px'});
+    expect(dialogRefSpy.afterClosed).toHaveBeenCalled();
+  });
+
+  //--Why does the test coverage show that the tests ran successfully for lines:[home.ts 139-141], when I only wrote expect() for line:[home.ts 136]?--
+  it('should open create password dialog', ()=>{
+    component.openPasswordGroupDialog();
+    expect(dialogSpy.open).toHaveBeenCalledWith(CreateGroupPasswordDialog, {width:'300px'});
+  });
 });

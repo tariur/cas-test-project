@@ -1,6 +1,9 @@
 export class MockAuth{
-    private mockAuth = { currentUser : { uid :'abc123' } }   
+    private currentUser = {uid:''};
+    constructor(uid:string){
+        this.currentUser.uid = uid;
+    }
     getMockAuthUser(){
-        return this.mockAuth;
+        return this.currentUser;
     }
 }
