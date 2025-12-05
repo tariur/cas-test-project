@@ -74,7 +74,7 @@ describe('Home', () => {
       ]
     });
     const tempFixture = TestBed.createComponent(Home);
-    expect(() => { tempFixture.detectChanges(); }).toThrowError();
+    expect(() => { tempFixture.detectChanges(); }).toThrowError(Error, 'User needs to sign in to access this page');
   });
   //----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -123,56 +123,56 @@ describe('Home', () => {
   });
 
   it('should open private chat', fakeAsync(() => {
-    const findPrivateChatSpy = spyOn(mockChatService, 'findPrivateChat');
+    const findPrivateChatSpy = spyOn(mockChatService, 'findPrivateChat').and.callThrough();
     component.openPrivateChat('abc123');
     expect(component.isLoading).withContext('isLoading').toBeTrue();
     expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
     tick(301);
     expect(component.isLoading).withContext('isLoading').toBeFalse();
-    expect(findPrivateChatSpy.calls.any()).withContext('findPrivateChat called').toBeTrue();
+    expect(findPrivateChatSpy).toHaveBeenCalledWith('abc123');
   }));
 
   it('should open group chat', fakeAsync(() => {
-    const fetchRoomByIdSpy = spyOn(mockChatService, 'fetchRoomById');
-    const addUserToPasswordAndPrivateGroupSpy = spyOn(mockChatService, 'addUserToPasswordAndPrivateGroup');
+    const fetchRoomByIdSpy = spyOn(mockChatService, 'fetchRoomById').and.callThrough();
+    const addUserToPasswordAndPrivateGroupSpy = spyOn(mockChatService, 'addUserToPasswordAndPrivateGroup').and.callThrough();
     component.openGroup('roomId');
     expect(component.isLoading).withContext('isLoading').toBeTrue();
     expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
     tick(301);
     expect(component.isLoading).withContext('isLoading').toBeFalse();
-    expect(addUserToPasswordAndPrivateGroupSpy.calls.any()).withContext('addUserToPasswordAndPrivateGroup called').toBeTrue();
-    expect(fetchRoomByIdSpy.calls.any()).withContext('fetchRoomById called').toBeTrue();
+    expect(addUserToPasswordAndPrivateGroupSpy).toHaveBeenCalledWith('roomId');
+    expect(fetchRoomByIdSpy).toHaveBeenCalledWith('roomId');
   }));
 
   it('should create public chat', fakeAsync(() => {
-    const createPublicGroupSpy = spyOn(mockChatService, 'createPublicGroup');
+    const createPublicGroupSpy = spyOn(mockChatService, 'createPublicGroup').and.callThrough();
     component.createPublicGroup();
     expect(component.isLoading).withContext('isLoading').toBeTrue();
     expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
     tick(301);
     expect(component.isLoading).withContext('isLoading').toBeFalse();
-    expect(createPublicGroupSpy.calls.any()).withContext('createPublicGroup called').toBeTrue();
+    expect(createPublicGroupSpy).toHaveBeenCalledWith(component.currentUserId);
   }));
 
   it('should create private chat', fakeAsync(()=>{
-    const createPrivateGroupSpy = spyOn(mockChatService, 'createPrivateGroup');
+    const createPrivateGroupSpy = spyOn(mockChatService, 'createPrivateGroup').and.callThrough();
     component.createPrivateGroup();
     expect(component.isLoading).withContext('isLoading').toBeTrue();
     expect(component.selectedRoom$).withContext('seletedRoom$').toBe(null);
     tick(301);
     expect(component.isLoading).withContext('isLoading').toBeFalse();
-    expect(createPrivateGroupSpy.calls.any()).withContext('createPrivateGroup called').toBeTrue();
+    expect(createPrivateGroupSpy).toHaveBeenCalledWith(component.currentUserId);
   }));
 
   it('should create password chat', fakeAsync(()=>{
-    const createPasswordGroupSpy = spyOn(mockChatService, 'createPasswordGroup');
-    const pw = '';
+    const createPasswordGroupSpy = spyOn(mockChatService, 'createPasswordGroup').and.callThrough();
+    const pw = '123';
     component.createPasswordGroup(pw);
     expect(component.isLoading).withContext('isLoading').toBeTrue();
     expect(component.selectedRoom$).withContext('selectedRoom$').toBe(null);
     tick(301);
     expect(component.isLoading).withContext('isLoading').toBeFalse();
-    expect(createPasswordGroupSpy.calls.any()).withContext('createPasswordGroup called').toBeTrue();
+    expect(createPasswordGroupSpy).toHaveBeenCalledWith(component.currentUserId, pw);
   }));
 
   it('should open change username dialog', ()=>{

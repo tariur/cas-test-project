@@ -3,7 +3,4 @@ export class MockAuth{
     constructor(uid:string){
         this.currentUser.uid = uid;
     }
-    getMockAuthUser(){
-        return this.currentUser;
-    }
 }

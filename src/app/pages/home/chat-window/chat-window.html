@@ -2,18 +2,18 @@
   @if(selectedRoom$() | async; as currentRoom){
     @if(currentRoom.restrictions !== "private-chat"){
       <button matButton="outlined" [disabled]="true" class="owner-name">{{'app.chat.owner-name' | translate}}: {{(owner$ | async)?.username}}</button>
-      <button matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+      <button matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()" class="room-name">{{currentRoom.roomName}}</button>
     }
     <div [ngClass]="currentRoom.restrictions === 'private-chat' ? 'room-name-container-private' : 'room-name-container' ">
       <div class="chat-room-name-add-buttons">
         @if(currentRoom.restrictions === "private-chat"){
-        <button id="room-name" matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()">{{currentRoom.roomName}}</button>
+        <button id="room-name" matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()" class="room-name">{{currentRoom.roomName}}</button>
         }
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
           <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="{{'app.chat.add-users-tooltip' | translate}}"><mat-icon id="add-user" >person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
           @for(user of allUsers$() | async; track user.id){
-            <button mat-menu-item matTooltip="{{'app.chat.add-user-tooltip' | translate}}" (click)="addUserToPrivateGroup(user.id)"><mat-icon id="add-user">person_add</mat-icon>{{user.username}}</button>
+            <button mat-menu-item matTooltip="{{'app.chat.add-user-tooltip' | translate}}" (click)="addUserToPrivateGroup(user.id)" id="user-add-button"><mat-icon id="add-user">person_add</mat-icon>{{user.username}}</button>
           } 
           </mat-menu>
           <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="{{'app.chat.remove-users-tooltip' | translate}}"><mat-icon id="remove-member">person_remove</mat-icon></button>

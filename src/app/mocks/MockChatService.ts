@@ -2,6 +2,7 @@
 import { of } from "rxjs";
 import { ChatRoom } from "../model/ChatRoom";
 import { Message } from "../model/Message";
+import { Timestamp } from "firebase/firestore";
 
 export class MockChatService {
     private groupsData: ChatRoom[];
@@ -32,6 +33,9 @@ export class MockChatService {
     addUserToPasswordAndPrivateGroup(_: string){
         return of([]);
     }
+    addUserToPrivateGroup(userId:string, roomId:string){
+        return of([]);
+    }
     createPublicGroup(_: string){
         return of(this.groupsData[0]);
     }
@@ -40,5 +44,8 @@ export class MockChatService {
     }
     createPasswordGroup(_:string, __:string){
         return of(this.groupsData[0]);
+    }
+    createMessage(_:string, __: Omit<Message, 'id' | 'timestamp'>){
+        return of({content: 'Message1', id: '1', senderId:'abc', senderName:'user1', timestamp: new Timestamp(1, 0)});
     }
 }
