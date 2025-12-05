@@ -18,21 +18,21 @@ import { UserService } from '../../../services/user-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from '../../../model/User';
 import { MatMenuModule } from '@angular/material/menu';
-import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguagesService } from '../../../services/languages-service';
 
 @Component({
   selector: 'app-chat-window',
-  imports: [TranslatePipe, 
-    CommonModule, 
-    FormsModule, 
-    NgClass, 
-    MatMenuModule, 
-    MatDividerModule, 
-    MatButtonModule, 
-    MatIconModule, 
+  imports: [TranslatePipe,
+    CommonModule,
+    FormsModule,
+    NgClass,
+    MatMenuModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatIconModule,
     MatTooltipModule
   ],
   templateUrl: './chat-window.html',
@@ -70,23 +70,21 @@ export class ChatWindow implements OnInit, AfterViewInit {
     if (user) {
       this.currentUserId = user.uid;
       this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(room => {
-        if(room){
-          this.loadedOnce = true;
-          this.currentRoom = room;
-          this.scrollToBottom();
-          this.owner$ = this.userService.getUser(room.ownerId);
-          this.currentUser$ = this.userService.getUser(this.currentUserId);
-          this.memberUsers$ = this.userService.getMembers(room.members);
-          this.messages$ = this.chatService.getMessages(room.roomId);
-          if(!room.members.includes(this.currentUserId)){
-            console.log('User not member of the room anymore');
-            this.handleCloseChat();
+        .subscribe(room => {
+          if (room) {
+            this.loadedOnce = true;
+            this.currentRoom = room;
+            this.scrollToBottom();
+            this.owner$ = this.userService.getUser(room.ownerId);
+            this.currentUser$ = this.userService.getUser(this.currentUserId);
+            this.memberUsers$ = this.userService.getMembers(room.members);
+            this.messages$ = this.chatService.getMessages(room.roomId);
+            if (!room.members.includes(this.currentUserId)) {
+              this.handleCloseChat();
+            }
           }
-        }
-      });
-    }else{
-      console.log('User has to be signed in to access this page');
+        });
+    } else {
       this.router.navigateByUrl('**');
     }
   }
@@ -95,14 +93,10 @@ export class ChatWindow implements OnInit, AfterViewInit {
     this.scrollToBottom();
   }
 
-  private scrollToBottom(): void {
+  scrollToBottom(): void {
     if (!this.scrollContainer) return;
-    try {
-      const container = this.scrollContainer.nativeElement;
-      container.scrollTop = container.scrollHeight;
-    } catch (error) {
-      console.error('Scroll error: ', error);
-    }
+    const container = this.scrollContainer.nativeElement;
+    container.scrollTop = container.scrollHeight;
   }
 
   sendMessage() {
@@ -147,7 +141,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
           }
         });
       } else {
-        this.languagesService.getTranslate('app.error.room-delete-restricted').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res:string) =>{
+        this.languagesService.getTranslate('app.error.room-delete-restricted').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res: string) => {
           this._snackBar.open(res, 'Ok');
         });
       }
@@ -165,10 +159,10 @@ export class ChatWindow implements OnInit, AfterViewInit {
         dialogRef.afterClosed();
       } else {
         this.languagesService.getTranslate('app.error.room-namechange-restricted')
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((res:string)=>{
-          this._snackBar.open(res, 'Ok');
-        });
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((res: string) => {
+            this._snackBar.open(res, 'Ok');
+          });
       }
     }
 
@@ -181,17 +175,17 @@ export class ChatWindow implements OnInit, AfterViewInit {
     ).subscribe(exists => {
       if (exists) {
         this.languagesService.getTranslate('app.error.user-already-member')
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((res:string)=>{
-          this._snackBar.open(res, 'Ok');
-        });
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((res: string) => {
+            this._snackBar.open(res, 'Ok');
+          });
       } else {
         this.chatService.addUserToPrivateGroup(userId, this.currentRoom!.roomId).subscribe(() => {
           this.languagesService.getTranslate('app.error.user-added')
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe((res:string)=>{
-            this._snackBar.open(res, 'Ok');
-          });
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((res: string) => {
+              this._snackBar.open(res, 'Ok');
+            });
         });
       }
     });
@@ -206,10 +200,10 @@ export class ChatWindow implements OnInit, AfterViewInit {
       })
     ).subscribe(() => {
       this.languagesService.getTranslate('app.error.user-removed')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res:string)=>{
-        this._snackBar.open(res, 'Ok');
-      });
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((res: string) => {
+          this._snackBar.open(res, 'Ok');
+        });
     }
     );
   }
