@@ -78,7 +78,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "include": ["src/app/pages/home/chat-window/chat-window.spec.ts"],
+            "include": ["src/app/services/user-service.spec.ts"],
             "polyfills": [
               "zone.js",
               "zone.js/testing"
