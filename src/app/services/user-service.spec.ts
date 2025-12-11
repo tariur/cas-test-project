@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-
 import { UserService } from './user-service';
 import { Firestore } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
@@ -8,8 +6,8 @@ import { where } from 'firebase/firestore';
 
 describe('UserService', () => {
   let service: UserService;
-  let firestoreMock: any;
-  let firebaseMock: any;
+  let firestoreMock: { type: string; };
+  let firebaseMock: {currentUser : { uid:string }};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions, no-constant-condition
   const mockPromise = new Promise<void>((resolve, reject) => { true ? resolve() : reject() });

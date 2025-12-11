@@ -10,24 +10,24 @@
         <button id="room-name" matButton="tonal" matTooltip="{{'app.chat.chatname-tooltip' | translate}}" (click)="changeChatName()" class="room-name">{{currentRoom.roomName}}</button>
         }
         @if(currentRoom.restrictions === 'private-group' && currentRoom.ownerId === currentUserId){
-          <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="{{'app.chat.add-users-tooltip' | translate}}"><mat-icon id="add-user" >person_add</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="addMenu" matTooltip="{{'app.chat.add-users-tooltip' | translate}}"><mat-icon class="add-user" >person_add</mat-icon></button>
           <mat-menu #addMenu="matMenu">
           @for(user of allUsers$() | async; track user.id){
-            <button mat-menu-item matTooltip="{{'app.chat.add-user-tooltip' | translate}}" (click)="addUserToPrivateGroup(user.id)" id="user-add-button"><mat-icon id="add-user">person_add</mat-icon>{{user.username}}</button>
+            <button mat-menu-item matTooltip="{{'app.chat.add-user-tooltip' | translate}}" (click)="addUserToPrivateGroup(user.id)"><mat-icon class="add-user">person_add</mat-icon>{{user.username}}</button>
           } 
           </mat-menu>
-          <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="{{'app.chat.remove-users-tooltip' | translate}}"><mat-icon id="remove-member">person_remove</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="removeMenu" matTooltip="{{'app.chat.remove-users-tooltip' | translate}}"><mat-icon class="remove-member">person_remove</mat-icon></button>
           <mat-menu #removeMenu="matMenu">
             @for (user of memberUsers$ | async; track user.id) {
-              <button mat-menu-item matTooltip="{{'app.chat.remove-user' | translate}}" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon id="remove-member">person_remove</mat-icon>{{user.username}}</button>
+              <button mat-menu-item matTooltip="{{'app.chat.remove-user' | translate}}" (click)="removeUserFromPrivateGroup(user.id)"><mat-icon class="remove-member">person_remove</mat-icon>{{user.username}}</button>
             }
           </mat-menu>
         }
-          <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="{{'app.chat.users-tooltip' | translate}}"><mat-icon id="chat-members">group</mat-icon></button>
+          <button matIconButton [matMenuTriggerFor]="membersMenu" matTooltip="{{'app.chat.users-tooltip' | translate}}"><mat-icon class="chat-members">group</mat-icon></button>
           <mat-menu #membersMenu="matMenu">
             @for (user of memberUsers$ | async; track user) {
               @if(user){
-              <button mat-menu-item><mat-icon id="chat-members">person</mat-icon>{{user.username}}</button>
+              <button mat-menu-item><mat-icon class="chat-members">person</mat-icon>{{user.username}}</button>
               }
             }
           </mat-menu>

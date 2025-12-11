@@ -60,7 +60,6 @@ describe('Home', () => {
     expect(component).toBeTruthy();
   });
 
-  //--Resetting the TestBed and configuring with wrong data, so ngOninit throws error (home.ts 78). But surely there is a better way to do this--
   it('should throw error when user not authenticated', () => {
     const mockAuth = { currentUser: null };
     TestBed.resetTestingModule();
@@ -76,7 +75,6 @@ describe('Home', () => {
     const tempFixture = TestBed.createComponent(Home);
     expect(() => { tempFixture.detectChanges(); }).toThrowError(Error, 'User needs to sign in to access this page');
   });
-  //----------------------------------------------------------------------------------------------------------------------------------------------
 
   it('should welcome user', async () => {
     await fixture.whenStable();
@@ -181,7 +179,6 @@ describe('Home', () => {
     expect(dialogRefSpy.afterClosed).toHaveBeenCalled();
   });
 
-  //--Why does the test coverage show that the tests ran successfully for lines:[home.ts 139-141], when I only wrote expect() for line:[home.ts 136]?--
   it('should open create password dialog', ()=>{
     component.openPasswordGroupDialog();
     expect(dialogSpy.open).toHaveBeenCalledWith(CreateGroupPasswordDialog, {width:'300px'});

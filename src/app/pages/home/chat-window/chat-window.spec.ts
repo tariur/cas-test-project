@@ -51,7 +51,7 @@ describe('ChatWindow', () => {
         { provide: FirebaseAuthService, useValue: mockAuth },
         { provide: Router, useValue: mockRouter },
         { provide: MatDialog, useValue: dialogSpy },
-        { provide: LanguagesService, useValue: mockLanguagesService}
+        { provide: LanguagesService, useValue: mockLanguagesService }
       ]
     }).compileComponents();
 
@@ -68,14 +68,14 @@ describe('ChatWindow', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should close chatroom for user if kicked out', () => {
+  it('should close chatroom for user if kicked out', async () => {
     const closeChatSpy = spyOn(component, 'handleCloseChat');
     componentRef.setInput('selectedRoom$', of(mockGroupsData[1]));
     component.ngOnInit();
     expect(closeChatSpy.calls.any()).withContext('handleCloseChat called').toBeTrue();
   });
 
-  it('should navigate user if not authenticated', () => {
+  it('should navigate user if not authenticated', async () => {
     const mockAuth = { currentUser: null };
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -90,7 +90,10 @@ describe('ChatWindow', () => {
     TestBed.compileComponents();
     fixture = TestBed.createComponent(ChatWindow);
     component = fixture.componentInstance;
-    component.ngOnInit();
+    componentRef = fixture.componentRef;
+    componentRef.setInput('allUsers$', of(mockUsersData));
+    componentRef.setInput('selectedRoom$', of(mockGroupsData[0]));
+    fixture.detectChanges();
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('**');
   });
 
@@ -142,9 +145,8 @@ describe('ChatWindow', () => {
     component.currentUserId = '1'; //currentUserId == currentRoom.ownerId
     component.currentRoom = mockGroupsData[0];
     component.deleteChat();
-    expect(dialogSpy.open).toHaveBeenCalledWith(DeleteChatDialog, {width:'300px', data:component.currentRoom.roomId});
-    //dialogref subscribe?
-    component.currentUserId='notOwnerId';
+    expect(dialogSpy.open).toHaveBeenCalledWith(DeleteChatDialog, { width: '300px', data: component.currentRoom.roomId });
+    component.currentUserId = 'notOwnerId';
     const spy = spyOn(mockLanguagesService, 'getTranslate').and.callThrough();
     component.deleteChat();
     expect(spy).toHaveBeenCalledWith('app.error.room-delete-restricted');
@@ -157,18 +159,18 @@ describe('ChatWindow', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should change chat name', ()=>{
+  it('should change chat name', () => {
     component.currentUserId = '1'; //currentUserId == currentRoom.ownerId
     component.currentRoom = mockGroupsData[0];
     component.changeChatName();
-    expect(dialogSpy.open).toHaveBeenCalledWith(ChangeChatnameDialog, {width:'300px', data:component.currentRoom.roomId});
+    expect(dialogSpy.open).toHaveBeenCalledWith(ChangeChatnameDialog, { width: '300px', data: component.currentRoom.roomId });
     component.currentUserId = 'notOwnerId';
     const spy = spyOn(mockLanguagesService, 'getTranslate').and.callThrough();
     component.changeChatName();
     expect(spy).toHaveBeenCalledWith('app.error.room-namechange-restricted');
   });
 
-  it('should add user to private group', ()=>{
+  it('should add user to private group', () => {
     component.memberUsers$ = of(mockUsersData);
     component.currentRoom = mockGroupsData[0];
     const translateSpy = spyOn(mockLanguagesService, 'getTranslate').and.callThrough();

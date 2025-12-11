@@ -12,9 +12,9 @@ export class UserService {
   private firestore = inject(Firestore);
   private firebaseAuth = inject(FirebaseAuth);
 
-  changeStatusOnline(uid: string, docFn = doc, updateDocFn = updateDoc) {
-    const docRef = docFn(this.firestore, "users", uid);
-    return updateDocFn(docRef, { online: true });
+  changeStatusOnline(uid: string, docSpy = doc, updateDocSpy = updateDoc) {
+    const docRef = docSpy(this.firestore, "users", uid);
+    return updateDocSpy(docRef, { online: true });
   }
   async changeStatusOffline(uid:string, docSpy = doc, updateDocSpy = updateDoc){
     const docRef = docSpy(this.firestore, "users", uid);

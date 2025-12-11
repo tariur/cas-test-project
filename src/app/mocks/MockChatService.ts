@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { of } from "rxjs";
 import { ChatRoom } from "../model/ChatRoom";
 import { Message } from "../model/Message";
@@ -33,7 +32,7 @@ export class MockChatService {
     addUserToPasswordAndPrivateGroup(_: string){
         return of([]);
     }
-    addUserToPrivateGroup(userId:string, roomId:string){
+    addUserToPrivateGroup(_:string, __:string){
         return of([]);
     }
     createPublicGroup(_: string){

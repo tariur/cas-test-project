@@ -16,8 +16,7 @@ export class MockUserService {
     getOnlineUsers(){
         return of(this.usersData);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getMembers(members:string[]):Observable<User[]>{
+    getMembers(_:string[]):Observable<User[]>{
         return of(this.usersData);
     }
 }
