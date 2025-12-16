@@ -74,8 +74,8 @@ export class Home implements OnInit {
       this.publicGroups$ = this.chatService.getAllPublicGroups();
       this.passwordGroups$ = this.chatService.getAllPasswordGroups();
     }else{
-      console.error('User needs to sign in to access this page');
       this.router.navigateByUrl('**');
+      throw new Error('User needs to sign in to access this page');
     }
   }
 
