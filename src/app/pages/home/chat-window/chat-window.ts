@@ -22,6 +22,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguagesService } from '../../../services/languages-service';
+import { Store } from '@ngrx/store';
+import { MessagesActions } from '../../../messages.state';
+import { DocumentReference } from 'firebase/firestore';
 
 @Component({
   selector: 'app-chat-window',
@@ -46,6 +49,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
   private languagesService = inject(LanguagesService);
+  private store = inject(Store);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Output() closeChat = new EventEmitter<void>();
@@ -109,16 +113,19 @@ export class ChatWindow implements OnInit, AfterViewInit {
       .pipe(
         take(1),
         switchMap(([room, user]) => {
-          return this.chatService.createMessage(room.roomId, {
+          const messagePayload = {
             content: trimmed,
             senderId: user.id,
             senderName: user.username
-          });
+          }
+          const res = this.chatService.createMessage(room.roomId, messagePayload);
+          return res;
         }),
-        tap(() => {
+        tap((res) => {
+          this.addMessageToStore(res);
           this.scrollToBottom();
           this.newMessage = '';
-        })
+        }),
       ).subscribe();
   }
 
@@ -126,6 +133,11 @@ export class ChatWindow implements OnInit, AfterViewInit {
     if (event.key === 'Enter') {
       this.sendMessage();
     }
+  }
+
+  addMessageToStore(docRef:DocumentReference) {
+    const message$ = this.chatService.getMessageByRef(docRef);
+    message$.pipe(take(1), map(x => this.store.dispatch(MessagesActions.add({ message:x })))).subscribe();
   }
 
   deleteChat() {

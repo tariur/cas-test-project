@@ -1,23 +1,28 @@
 <div class="main-container">
   <div class="navbar-container">
-    <button class="welcome" matButton="tonal" matTooltip="{{'app.home.username-tooltip' | translate}}" (click)="openChangeUsernameDialog()">{{'app.home.greet' | translate}}, {{
+    <button class="welcome" matButton="tonal" matTooltip="{{'app.home.username-tooltip' | translate}}"
+      (click)="openChangeUsernameDialog()">{{'app.home.greet' | translate}}, {{
       (currentUser$ | async)?.username }}</button>
     <div class="lang-logout-container">
-      <button class="signout" matButton="outlined" (click)="signout()"><mat-icon fontIcon="logout"></mat-icon>{{'app.home.signout' | translate}}</button>
+      <button class="signout" matButton="outlined" (click)="signout()"><mat-icon
+          fontIcon="logout"></mat-icon>{{'app.home.signout' | translate}}</button>
       <app-language-selector></app-language-selector>
     </div>
   </div>
   <mat-drawer-container>
     <mat-drawer #sidenav mode="over" closed class="sidenav">
-      <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
+      <div class="sidenav-header">
+        <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
+        <button matButton="outlined" (click)="statistics()">{{'app.home.statistics' | translate}}</button>
+      </div>
       <mat-tab-group>
         <mat-tab label="{{'app.home.all-users-label' | translate}}">
           <mat-list>
             @for(user of allUsers$ | async; track user.id){
-              <mat-list-item><button (click)="openPrivateChat(user.id)"
-                  [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'"
-                  matButton="outlined" class="allUsersButtons"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
-              <mat-divider></mat-divider>
+            <mat-list-item><button (click)="openPrivateChat(user.id)"
+                [ngClass]="user.online ? 'online-user-button' : 'offline-user-button'" matButton="outlined"
+                class="allUsersButtons"><mat-icon>person</mat-icon>{{user.username}}</button></mat-list-item>
+            <mat-divider></mat-divider>
             }
           </mat-list>
         </mat-tab>
@@ -41,7 +46,9 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="createPublicGroup()"><mat-icon>add</mat-icon>{{'app.home.public-room-add' | translate}}</button>
+                <button class="create-group-button" matButton="outlined"
+                  (click)="createPublicGroup()"><mat-icon>add</mat-icon>{{'app.home.public-room-add' |
+                  translate}}</button>
               </div>
             </mat-tab>
             <mat-tab label="{{'app.home.password-groups-label' | translate}}">
@@ -54,7 +61,9 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="openPasswordGroupDialog()"><mat-icon>add</mat-icon>{{'app.home.password-room-add' | translate}}</button>
+                <button class="create-group-button" matButton="outlined"
+                  (click)="openPasswordGroupDialog()"><mat-icon>add</mat-icon>{{'app.home.password-room-add' |
+                  translate}}</button>
               </div>
             </mat-tab>
             <mat-tab label="{{'app.home.private-groups-label' | translate}}">
@@ -66,7 +75,9 @@
               </mat-list>
               }
               <div class="create-group-button-container">
-                <button class="create-group-button" matButton="outlined" (click)="createPrivateGroup()"><mat-icon>add</mat-icon>{{'app.home.private-room-add' | translate}}</button>
+                <button class="create-group-button" matButton="outlined"
+                  (click)="createPrivateGroup()"><mat-icon>add</mat-icon>{{'app.home.private-room-add' |
+                  translate}}</button>
               </div>
             </mat-tab>
           </mat-tab-group>

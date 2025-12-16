@@ -1,0 +1,14 @@
+<div class="page">
+    <div class="header">
+        <button matButton="outlined" (click)="home()">{{'app.statistics.back' | translate}}</button>
+    </div>
+    <div class="main">
+        <div class="main-container">
+            <p>{{'app.statistics.messages-count' | translate}}:{{ count }}</p>
+            <mat-divider></mat-divider>
+            @for(msg of messages(); track $index){
+                <p>{{'app.statistics.message-content' | translate}}: {{msg.content}}</p>
+            }
+        </div>
+    </div>
+</div>

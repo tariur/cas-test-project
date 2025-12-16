@@ -44,7 +44,8 @@
             "public-room-add": "Neuen öffentlichen Raum erstellen",
             "password-room-add": "Neuen passwortgeschützten Raum erstellen",
             "private-room-add": "Neuen privaten Raum erstellen",
-            "loading": "Lädt..."
+            "loading": "Lädt...",
+            "statistics": "Statistik"
         },
         "password-room-create-dialog": {
             "title": "Passwort für Raum erstellen",
@@ -91,6 +92,9 @@
             "delete-tooltip": "Chatraum löschen",
             "message-bubble": "von",
             "textbox-placeholder": "Nachricht schreiben..."
+        },
+        "statistics":{
+            "back": "Zur Startseite"
         },
         "error": {
             "email-password": "E-Mail und/oder Passwort falsch",

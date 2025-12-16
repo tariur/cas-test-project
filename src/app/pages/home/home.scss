@@ -23,6 +23,12 @@ mat-drawer{
     padding:15px;
     background-color: #d7e3ff;
 }
+.sidenav-header{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    gap:20px;
+}
 mat-drawer-content{
     background-color: #f2f0f4;
     padding:15px;

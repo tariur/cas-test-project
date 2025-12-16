@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
-import { forkJoin, from, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { forkJoin, from, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -35,14 +35,18 @@ export class ChatService {
     return collectionDataSpy(q, { idField: 'id' }) as Observable<Message[]>;
   }
 
-  createMessage(roomId: string, message: Omit<Message, 'id' | 'timestamp'>, collectionSpy=collection, addDocSpy = addDoc) {
+  createMessage(roomId: string, message: Omit<Message, 'id' | 'timestamp'>, collectionSpy = collection, addDocSpy = addDoc) {
     const messagesRef = collectionSpy(this.firestore, `chatRooms/${roomId}/messages`);
+    const newMessage = {...message, timestamp: serverTimestamp()};
     return from(
-      addDocSpy(messagesRef, {
-        ...message,
-        timestamp: serverTimestamp()
-      })
-    );
+      addDocSpy(messagesRef, newMessage)
+    ).pipe(tap(docRef=>{
+      updateDoc(docRef, {id:docRef.id})
+    }));
+  }
+
+  getMessageByRef(docRef:DocumentReference){
+    return from(docData(docRef) as Observable<Message>);
   }
 
   findPrivateChat(otherUserId: string, collectionSpy = collection, collectionDataSpy = collectionData, querySpy = query, addDocSpy = addDoc): Observable<ChatRoom> {
@@ -97,7 +101,7 @@ export class ChatService {
   }
 
 
-  createPublicGroup(currentUserId: string, collectionSpy=collection, addDocSpy=addDoc, updateDocSpy=updateDoc): Observable<ChatRoom> {
+  createPublicGroup(currentUserId: string, collectionSpy = collection, addDocSpy = addDoc, updateDocSpy = updateDoc): Observable<ChatRoom> {
     const chatRoomsCollRef = collectionSpy(this.firestore, 'chatRooms');
     return this.userService.getUser(currentUserId).pipe(
       take(1),
@@ -121,7 +125,7 @@ export class ChatService {
     );
   }
 
-  createPrivateGroup(currentUserId: string, collectionSpy=collection, addDocSpy=addDoc, updateDocSpy=updateDoc): Observable<ChatRoom> {
+  createPrivateGroup(currentUserId: string, collectionSpy = collection, addDocSpy = addDoc, updateDocSpy = updateDoc): Observable<ChatRoom> {
     const chatRoomsCollRef = collectionSpy(this.firestore, 'chatRooms');
 
     return this.userService.getUser(currentUserId).pipe(
@@ -146,7 +150,7 @@ export class ChatService {
     );
   }
 
-  createPasswordGroup(currentUserId: string, password: string, collectionSpy=collection, addDocSpy=addDoc, updateDocSpy=updateDoc): Observable<ChatRoom> {
+  createPasswordGroup(currentUserId: string, password: string, collectionSpy = collection, addDocSpy = addDoc, updateDocSpy = updateDoc): Observable<ChatRoom> {
     const chatRoomsCollRef = collectionSpy(this.firestore, 'chatRooms');
     return this.userService.getUser(currentUserId).pipe(
       take(1),
@@ -169,16 +173,16 @@ export class ChatService {
     );
   }
 
-  addUserToPrivateGroup(userId: string, roomId: string, docSpy=doc, updateDocSpy=updateDoc): Observable<void> {
+  addUserToPrivateGroup(userId: string, roomId: string, docSpy = doc, updateDocSpy = updateDoc): Observable<void> {
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     return from(updateDocSpy(docRef, { members: arrayUnion(userId) }));
   }
-  removeUserFromPrivateGroup(userId: string, roomId: string, docSpy=doc, updateDocSpy=updateDoc): Observable<void> {
+  removeUserFromPrivateGroup(userId: string, roomId: string, docSpy = doc, updateDocSpy = updateDoc): Observable<void> {
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     return from(updateDocSpy(docRef, { members: arrayRemove(userId) }));
   }
 
-  getAllPrivateGroups(currentUserId: string, collectionSpy=collection, querySpy=query, collectionDataSpy=collectionData): Observable<ChatRoom[]> {
+  getAllPrivateGroups(currentUserId: string, collectionSpy = collection, querySpy = query, collectionDataSpy = collectionData): Observable<ChatRoom[]> {
     const chatRoomsCollRef = collectionSpy(this.firestore, 'chatRooms');
     const q = querySpy(chatRoomsCollRef,
       where('restrictions', '==', 'private-group'),
@@ -187,14 +191,14 @@ export class ChatService {
     return collectionDataSpy(q, { idField: 'roomId' }) as Observable<ChatRoom[]>;
   }
 
-  getAllPasswordGroups(collectionSpy=collection, querySpy=query, collectionDataSpy=collectionData): Observable<ChatRoom[]> {
+  getAllPasswordGroups(collectionSpy = collection, querySpy = query, collectionDataSpy = collectionData): Observable<ChatRoom[]> {
     const chatRoomsCollRef = collectionSpy(this.firestore, 'chatRooms');
     const q = querySpy(chatRoomsCollRef, where('restrictions', '==', 'password-group'));
     return collectionDataSpy(q, { idField: 'roomId' }) as Observable<ChatRoom[]>;
   }
 
   //Checks if password is correct when trying to join a password protected group
-  async validateGroupPassword(roomId: string, password: string, docSpy=doc, getDocSpy=getDoc): Promise<boolean> {
+  async validateGroupPassword(roomId: string, password: string, docSpy = doc, getDocSpy = getDoc): Promise<boolean> {
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     const docSnap = await getDocSpy(docRef);
     if (docSnap.exists()) {
@@ -207,11 +211,11 @@ export class ChatService {
     }
   }
 
-  addUserToPasswordAndPrivateGroup(roomId: string, docSpy=doc, updateDocSpy=updateDoc) {
+  addUserToPasswordAndPrivateGroup(roomId: string, docSpy = doc, updateDocSpy = updateDoc) {
     const user = this.firebaseAuth.currentUser;
-    if(!user){
+    if (!user) {
       throw new Error('No logged in user');
-    }  
+    }
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     return from(updateDocSpy(docRef, { members: arrayUnion(user.uid) }));
   }

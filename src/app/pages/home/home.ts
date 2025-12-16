@@ -170,4 +170,8 @@ export class Home implements OnInit {
     await this.authService.signOutUser();
     this.router.navigateByUrl('');
   }
+
+  statistics(){
+    this.router.navigateByUrl('/statistics');
+  }
 }

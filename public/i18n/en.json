@@ -44,7 +44,8 @@
             "public-room-add": "Create new public room",
             "password-room-add": "Create new password room",
             "private-room-add": "Create new private room",
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "statistics": "Statistics"
         },
         "password-room-create-dialog": {
             "title": "Create password for room",
@@ -91,6 +92,11 @@
             "delete-tooltip": "Delete chatroom",
             "message-bubble": "from",
             "textbox-placeholder": "Write a message..."
+        },
+        "statistics":{
+            "back":"Back to Home",
+            "messages-count": "Messages sent this session",
+            "message-content": "Message content"
         },
         "error":{
             "email-password": "Email and/or password incorrect",
