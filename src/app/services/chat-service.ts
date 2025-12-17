@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
 import { forkJoin, from, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, collectionGroup, deleteDoc, doc, documentId, DocumentReference, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
@@ -218,6 +218,26 @@ export class ChatService {
     }
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     return from(updateDocSpy(docRef, { members: arrayUnion(user.uid) }));
+  }
+
+  async getRoomNameByMessageId(messageId:string){
+    const user = this.firebaseAuth.currentUser;
+    if(!user) throw new Error('No logged in user');
+    const messagesRef = collectionGroup(this.firestore, 'messages');
+    const q = query(messagesRef, where(documentId(), "==", messageId));
+    const snap = await getDocs(q);
+    if(snap.empty) throw new Error('No document found');
+    const docSnap = snap.docs[0];
+    const roomRef = docSnap.ref.parent.parent;
+    if(roomRef){
+      const roomSnap = await getDoc(roomRef);
+      if(roomSnap.exists()){
+        const roomName = roomSnap.data()['roomName'];
+        return roomName;
+      }else{
+        throw new Error('No snapshot found');
+      }
+    }
   }
 
 }

@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChatRoom } from '../../../model/ChatRoom';
 import { ChatService } from '../../../services/chat-service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { combineLatest, EMPTY, map, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
@@ -73,12 +73,11 @@ export class ChatWindow implements OnInit, AfterViewInit {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
-      this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef))
+      this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef), tap(()=>this.scrollToBottom()))
         .subscribe(room => {
           if (room) {
             this.loadedOnce = true;
             this.currentRoom = room;
-            this.scrollToBottom();
             this.owner$ = this.userService.getUser(room.ownerId);
             this.currentUser$ = this.userService.getUser(this.currentUserId);
             this.memberUsers$ = this.userService.getMembers(room.members);
@@ -136,8 +135,13 @@ export class ChatWindow implements OnInit, AfterViewInit {
   }
 
   addMessageToStore(docRef:DocumentReference) {
-    const message$ = this.chatService.getMessageByRef(docRef);
-    message$.pipe(take(1), map(x => this.store.dispatch(MessagesActions.add({ message:x })))).subscribe();
+    const message$ = this.chatService.getMessageByRef(docRef).pipe(take(1));
+    const room$ = this.selectedRoom$().pipe(take(1));
+    forkJoin([message$, room$]).subscribe(([message, room])=>{
+      const payload:(Message&{roomName:string}) = { ...message, roomName: room.roomName };
+      console.log(payload);
+      this.store.dispatch(MessagesActions.add({ message:payload }));
+    });
   }
 
   deleteChat() {

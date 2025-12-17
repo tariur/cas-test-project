@@ -95,8 +95,12 @@
         },
         "statistics":{
             "back":"Back to Home",
-            "messages-count": "Messages sent this session",
-            "message-content": "Message content"
+            "messages-count": "Messages",
+            "message-content": "Message content",
+            "message-room-name": "sent to",
+            "message-date": "Date sent",
+            "rooms-count": "Rooms",
+            "header": "Session statistics"
         },
         "error":{
             "email-password": "Email and/or password incorrect",

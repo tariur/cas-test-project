@@ -1,14 +1,25 @@
 <div class="page">
-    <div class="header">
-        <button matButton="outlined" (click)="home()">{{'app.statistics.back' | translate}}</button>
-    </div>
-    <div class="main">
-        <div class="main-container">
-            <p>{{'app.statistics.messages-count' | translate}}:{{ count }}</p>
-            <mat-divider></mat-divider>
-            @for(msg of messages(); track $index){
-                <p>{{'app.statistics.message-content' | translate}}: {{msg.content}}</p>
-            }
+    <div class="top-wrapper">
+        <div class="header">
+            <h1 id="header-text">{{'app.statistics.header' | translate}}</h1>
+            <div class="header-buttons">
+                <button matButton="outlined" (click)="home()">{{'app.statistics.back' | translate}}</button>
+                <app-language-selector></app-language-selector>
+            </div>
         </div>
+        <mat-divider></mat-divider>
+        <div class="message-box-header">
+            <button matButton="elevated" (click)="statDisplay('messages')">{{'app.statistics.messages-count' |
+                translate}}: {{ count }}</button>
+            <button matButton="elevated" (click)="statDisplay('')">{{'app.statistics.rooms-count' | translate}}: {{
+                count }}</button>
+            <button matButton="elevated">{{'app.statistics.messages-count' | translate}}: {{ count }}</button>
+        </div>
+        <mat-divider></mat-divider>
+    </div>
+    <div class="loaded-stat">
+        @if(loadedStat==='messages'){
+        <app-message-statistics-component></app-message-statistics-component>
+        }
     </div>
 </div>

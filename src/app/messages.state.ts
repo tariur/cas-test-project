@@ -4,16 +4,15 @@ import { Message } from "./model/Message";
 export const MessagesActions = createActionGroup({
     source: 'Messages',
     events: {
-        'Add': props<{ message: Message }>()
+        'Add': props<{ message: Message & { roomName: string } }>()
     },
 });
 
 interface MessagesState {
-    messages: Message[];
+    messages: (Message & { roomName: string })[];
 }
-
 const initialState: MessagesState = {
-    messages: [] as Message[],
+    messages: []as(Message & { roomName: string })[],
 };
 
 export const messagesFeature = createFeature({

@@ -1,0 +1,12 @@
+    <div class="message-box-wrapper">
+        @for(msg of messages(); track $index){
+        <div class="message-box">
+            <p class="message-p"><span class="message-sp">{{'app.statistics.message-room-name' | translate}}:</span><br>
+                {{msg.roomName}}</p>
+            <p class="message-p"><span class="message-sp">{{'app.statistics.message-content' | translate}}:</span><br>
+                {{msg.content}}</p>
+            <p class="message-p"><span class="message-sp">{{'app.statistics.message-date' | translate}}:</span><br> {{
+                msg.timestamp.toDate() | date: 'medium' }}</p>
+        </div>
+        }
+    </div>
