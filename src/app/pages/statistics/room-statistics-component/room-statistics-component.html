@@ -1,0 +1,38 @@
+<mat-tab-group>
+    <mat-tab label="{{'app.statistics.rooms-created'| translate}}: {{createdRooms().length}}">
+        <div class="created-rooms">
+            @for(room of createdRooms(); track $index){
+            <div class="room-box">
+                <p class="label-p">{{'app.statistics.room-name' | translate}}</p>
+                <p>{{room.roomName}}</p>
+                <p class="label-p">{{'app.statistics.room-type' | translate}}</p>
+                <p>{{room.restrictions}}</p>
+            </div>
+            }
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'app.statistics.rooms-deleted' | translate}}: {{deletedRooms().length}}">
+        <div class="created-rooms">
+            @for(room of deletedRooms(); track $index){
+            <div class="room-box-d">
+                <p class="label-p">{{'app.statistics.room-name' | translate}}</p>
+                <p>{{room.roomName}}</p>
+                <p class="label-p">{{'app.statistics.room-type' | translate}}</p>
+                <p>{{room.restrictions}}</p>
+            </div>
+            }
+        </div>
+    </mat-tab>
+    <mat-tab label="{{'app.statistics.messages-sent-per-rooms' | translate}}">
+        <div class="bars-wrapper">
+            @for (room of sentperRooms(); track $index) {
+            <div class="bar-box" >
+                <p class="bar-description">{{room.roomName}}</p>
+                <div class="bar">
+                    <mat-progress-bar mode="determinate" value="{{(room.count / totalMessages)*100}}" matTooltip="{{room.count}} {{'app.statistics.messages-out-of' | translate}} {{totalMessages}}"></mat-progress-bar>
+                </div>
+            </div>
+            }
+        </div>
+    </mat-tab>
+</mat-tab-group>

@@ -6,6 +6,7 @@
     <div class="lang-logout-container">
       <button class="signout" matButton="outlined" (click)="signout()"><mat-icon
           fontIcon="logout"></mat-icon>{{'app.home.signout' | translate}}</button>
+      <button matIconButton="outlined" (click)="statistics()" id="bar-chart" matTooltip="{{'app.home.statistics' | translate}}"><mat-icon>bar_chart</mat-icon></button>
       <app-language-selector></app-language-selector>
     </div>
   </div>
@@ -13,7 +14,6 @@
     <mat-drawer #sidenav mode="over" closed class="sidenav">
       <div class="sidenav-header">
         <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
-        <button matButton="outlined" (click)="statistics()">{{'app.home.statistics' | translate}}</button>
       </div>
       <mat-tab-group>
         <mat-tab label="{{'app.home.all-users-label' | translate}}">

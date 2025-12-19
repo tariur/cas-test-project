@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { collectionData, docData, Firestore } from '@angular/fire/firestore';
-import { forkJoin, from, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { combineLatest, forkJoin, from, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { ChatRoom } from '../model/ChatRoom';
-import { addDoc, arrayRemove, arrayUnion, collection, collectionGroup, deleteDoc, doc, documentId, DocumentReference, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { Message } from '../model/Message';
 import { Auth } from '@angular/fire/auth';
 import { UserService } from './user-service';
 import { User } from '../model/User';
+import { Store } from '@ngrx/store';
+import { RoomsActions } from '../app.state';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,7 @@ export class ChatService {
   private firestore = inject(Firestore);
   private firebaseAuth = inject(Auth);
   private userService = inject(UserService);
+  private store = inject(Store);
 
   fetchRoomById(roomId: string, docSpy = doc, docDataSpy = docData): Observable<ChatRoom> {
     const chatRef = docSpy(this.firestore, "chatRooms", roomId);
@@ -58,10 +61,14 @@ export class ChatService {
       where('members', 'array-contains', currentUserId)
     );
     const rooms$ = collectionDataSpy(q, { idField: 'roomId' }) as Observable<ChatRoom[]>;
-    return rooms$.pipe(
-      map(rooms => rooms.find(r => r.members.includes(otherUserId))),
+    const otherUser$ = this.userService.getUser(otherUserId) as Observable<User>;
+    const result$ = combineLatest([
+      rooms$.pipe(
+      map(rooms => rooms.find(r => r.members.includes(otherUserId)))),
+      otherUser$
+    ]).pipe(
       take(1),
-      switchMap(existingRoom => {
+      switchMap(([existingRoom, user]) => {
         if (existingRoom != undefined) {
           return of(existingRoom);
         }
@@ -69,14 +76,18 @@ export class ChatService {
           members: [currentUserId, otherUserId],
           ownerId: currentUserId,
           restrictions: 'private-chat',
-          roomName: 'Private Chat'
+          roomName: 'Private chat with ' + user.username
         };
         return from(addDocSpy(chatRoomRef, newRoom)).pipe(
-          map(docRef => ({ roomId: docRef.id, ...newRoom }))
+          map(docRef => ({ roomId: docRef.id, ...newRoom })),
+          tap((room)=>{
+            this.store.dispatch(RoomsActions.create({room: room}));
+          })
         );
       }),
       shareReplay(1)
-    )
+    );
+    return result$;
   }
 
   deletePrivateChat(roomId: string): Observable<void> {
@@ -219,25 +230,4 @@ export class ChatService {
     const docRef = docSpy(this.firestore, 'chatRooms', roomId);
     return from(updateDocSpy(docRef, { members: arrayUnion(user.uid) }));
   }
-
-  async getRoomNameByMessageId(messageId:string){
-    const user = this.firebaseAuth.currentUser;
-    if(!user) throw new Error('No logged in user');
-    const messagesRef = collectionGroup(this.firestore, 'messages');
-    const q = query(messagesRef, where(documentId(), "==", messageId));
-    const snap = await getDocs(q);
-    if(snap.empty) throw new Error('No document found');
-    const docSnap = snap.docs[0];
-    const roomRef = docSnap.ref.parent.parent;
-    if(roomRef){
-      const roomSnap = await getDoc(roomRef);
-      if(roomSnap.exists()){
-        const roomName = roomSnap.data()['roomName'];
-        return roomName;
-      }else{
-        throw new Error('No snapshot found');
-      }
-    }
-  }
-
 }

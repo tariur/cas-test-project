@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild, input } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild, input, AfterViewChecked } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatRoom } from '../../../model/ChatRoom';
 import { ChatService } from '../../../services/chat-service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { combineLatest, EMPTY, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, map, Observable, shareReplay, switchMap, take, tap } from 'rxjs';
 import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguagesService } from '../../../services/languages-service';
 import { Store } from '@ngrx/store';
-import { MessagesActions } from '../../../messages.state';
+import { MessagesActions, RoomsActions } from '../../../app.state';
 import { DocumentReference } from 'firebase/firestore';
 
 @Component({
@@ -41,7 +41,7 @@ import { DocumentReference } from 'firebase/firestore';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit, AfterViewInit {
+export class ChatWindow implements OnInit, AfterViewChecked {
   private router = inject(Router);
   private userService = inject(UserService);
   private chatService = inject(ChatService);
@@ -92,7 +92,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
 
@@ -138,9 +138,10 @@ export class ChatWindow implements OnInit, AfterViewInit {
     const message$ = this.chatService.getMessageByRef(docRef).pipe(take(1));
     const room$ = this.selectedRoom$().pipe(take(1));
     forkJoin([message$, room$]).subscribe(([message, room])=>{
-      const payload:(Message&{roomName:string}) = { ...message, roomName: room.roomName };
-      console.log(payload);
-      this.store.dispatch(MessagesActions.add({ message:payload }));
+      const mfpayload:(Message&{roomName:string}) = { ...message, roomName: room.roomName };
+      const rfpayload:{roomId:string, roomName:string} = { roomId: room.roomId, roomName:room.roomName }
+      this.store.dispatch(RoomsActions.sent({ room: rfpayload }))
+      this.store.dispatch(MessagesActions.add({ message:mfpayload }));
     });
   }
 
@@ -151,8 +152,9 @@ export class ChatWindow implements OnInit, AfterViewInit {
           width: '300px',
           data: this.currentRoom.roomId
         });
-        dialogRef.afterClosed().subscribe((roomDeleted: boolean) => {
+        dialogRef.afterClosed().pipe(take(1), shareReplay(1)).subscribe((roomDeleted: boolean) => {
           if (roomDeleted) {
+            this.store.dispatch(RoomsActions.delete({ room: this.currentRoom!}))
             this.handleCloseChat();
           }
         });

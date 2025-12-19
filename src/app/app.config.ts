@@ -10,7 +10,7 @@ import {provideTranslateService} from "@ngx-translate/core";
 import {provideTranslateHttpLoader} from "@ngx-translate/http-loader";
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { messagesFeature } from './messages.state';
+import { messagesFeature, roomsFeature } from './app.state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,7 +34,8 @@ export const appConfig: ApplicationConfig = {
         })
     }),
     provideStore({
-        [messagesFeature.name]: messagesFeature.reducer
+        [messagesFeature.name]: messagesFeature.reducer,
+        [roomsFeature.name]: roomsFeature.reducer
     }),
     provideStoreDevtools({ logOnly: !isDevMode() })
 ]

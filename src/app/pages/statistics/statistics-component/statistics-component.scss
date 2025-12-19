@@ -14,6 +14,12 @@
     padding: 10px 10px 10px 10px;
     margin: 0px;
 }
+.header-static{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+}
 .header-buttons{
     display:flex;
     flex-direction: row;
@@ -24,24 +30,30 @@
     align-items: center;
     justify-content: center;
 }
-
-.message-box-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    background-color: #d7e3ff;
-    padding:5px;
-}
 #header-text{
     padding: 10px 0px 0px 0px;
     margin: 0px;
     font-size: 20px;
+    color: #005cbb;
+}
+#bar-chart{
+    padding: 7px 0px 0px 0px;
+    color: #005cbb;
+}
+#home{
+    color: #005cbb;
 }
 .top-wrapper{
     position:fixed;
     width: 100%;
+    z-index: 10;
 }
-.loaded-stat{
-    margin-top:120px;
+mat-tab-group{
+    margin-top:60px;
+}
+
+@media  screen and (max-width: 356px) {
+    mat-tab-group{
+    margin-top:70px;
+}   
 }

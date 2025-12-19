@@ -1,25 +1,25 @@
 <div class="page">
     <div class="top-wrapper">
         <div class="header">
-            <h1 id="header-text">{{'app.statistics.header' | translate}}</h1>
+            <div class="header-static">
+                <h1 id="header-text">{{'app.statistics.header' | translate}}</h1>
+                <mat-icon id="bar-chart">bar_chart</mat-icon>
+            </div>
             <div class="header-buttons">
-                <button matButton="outlined" (click)="home()">{{'app.statistics.back' | translate}}</button>
+                <button matIconButton (click)="home()" matTooltip="{{'app.statistics.back' | translate}}"><mat-icon id="home">home</mat-icon></button>
                 <app-language-selector></app-language-selector>
             </div>
         </div>
-        <mat-divider></mat-divider>
-        <div class="message-box-header">
-            <button matButton="elevated" (click)="statDisplay('messages')">{{'app.statistics.messages-count' |
-                translate}}: {{ count }}</button>
-            <button matButton="elevated" (click)="statDisplay('')">{{'app.statistics.rooms-count' | translate}}: {{
-                count }}</button>
-            <button matButton="elevated">{{'app.statistics.messages-count' | translate}}: {{ count }}</button>
-        </div>
-        <mat-divider></mat-divider>
     </div>
-    <div class="loaded-stat">
-        @if(loadedStat==='messages'){
-        <app-message-statistics-component></app-message-statistics-component>
-        }
-    </div>
+    <mat-tab-group>
+        <mat-tab label="{{'app.statistics.messages-count' |
+                translate}}: {{ messagesCount }}">
+            <app-message-statistics-component></app-message-statistics-component>
+        </mat-tab>
+        <mat-tab label="{{'app.statistics.rooms-count' | translate}}: {{
+                roomsCount }}">
+            <app-room-statistics-component></app-room-statistics-component>
+        </mat-tab>
+    </mat-tab-group>
+
 </div>
