@@ -1,11 +1,12 @@
-import { createActionGroup, createFeature, createReducer, on, props } from "@ngrx/store";
+import { createActionGroup, createFeature, createReducer, emptyProps, on, props } from "@ngrx/store";
 import { Message } from "./model/Message";
 import { ChatRoom } from "./model/ChatRoom";
 
 export const MessagesActions = createActionGroup({
     source: 'Messages',
     events: {
-        'Add': props<{ message: Message & { roomName: string } }>()
+        'Add': props<{ message: Message & { roomName: string } }>(),
+        'Clear': emptyProps()
     },
 });
 
@@ -14,24 +15,25 @@ export const RoomsActions = createActionGroup({
     events: {
         'Create': props<{ room: ChatRoom }>(),
         'Delete': props<{ room: ChatRoom }>(),
-        'Sent': props<{ room: { roomId: string, roomName: string } }>()
+        'Sent': props<{ room: { roomId: string, roomName: string } }>(),
+        'Clear': emptyProps()
     },
 });
 
-interface MessagesState {
+export interface MessagesState {
     messages: (Message & { roomName: string })[],
 }
 
-interface RoomsState {
+export interface RoomsState {
     createdrooms: ChatRoom[],
     deletedrooms: ChatRoom[],
     sentperroom: { roomId: string, roomName: string, count: number }[]
 }
-const initialMessagesState: MessagesState = {
+export const initialMessagesState: MessagesState = {
     messages: [] as (Message & { roomName: string })[],
 
 };
-const initialRoomsState: RoomsState = {
+export const initialRoomsState: RoomsState = {
     createdrooms: [] as ChatRoom[],
     deletedrooms: [] as ChatRoom[],
     sentperroom: [] as { roomId: string, roomName: string, count: number }[]
@@ -45,6 +47,9 @@ export const messagesFeature = createFeature({
         on(MessagesActions.add, (state, action) => ({
             ...state, messages: state.messages.concat(action.message),
         })),
+        on(MessagesActions.clear, () => ({
+            ...initialMessagesState
+        }))
     ),
 });
 
@@ -52,6 +57,9 @@ export const roomsFeature = createFeature({
     name: 'rooms',
     reducer: createReducer(
         initialRoomsState,
+        on(RoomsActions.clear, () => ({
+            ...initialRoomsState
+        })),
         on(RoomsActions.create, (state, action) => ({
             ...state, createdrooms: state.createdrooms.concat(action.room),
         })),

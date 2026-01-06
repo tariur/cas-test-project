@@ -1,4 +1,4 @@
-$owner-related-button-color: #faf9fd;
+@use '../../../colors.scss';
 
 .main-container{
     display:flex;
@@ -21,7 +21,7 @@ mat-drawer-container{
 }
 mat-drawer{
     padding:15px;
-    background-color: #d7e3ff;
+    background-color: colors.$light-blue;
 }
 .sidenav-header{
     padding: 10px;
@@ -30,14 +30,14 @@ mat-drawer{
     gap:20px;
 }
 mat-drawer-content{
-    background-color: #f2f0f4;
+    background-color: colors.$grey;
     padding:15px;
 }
 .online-user-button{
-    color: green !important;
+    color: colors.$dark-green !important;
 }
 .offline-user-button{
-    color: red !important;
+    color: colors.$dark-red !important;
 }
 .no-chat-opened-container{
     height: 80%;
@@ -50,7 +50,7 @@ mat-drawer-content{
     text-align: center;
 }
 .no-chat-opened-container > button{
-    background-color:$owner-related-button-color;
+    background-color: colors.$white;
 }
 .create-group-button-container{
     display:flex;
@@ -59,14 +59,14 @@ mat-drawer-content{
 
 }
 .create-group-button{
-    background-color: $owner-related-button-color;
+    background-color: colors.$white;
 }
 .owned-group{
-    background-color: $owner-related-button-color;
+    background-color: colors.$white;
 }
 .sidenav > button{
     margin:10px;
 }
 #bar-chart{
-    color: #005cbb;
+    color: colors.$vivid-blue;
 }

@@ -1,7 +1,9 @@
+@use '../../../colors.scss';
+
 .language-selector-container{
     display:flex;
     justify-content:flex-end;
 }
 #menu{
-    color: #005cbb;
+    color: colors.$vivid-blue;
 }

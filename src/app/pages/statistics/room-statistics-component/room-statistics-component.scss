@@ -1,3 +1,5 @@
+@use '../../../../colors.scss';
+
 .created-rooms{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
@@ -10,8 +12,8 @@
     padding: 10px 10px 10px 30px;
     margin: 10px;
     width: 200px;
-    background-color: #ffff;
-    border-color:#74777f;
+    background-color: colors.$white;
+    border-color: colors.$purple-blue;
     border-style: solid;
     border-radius: 15px;
     border-width: 1px;
@@ -23,8 +25,8 @@
     padding: 10px 10px 10px 30px;
     margin: 10px;
     width: 200px;
-    background-color: #ffff;
-    border-color:#be3232;
+    background-color: colors.$white;
+    border-color:colors.$dark-red;
     border-style: solid;
     border-radius: 15px;
     border-width: 1px;
@@ -33,7 +35,7 @@ p{
     margin: 0px;
 }
 .label-p{
-    color:#00458f;
+    color: colors.$vivid-blue;
     font-style: italic;
 }
 .bars-wrapper{
@@ -51,7 +53,7 @@ p{
     flex-direction: row;
     justify-content: flex-start;
     padding:5px;
-    color:#00458f;
+    color: colors.$vivid-blue;
     font-style: italic;
 }
 .bar{

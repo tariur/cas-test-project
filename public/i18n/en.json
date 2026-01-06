@@ -106,7 +106,13 @@
             "messages-sent-per-rooms":"Messages sent per rooms",
             "room-name": "Room name",
             "room-type": "Room type",
-            "messages-out-of": "messages out of"
+            "messages-out-of": "messages out of",
+            "reset": "Reset statistics",
+            "reset-dialog": {
+                "title": "Would you like to reset your statistics?",
+                "reset": "Reset",
+                "cancel": "Cancel"
+            }
         },
         "error":{
             "email-password": "Email and/or password incorrect",

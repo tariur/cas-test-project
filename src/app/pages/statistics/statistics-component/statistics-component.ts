@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,6 +11,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import {  MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { MatDialog } from '@angular/material/dialog';
+import { ResetStatisticsDialog } from '../reset-statistics-dialog/reset-statistics-dialog';
 
 @Component({
   selector: 'app-statistics-component',
@@ -19,15 +21,17 @@ import { MatButtonModule } from "@angular/material/button";
   styleUrl: './statistics-component.scss',
 })
 export class StatisticsComponent {
+  readonly dialog = inject(MatDialog);
   private router = inject(Router);
   private store = inject(Store);
   loadedStat = '';
   messages = this.store.selectSignal(messagesFeature.selectMessages);
-  messagesCount = this.messages().length;
+
+  messagesCount = computed(() => this.messages().length);
   roomsCreated = this.store.selectSignal(roomsFeature.selectCreatedrooms);
   roomsDeleted = this.store.selectSignal(roomsFeature.selectDeletedrooms);
   roomsSent = this.store.selectSignal(roomsFeature.selectSentperroom);
-  roomsCount = this.roomsCreated().length + this.roomsDeleted().length;
+  roomsCount = computed(() => this.roomsCreated().length + this.roomsDeleted().length);
 
   home(){
     this.router.navigateByUrl('/home');
@@ -35,5 +39,9 @@ export class StatisticsComponent {
 
   statDisplay(stat:string){
     this.loadedStat = stat;
+  }
+
+  resetStatistics(){
+    this.dialog.open(ResetStatisticsDialog);
   }
 }

@@ -1,3 +1,5 @@
+@use '../../../../colors.scss';
+
 .message-box-wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -14,7 +16,7 @@
     padding: 10px;
     border-radius: 25px 25px 25px 0px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    background-color: #d7e3ff;
+    background-color: colors.$light-blue;
 }
 .message-p{
     margin:0px 0px 10px 0px;
@@ -22,7 +24,7 @@
     word-wrap: break-word;
 }
 .message-sp{
-    color:#00458f;
+    color: colors.$vivid-blue;
     font-style: italic;
 }
 

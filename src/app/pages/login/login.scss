@@ -1,3 +1,5 @@
+@use '../../../colors.scss';
+
 .main-container{
     height:100%;
     display:flex;
@@ -31,7 +33,7 @@
     gap:5px;
 }
 .error-message{
-    color:red;
+    color: colors.$dark-red;
 }
 .error-messages{
     display:flex;

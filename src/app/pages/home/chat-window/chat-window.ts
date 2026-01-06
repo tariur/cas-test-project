@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild, input, AfterViewChecked } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, input, viewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,7 +41,7 @@ import { DocumentReference } from 'firebase/firestore';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit, AfterViewChecked {
+export class ChatWindow implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private chatService = inject(ChatService);
@@ -51,7 +51,7 @@ export class ChatWindow implements OnInit, AfterViewChecked {
   private languagesService = inject(LanguagesService);
   private store = inject(Store);
 
-  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+  readonly scrollContainer = viewChild<ElementRef>('scrollContainer');
   @Output() closeChat = new EventEmitter<void>();
   private _snackBar = inject(MatSnackBar);
   messages$!: Observable<Message[]>;
@@ -73,7 +73,7 @@ export class ChatWindow implements OnInit, AfterViewChecked {
     const user = this.firebaseAuth.currentUser;
     if (user) {
       this.currentUserId = user.uid;
-      this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef), tap(()=>this.scrollToBottom()))
+      this.selectedRoom$().pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(room => {
           if (room) {
             this.loadedOnce = true;
@@ -85,6 +85,7 @@ export class ChatWindow implements OnInit, AfterViewChecked {
             if (!room.members.includes(this.currentUserId)) {
               this.handleCloseChat();
             }
+            this.scrollToBottom();
           }
         });
     } else {
@@ -92,14 +93,16 @@ export class ChatWindow implements OnInit, AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-
   scrollToBottom(): void {
-    if (!this.scrollContainer) return;
-    const container = this.scrollContainer.nativeElement;
-    container.scrollTop = container.scrollHeight;
+    if (!this.scrollContainer()) {
+      setTimeout(() => {
+        const container = this.scrollContainer()?.nativeElement;
+        container.scrollTop = container.scrollHeight;
+      }, 300);
+    } else {
+      const container = this.scrollContainer()?.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    }
   }
 
   sendMessage() {
@@ -134,14 +137,14 @@ export class ChatWindow implements OnInit, AfterViewChecked {
     }
   }
 
-  addMessageToStore(docRef:DocumentReference) {
+  addMessageToStore(docRef: DocumentReference) {
     const message$ = this.chatService.getMessageByRef(docRef).pipe(take(1));
     const room$ = this.selectedRoom$().pipe(take(1));
-    forkJoin([message$, room$]).subscribe(([message, room])=>{
-      const mfpayload:(Message&{roomName:string}) = { ...message, roomName: room.roomName };
-      const rfpayload:{roomId:string, roomName:string} = { roomId: room.roomId, roomName:room.roomName }
-      this.store.dispatch(RoomsActions.sent({ room: rfpayload }))
-      this.store.dispatch(MessagesActions.add({ message:mfpayload }));
+    forkJoin([message$, room$]).subscribe(([message, room]) => {
+      const messagePayload: (Message & { roomName: string }) = { ...message, roomName: room.roomName };
+      const roomPayload: { roomId: string, roomName: string } = { roomId: room.roomId, roomName: room.roomName }
+      this.store.dispatch(RoomsActions.sent({ room: roomPayload }))
+      this.store.dispatch(MessagesActions.add({ message: messagePayload }));
     });
   }
 
@@ -154,7 +157,7 @@ export class ChatWindow implements OnInit, AfterViewChecked {
         });
         dialogRef.afterClosed().pipe(take(1), shareReplay(1)).subscribe((roomDeleted: boolean) => {
           if (roomDeleted) {
-            this.store.dispatch(RoomsActions.delete({ room: this.currentRoom!}))
+            this.store.dispatch(RoomsActions.delete({ room: this.currentRoom! }))
             this.handleCloseChat();
           }
         });

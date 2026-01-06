@@ -106,7 +106,13 @@
             "messages-sent-per-rooms": "Gesendete Nachrichten pro Raum",
             "room-name": "Raumname",
             "room-type": "Raumtyp",
-            "messages-out-of": "Nachrichten von"
+            "messages-out-of": "Nachrichten von",
+            "reset": "Statistiken zurücksetzen",
+            "reset-dialog": {
+                "title": "Möchten Sie Ihre Statistiken zurücksetzen?",
+                "reset": "Zurücksetzen",
+                "cancel": "Abbrechen"
+            }
         },
         "error": {
             "email-password": "E-Mail und/oder Passwort falsch",
