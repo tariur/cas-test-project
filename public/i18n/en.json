@@ -44,7 +44,8 @@
             "public-room-add": "Create new public room",
             "password-room-add": "Create new password room",
             "private-room-add": "Create new private room",
-            "loading": "Loading..."
+            "loading": "Loading...",
+            "statistics": "Statistics"
         },
         "password-room-create-dialog": {
             "title": "Create password for room",
@@ -91,6 +92,33 @@
             "delete-tooltip": "Delete chatroom",
             "message-bubble": "from",
             "textbox-placeholder": "Write a message..."
+        },
+        "statistics":{
+            "back":"Back to Home",
+            "messages-count": "Messages",
+            "message-content": "Message content",
+            "message-room-name": "sent to",
+            "message-date": "Date sent",
+            "rooms-count": "Rooms",
+            "header": "Session statistics",
+            "rooms-created": "Rooms created",
+            "rooms-deleted": "Rooms deleted",
+            "messages-sent-per-rooms":"Messages sent per rooms",
+            "room-name": "Room name",
+            "room-type": "Room type",
+            "messages-out-of": "messages out of",
+            "no-stats": {
+                "title": "No satistics to show yet",
+                "messages": "send messages...",
+                "create-rooms": "create rooms...",
+                "delete-rooms": "delete rooms..."
+            },
+            "reset": "Reset statistics",
+            "reset-dialog": {
+                "title": "Would you like to reset your statistics?",
+                "reset": "Reset",
+                "cancel": "Cancel"
+            }
         },
         "error":{
             "email-password": "Email and/or password incorrect",

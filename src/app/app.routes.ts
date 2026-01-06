@@ -5,6 +5,7 @@ import { Signup } from './pages/signup/signup';
 import { Home } from './pages/home/home';
 import { PageNotFound } from './pages/page-not-found/page-not-found';
 import { authGuard, publicGuard } from './guards/auth-guard';
+import { StatisticsComponent } from './pages/statistics/statistics-component/statistics-component';
 
 export const routes: Routes = [
     {
@@ -25,6 +26,11 @@ export const routes: Routes = [
     {
         path:"home",
         component: Home,
+        canActivate: [authGuard]
+    },
+    {
+        path:"statistics",
+        component: StatisticsComponent,
         canActivate: [authGuard]
     },
     {

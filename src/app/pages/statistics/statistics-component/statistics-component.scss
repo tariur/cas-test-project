@@ -1,0 +1,70 @@
+@use '../../../../colors.scss';
+.page {
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: colors.$bright-white;
+    padding: 10px 10px 10px 10px;
+    margin: 0px;
+}
+.header-static{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+}
+.header-buttons{
+    display:flex;
+    flex-direction: row;
+}
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#header-text{
+    padding: 10px 0px 0px 0px;
+    margin: 0px;
+    font-size: 20px;
+    color: colors.$vivid-blue;
+}
+#bar-chart{
+    padding: 7px 0px 0px 0px;
+    color: colors.$vivid-blue;
+}
+#home{
+    color: colors.$vivid-blue;
+}
+#reset{
+    color: colors.$dark-red;
+}
+.top-wrapper{
+    position:fixed;
+    width: 100%;
+    z-index: 10;
+}
+mat-tab-group{
+    margin-top:60px;
+}
+.empty-stats{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+@media  screen and (max-width: 356px) {
+    mat-tab-group{
+    margin-top:70px;
+}   
+}

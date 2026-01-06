@@ -1,9 +1,11 @@
+@use '../../../../../colors.scss';
+
 .dialog-container{
     margin:0px 20px 0px 20px;
 }
 #confirm-button{
-    color:red;
+    color: colors.$dark-red;
 }
 mat-dialog-content > strong{
-    color:red;
+    color: colors.$dark-red;
 }

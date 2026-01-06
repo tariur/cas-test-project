@@ -20,24 +20,26 @@ import { ChatService } from '../../services/chat-service';
 import { ChatRoom } from '../../model/ChatRoom';
 import { CreateGroupPasswordDialog } from './create-group-password-dialog/create-group-password-dialog';
 import { JoinPasswordGroupDialog } from './join-password-group-dialog/join-password-group-dialog';
-import { Observable } from 'rxjs';
+import { finalize, Observable, shareReplay, tap } from 'rxjs';
 import { LanguageSelector } from '../language-selector/language-selector';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Store } from '@ngrx/store';
+import { RoomsActions } from '../../app.state';
 
 @Component({
   selector: 'app-home',
   imports: [
-    CommonModule, 
-    TranslatePipe, 
-    LanguageSelector, 
-    ChatWindow, 
-    NgClass, 
-    MatTooltipModule, 
-    MatDividerModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatSidenavModule, 
-    MatTabsModule, 
+    CommonModule,
+    TranslatePipe,
+    LanguageSelector,
+    ChatWindow,
+    NgClass,
+    MatTooltipModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatTabsModule,
     MatListModule
   ],
   templateUrl: './home.html',
@@ -50,6 +52,7 @@ export class Home implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private dialog = inject(MatDialog);
+  private store = inject(Store);
 
   currentUserId = '';
   isLoading = false;
@@ -59,8 +62,8 @@ export class Home implements OnInit {
   publicGroups$!: Observable<ChatRoom[]>
   privateGroups$!: Observable<ChatRoom[]>
   passwordGroups$!: Observable<ChatRoom[]>
-  currentUser$!:Observable<User>;
-  selectedRoom$!:Observable<ChatRoom> | null;
+  currentUser$!: Observable<User>;
+  selectedRoom$!: Observable<ChatRoom> | null;
 
 
   ngOnInit() {
@@ -73,7 +76,7 @@ export class Home implements OnInit {
       this.onlineUsers$ = this.userService.getOnlineUsers();
       this.publicGroups$ = this.chatService.getAllPublicGroups();
       this.passwordGroups$ = this.chatService.getAllPasswordGroups();
-    }else{
+    } else {
       this.router.navigateByUrl('**');
       throw new Error('User needs to sign in to access this page');
     }
@@ -82,7 +85,7 @@ export class Home implements OnInit {
   openPrivateChat(userId: string) {
     this.isLoading = true;
     this.selectedRoom$ = null;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.selectedRoom$ = this.chatService.findPrivateChat(userId);
       this.isLoading = false;
     }, 300);
@@ -91,26 +94,35 @@ export class Home implements OnInit {
   openGroup(roomId: string) {
     this.isLoading = true;
     this.selectedRoom$ = null;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.selectedRoom$ = this.chatService.fetchRoomById(roomId);
       this.chatService.addUserToPasswordAndPrivateGroup(roomId);
       this.isLoading = false;
     }, 300);
   }
 
+  createRoomToStore(room: ChatRoom) {
+    this.store.dispatch(RoomsActions.create({ room: room }));
+  }
+
   createPublicGroup() {
     this.isLoading = true;
     this.selectedRoom$ = null;
-    setTimeout(()=>{
-      this.selectedRoom$ = this.chatService.createPublicGroup(this.currentUserId);
-      this.isLoading = false;
+    setTimeout(() => {
+      this.selectedRoom$ = this.chatService.createPublicGroup(this.currentUserId).pipe(
+        tap((room) => {
+          this.createRoomToStore(room);
+        }),
+        finalize(() => this.isLoading=true),
+        shareReplay(1)
+      );
     }, 300);
   }
 
   createPrivateGroup() {
     this.isLoading = true;
     this.selectedRoom$ = null;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.selectedRoom$ = this.chatService.createPrivateGroup(this.currentUserId);
       this.isLoading = false;
     }, 300);
@@ -119,7 +131,7 @@ export class Home implements OnInit {
   createPasswordGroup(password: string) {
     this.isLoading = true;
     this.selectedRoom$ = null;
-    setTimeout(()=>{
+    setTimeout(() => {
       this.selectedRoom$ = this.chatService.createPasswordGroup(this.currentUserId, password);
       this.isLoading = false;
     }, 300);
@@ -169,5 +181,9 @@ export class Home implements OnInit {
   async signout() {
     await this.authService.signOutUser();
     this.router.navigateByUrl('');
+  }
+
+  statistics() {
+    this.router.navigateByUrl('/statistics');
   }
 }

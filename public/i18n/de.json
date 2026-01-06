@@ -44,7 +44,8 @@
             "public-room-add": "Neuen öffentlichen Raum erstellen",
             "password-room-add": "Neuen passwortgeschützten Raum erstellen",
             "private-room-add": "Neuen privaten Raum erstellen",
-            "loading": "Lädt..."
+            "loading": "Lädt...",
+            "statistics": "Statistik"
         },
         "password-room-create-dialog": {
             "title": "Passwort für Raum erstellen",
@@ -91,6 +92,33 @@
             "delete-tooltip": "Chatraum löschen",
             "message-bubble": "von",
             "textbox-placeholder": "Nachricht schreiben..."
+        },
+        "statistics": {
+            "back": "Zur Startseite",
+            "messages-count": "Nachrichten",
+            "message-content": "Nachrichteninhalt",
+            "message-room-name": "gesendet an",
+            "message-date": "Gesendet am",
+            "rooms-count": "Räume",
+            "header": "Sitzungsstatistiken",
+            "rooms-created": "Erstellte Räume",
+            "rooms-deleted": "Gelöschte Räume",
+            "messages-sent-per-rooms": "Gesendete Nachrichten pro Raum",
+            "room-name": "Raumname",
+            "room-type": "Raumtyp",
+            "messages-out-of": "Nachrichten von",
+            "no-stats": {
+                "title": "Noch keine Statistiken vorhanden",
+                "messages": "Nachrichten senden...",
+                "create-rooms": "Räume erstellen...",
+                "delete-rooms": "Räume löschen..."
+            },
+            "reset": "Statistiken zurücksetzen",
+            "reset-dialog": {
+                "title": "Möchten Sie Ihre Statistiken zurücksetzen?",
+                "reset": "Zurücksetzen",
+                "cancel": "Abbrechen"
+            }
         },
         "error": {
             "email-password": "E-Mail und/oder Passwort falsch",

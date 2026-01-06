@@ -1,0 +1,7 @@
+<mat-dialog-content>
+  {{ 'app.statistics.reset-dialog.title' | translate }}
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton (click)="reset()" id="reset">{{ 'app.statistics.reset-dialog.reset' | translate }}</button>
+  <button matButton (click)="cancel()">{{ 'app.statistics.reset-dialog.cancel' | translate }}</button>
+</mat-dialog-actions>

@@ -1,9 +1,11 @@
+@use '../../../../colors.scss';
+
 .window-container{
     display:flex;
     flex-direction: column;
     justify-content: space-between;
     height: 85%;
-    background-color: #faf9fd;
+    background-color: colors.$white;
     margin:20px;
     padding: 10px;
     border-radius: 8px;
@@ -55,7 +57,7 @@
     height:10%;
 }
 .send-button mat-icon{
-    color:#00458f;
+    color: colors.$vivid-blue;
 }
 .current-user-message{
     display:flex;
@@ -64,7 +66,7 @@
 }
 .current-user-message .message-bubble{
     padding:10px;
-    background-color: #abc7ff;
+    background-color: colors.$purple-blue;
     border-radius: 30px 30px 5px 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     margin-right: 10px;
@@ -78,7 +80,7 @@
 }
 .partner-message .message-bubble{
     padding:10px;
-    background-color: #d7e3ff;
+    background-color: colors.$light-blue;
     border-radius: 30px 30px 30px 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     margin-left: 5px;
@@ -87,7 +89,7 @@
 .message-input{
     width:50%;
     padding:10px;
-    border: 1px solid #00458f;
+    border: 1px solid colors.$vivid-blue;
     border-radius: 30px;
 }
 .current-user-message .sender-name{
@@ -98,7 +100,7 @@
     padding:0px;
     font-style: italic;
     font-size: 12px;
-    color:#d7e3ff;
+    color: colors.$light-blue;
 }
 .partner-message .sender-name{
     display:flex;
@@ -108,7 +110,7 @@
     padding:0px;
     font-style: italic;
     font-size: 12px;
-    color:#abc7ff;
+    color: colors.$purple-blue;
 }
 .message-bubble{
     max-width: 280px;
@@ -118,14 +120,14 @@
     margin:10px;
 }
 #delete-chat{
-    color:red;
+    color: colors.$dark-red;
 }
 .chat-members{
-    color:#00458f;
+    color:colors.$vivid-blue;
 }
 .remove-member{
-    color:red;
+    color: colors.$dark-red;
 }
 .add-user{
-    color:green;
+    color: colors.$dark-green;
 }

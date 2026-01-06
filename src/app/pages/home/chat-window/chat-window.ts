@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, ViewChild, input } from '@angular/core';
+import { Component, DestroyRef, ElementRef, EventEmitter, inject, OnInit, Output, input, viewChild } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ChatRoom } from '../../../model/ChatRoom';
 import { ChatService } from '../../../services/chat-service';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { combineLatest, EMPTY, map, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, map, Observable, shareReplay, switchMap, take, tap } from 'rxjs';
 import { Message } from '../../../model/Message';
 import { CommonModule } from '@angular/common';
 import { NgClass } from '@angular/common';
@@ -22,6 +22,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguagesService } from '../../../services/languages-service';
+import { Store } from '@ngrx/store';
+import { MessagesActions, RoomsActions } from '../../../app.state';
+import { DocumentReference } from 'firebase/firestore';
 
 @Component({
   selector: 'app-chat-window',
@@ -38,7 +41,7 @@ import { LanguagesService } from '../../../services/languages-service';
   templateUrl: './chat-window.html',
   styleUrl: './chat-window.scss'
 })
-export class ChatWindow implements OnInit, AfterViewInit {
+export class ChatWindow implements OnInit {
   private router = inject(Router);
   private userService = inject(UserService);
   private chatService = inject(ChatService);
@@ -46,8 +49,9 @@ export class ChatWindow implements OnInit, AfterViewInit {
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
   private languagesService = inject(LanguagesService);
+  private store = inject(Store);
 
-  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+  readonly scrollContainer = viewChild<ElementRef>('scrollContainer');
   @Output() closeChat = new EventEmitter<void>();
   private _snackBar = inject(MatSnackBar);
   messages$!: Observable<Message[]>;
@@ -74,7 +78,6 @@ export class ChatWindow implements OnInit, AfterViewInit {
           if (room) {
             this.loadedOnce = true;
             this.currentRoom = room;
-            this.scrollToBottom();
             this.owner$ = this.userService.getUser(room.ownerId);
             this.currentUser$ = this.userService.getUser(this.currentUserId);
             this.memberUsers$ = this.userService.getMembers(room.members);
@@ -82,6 +85,7 @@ export class ChatWindow implements OnInit, AfterViewInit {
             if (!room.members.includes(this.currentUserId)) {
               this.handleCloseChat();
             }
+            this.scrollToBottom();
           }
         });
     } else {
@@ -89,14 +93,16 @@ export class ChatWindow implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    this.scrollToBottom();
-  }
-
   scrollToBottom(): void {
-    if (!this.scrollContainer) return;
-    const container = this.scrollContainer.nativeElement;
-    container.scrollTop = container.scrollHeight;
+    if (!this.scrollContainer()) {
+      setTimeout(() => {
+        const container = this.scrollContainer()?.nativeElement;
+        container.scrollTop = container.scrollHeight;
+      }, 300);
+    } else {
+      const container = this.scrollContainer()?.nativeElement;
+      container.scrollTop = container.scrollHeight;
+    }
   }
 
   sendMessage() {
@@ -109,16 +115,19 @@ export class ChatWindow implements OnInit, AfterViewInit {
       .pipe(
         take(1),
         switchMap(([room, user]) => {
-          return this.chatService.createMessage(room.roomId, {
+          const messagePayload = {
             content: trimmed,
             senderId: user.id,
             senderName: user.username
-          });
+          }
+          const res = this.chatService.createMessage(room.roomId, messagePayload);
+          return res;
         }),
-        tap(() => {
+        tap((res) => {
+          this.addMessageToStore(res);
           this.scrollToBottom();
           this.newMessage = '';
-        })
+        }),
       ).subscribe();
   }
 
@@ -128,6 +137,17 @@ export class ChatWindow implements OnInit, AfterViewInit {
     }
   }
 
+  addMessageToStore(docRef: DocumentReference) {
+    const message$ = this.chatService.getMessageByRef(docRef).pipe(take(1));
+    const room$ = this.selectedRoom$().pipe(take(1));
+    forkJoin([message$, room$]).subscribe(([message, room]) => {
+      const messagePayload: (Message & { roomName: string }) = { ...message, roomName: room.roomName };
+      const roomPayload: { roomId: string, roomName: string } = { roomId: room.roomId, roomName: room.roomName }
+      this.store.dispatch(RoomsActions.sent({ room: roomPayload }))
+      this.store.dispatch(MessagesActions.add({ message: messagePayload }));
+    });
+  }
+
   deleteChat() {
     if (this.currentRoom) {
       if (this.currentRoom.restrictions === 'private-chat' || this.currentRoom.ownerId === this.currentUserId) {
@@ -135,8 +155,9 @@ export class ChatWindow implements OnInit, AfterViewInit {
           width: '300px',
           data: this.currentRoom.roomId
         });
-        dialogRef.afterClosed().subscribe((roomDeleted: boolean) => {
+        dialogRef.afterClosed().pipe(take(1), shareReplay(1)).subscribe((roomDeleted: boolean) => {
           if (roomDeleted) {
+            this.store.dispatch(RoomsActions.delete({ room: this.currentRoom! }))
             this.handleCloseChat();
           }
         });
