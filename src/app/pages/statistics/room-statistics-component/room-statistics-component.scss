@@ -61,7 +61,13 @@ p{
     flex-direction: row;
     gap:5px;
 }
-
+.empty-stats{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
 
 @media screen and (max-width: 800px) {
     .created-rooms{

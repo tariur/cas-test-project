@@ -55,6 +55,13 @@
 mat-tab-group{
     margin-top:60px;
 }
+.empty-stats{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
 
 @media  screen and (max-width: 356px) {
     mat-tab-group{

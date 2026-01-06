@@ -6,8 +6,11 @@
                 <mat-icon id="bar-chart">bar_chart</mat-icon>
             </div>
             <div class="header-buttons">
-                <button matIconButton (click)="resetStatistics()" matTooltip="{{ 'app.statistics.reset' | translate }}"><mat-icon id="reset">replay</mat-icon></button>
-                <button matIconButton (click)="home()" matTooltip="{{'app.statistics.back' | translate}}"><mat-icon id="home">home</mat-icon></button>
+                <button matIconButton (click)="resetStatistics()"
+                    matTooltip="{{ 'app.statistics.reset' | translate }}"><mat-icon
+                        id="reset">replay</mat-icon></button>
+                <button matIconButton (click)="home()" matTooltip="{{'app.statistics.back' | translate}}"><mat-icon
+                        id="home">home</mat-icon></button>
                 <app-language-selector></app-language-selector>
             </div>
         </div>
@@ -15,7 +18,15 @@
     <mat-tab-group>
         <mat-tab label="{{'app.statistics.messages-count' |
                 translate}}: {{ messagesCount() }}">
+            @if(messagesCount() > 0) {
             <app-message-statistics-component></app-message-statistics-component>
+            }
+            @else {
+                <div class="empty-stats">
+                <h1>{{'app.statistics.no-stats.title' | translate}}</h1>
+                <button matButton="outlined" (click)="home()">{{'app.statistics.no-stats.messages' | translate}}</button>
+                </div>
+            }
         </mat-tab>
         <mat-tab label="{{'app.statistics.rooms-count' | translate}}: {{
                 roomsCount() }}">

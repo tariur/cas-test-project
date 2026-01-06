@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-room-statistics-component',
@@ -15,11 +16,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class RoomStatisticsComponent {
   private store = inject(Store);
+  private router = inject(Router);
   messages = this.store.selectSignal(messagesFeature.selectMessages);
   createdRooms = this.store.selectSignal(roomsFeature.selectCreatedrooms);
   deletedRooms = this.store.selectSignal(roomsFeature.selectDeletedrooms);
   sentperRooms = this.store.selectSignal(roomsFeature.selectSentperroom);
 
   totalMessages = this.messages().length;
+
+  home(){
+    this.router.navigateByUrl('/home');
+  }
 
 }

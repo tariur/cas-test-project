@@ -1,5 +1,6 @@
 <mat-tab-group>
     <mat-tab label="{{'app.statistics.rooms-created'| translate}}: {{createdRooms().length}}">
+        @if(createdRooms().length > 0){
         <div class="created-rooms">
             @for(room of createdRooms(); track $index){
             <div class="room-box">
@@ -10,8 +11,17 @@
             </div>
             }
         </div>
+        }
+        @else {
+        <div class="empty-stats">
+            <h1>{{'app.statistics.no-stats.title' | translate}}</h1>
+            <button matButton="outlined" (click)="home()">{{'app.statistics.no-stats.create-rooms' |
+                translate}}</button>
+        </div>
+        }
     </mat-tab>
     <mat-tab label="{{'app.statistics.rooms-deleted' | translate}}: {{deletedRooms().length}}">
+        @if(deletedRooms().length > 0){
         <div class="created-rooms">
             @for(room of deletedRooms(); track $index){
             <div class="room-box-d">
@@ -22,17 +32,35 @@
             </div>
             }
         </div>
+        }
+        @else {
+        <div class="empty-stats">
+            <h1>{{'app.statistics.no-stats.title' | translate}}</h1>
+            <button matButton="outlined" (click)="home()">{{'app.statistics.no-stats.delete-rooms' |
+                translate}}</button>
+        </div>
+        }
     </mat-tab>
     <mat-tab label="{{'app.statistics.messages-sent-per-rooms' | translate}}">
+        @if(sentperRooms().length > 0){
         <div class="bars-wrapper">
             @for (room of sentperRooms(); track $index) {
-            <div class="bar-box" >
+            <div class="bar-box">
                 <p class="bar-description">{{room.roomName}}</p>
                 <div class="bar">
-                    <mat-progress-bar mode="determinate" value="{{(room.count / totalMessages)*100}}" matTooltip="{{room.count}} {{'app.statistics.messages-out-of' | translate}} {{totalMessages}}"></mat-progress-bar>
+                    <mat-progress-bar mode="determinate" value="{{(room.count / totalMessages)*100}}"
+                        matTooltip="{{room.count}} {{'app.statistics.messages-out-of' | translate}} {{totalMessages}}"></mat-progress-bar>
                 </div>
             </div>
             }
         </div>
+        }
+        @else {
+        <div class="empty-stats">
+            <h1>{{'app.statistics.no-stats.title' | translate}}</h1>
+            <button matButton="outlined" (click)="home()">{{'app.statistics.no-stats.messages' |
+                translate}}</button>
+        </div>
+        }
     </mat-tab>
 </mat-tab-group>

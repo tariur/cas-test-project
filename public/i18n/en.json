@@ -107,6 +107,12 @@
             "room-name": "Room name",
             "room-type": "Room type",
             "messages-out-of": "messages out of",
+            "no-stats": {
+                "title": "No satistics to show yet",
+                "messages": "send messages...",
+                "create-rooms": "create rooms...",
+                "delete-rooms": "delete rooms..."
+            },
             "reset": "Reset statistics",
             "reset-dialog": {
                 "title": "Would you like to reset your statistics?",

@@ -107,6 +107,12 @@
             "room-name": "Raumname",
             "room-type": "Raumtyp",
             "messages-out-of": "Nachrichten von",
+            "no-stats": {
+                "title": "Noch keine Statistiken vorhanden",
+                "messages": "Nachrichten senden...",
+                "create-rooms": "Räume erstellen...",
+                "delete-rooms": "Räume löschen..."
+            },
             "reset": "Statistiken zurücksetzen",
             "reset-dialog": {
                 "title": "Möchten Sie Ihre Statistiken zurücksetzen?",

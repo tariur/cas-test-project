@@ -27,14 +27,7 @@ describe('Messages Reducer', () => {
         const state = reducer(messagesState, MessagesActions.add({ message: message }));
         expect(state).toEqual({
             messages: [
-                {
-                    content: 'test content',
-                    id: 'testID',
-                    senderId: 'test senderID',
-                    senderName: 'test sender name',
-                    timestamp: new Timestamp(1, 1),
-                    roomName: 'test room name'
-                }
+                message
             ]
         });
     });
@@ -54,13 +47,7 @@ describe('Rooms Reducer', () => {
         const state = reducer(roomsState, RoomsActions.create({ room: room }));
         expect(state).toEqual({
             createdrooms: [
-                {
-                    members: ['memberID1'],
-                    ownerId: 'ownerID',
-                    restrictions: 'public-group',
-                    roomId: 'roomID',
-                    roomName: 'room-name'
-                }
+                room
             ],
             deletedrooms: [],
             sentperroom: []
@@ -72,13 +59,7 @@ describe('Rooms Reducer', () => {
         expect(state).toEqual({
             createdrooms: [],
             deletedrooms: [
-                {
-                    members: ['memberID1'],
-                    ownerId: 'ownerID',
-                    restrictions: 'public-group',
-                    roomId: 'roomID',
-                    roomName: 'room-name'
-                }
+                room
             ],
             sentperroom: []
         });
