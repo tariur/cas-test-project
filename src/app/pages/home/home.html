@@ -15,7 +15,7 @@
       <div class="sidenav-header">
         <button matMiniFab (click)="sidenav.toggle()"><mat-icon>arrow_back</mat-icon></button>
       </div>
-      <mat-tab-group>
+      <mat-tab-group dynamicHeight>
         <mat-tab label="{{'app.home.all-users-label' | translate}}">
           <mat-list>
             @for(user of allUsers$ | async; track user.id){
@@ -36,7 +36,7 @@
           }
         </mat-tab>
         <mat-tab label="{{'app.home.groups-label' | translate}}">
-          <mat-tab-group>
+          <mat-tab-group dynamicHeight>
             <mat-tab label="{{'app.home.public-groups-label' | translate}}">
               @for (group of publicGroups$ | async; track group.roomId) {
               <mat-list>

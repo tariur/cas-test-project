@@ -11,19 +11,13 @@ import {provideTranslateHttpLoader} from "@ngx-translate/http-loader";
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { messagesFeature, roomsFeature } from './app.state';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes), provideFirebaseApp(() => initializeApp({
-        apiKey: "AIzaSyAc8h8jqZ1OZ0GlDRvgcXkcIHdOOUoYws0",
-        authDomain: "cas-chat-app-df45a.firebaseapp.com",
-        projectId: "cas-chat-app-df45a",
-        storageBucket: "cas-chat-app-df45a.firebasestorage.app",
-        messagingSenderId: "782939595753",
-        appId: "1:782939595753:web:7e72fed873f75ce9e22178"
-    })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
+    provideRouter(routes), provideFirebaseApp(() => initializeApp(environment.firebase)), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()),
     provideHttpClient(),
     provideTranslateService({
         lang: localStorage.getItem("language") || 'en',
