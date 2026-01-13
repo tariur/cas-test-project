@@ -1,5 +1,11 @@
 # CasChatApp
 
+## Runing in Docker
+
+```bash
+docker compose up --build
+```
+Once the container is running, the app is available on `http://localhost:8080`
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.1.
 
