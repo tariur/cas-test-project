@@ -1,41 +1,35 @@
 import { Routes } from '@angular/router';
-import { Landing } from './pages/landing/landing';
-import { Login } from './pages/login/login';
-import { Signup } from './pages/signup/signup';
-import { Home } from './pages/home/home';
-import { PageNotFound } from './pages/page-not-found/page-not-found';
 import { authGuard, publicGuard } from './guards/auth-guard';
-import { StatisticsComponent } from './pages/statistics/statistics-component/statistics-component';
+
 
 export const routes: Routes = [
     {
         path: "",
-        component: Landing,
+        loadComponent: () => import('./pages/landing/landing').then(m => m.Landing),
         canActivate: [publicGuard]
     },
     {
         path:"login",
-        component: Login,
+        loadComponent: () => import('./pages/login/login').then(m => m.Login),
         canActivate: [publicGuard]
     },
     {
         path:"signup",
-        component: Signup,
+        loadComponent: () => import('./pages/signup/signup').then(m => m.Signup),
         canActivate: [publicGuard]
     },
     {
         path:"home",
-        component: Home,
+        loadComponent: () => import('./pages/home/home').then(m => m.Home),
         canActivate: [authGuard]
     },
     {
         path:"statistics",
-        component: StatisticsComponent,
+        loadComponent: () => import('./pages/statistics/statistics-component/statistics-component').then(m => m.StatisticsComponent),
         canActivate: [authGuard]
     },
     {
         path:"**",
-        component: PageNotFound,
-        canActivate: [publicGuard]
+        loadComponent: () => import('./pages/page-not-found/page-not-found').then(m => m.PageNotFound)
     }
 ];
