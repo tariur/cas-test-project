@@ -1,5 +1,7 @@
 services:
   app:
+    image: cas-chat-app:1.0
+
     build:
       context: .
       dockerfile: Dockerfile
